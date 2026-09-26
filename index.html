@@ -37,6 +37,7 @@
     --font-sans: 'Gowun Dodum', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
     --font-hand: 'Nanum Pen Script', cursive;
+    --line-grid-step: 35px;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,8 +46,9 @@
     color: var(--ink);
     font-family: var(--font-sans);
     line-height: 1.5;
-    padding: 12px 14px 60px;
+    padding: 10px 12px 60px;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
   .app-container {
@@ -68,15 +70,16 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 16px;
+    padding: 4px 14px;
     font-family: var(--font-serif);
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
     position: relative;
     user-select: none;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     transition: transform 0.15s ease;
+    white-space: nowrap;
     clip-path: polygon(
       0% 0%, 100% 0%,
       98% 25%, 100% 50%, 98% 75%, 100% 100%,
@@ -119,42 +122,47 @@
     border-top: 1px solid rgba(255, 255, 255, 0.7);
   }
 
-  /* 최상단 바 */
+  /* 최상단 바: 모바일 글자 쪼개짐 방지 */
   .top-bar-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 4px 12px;
+    padding: 6px 2px 10px;
     border-bottom: 1.5px solid var(--line);
+    gap: 8px;
   }
   .app-brand {
     font-family: var(--font-serif);
-    font-size: 19px;
+    font-size: 17px;
     font-weight: 700;
     color: var(--ink);
     letter-spacing: -0.01em;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .top-bar-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    flex-wrap: nowrap;
   }
   .header-icon-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     background: #FFFFFF;
     border: 1.5px solid var(--line);
     border-radius: 999px;
-    padding: 6px 14px;
-    font-size: 12.5px;
+    padding: 5px 10px;
+    font-size: 11.5px;
     font-family: var(--font-sans);
     color: var(--ink-soft);
     cursor: pointer;
     box-shadow: var(--shadow-sm);
+    white-space: nowrap;
     transition: all 0.15s ease;
   }
   .header-icon-btn:hover {
@@ -162,8 +170,8 @@
     color: var(--accent);
   }
   .sync-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: #9CA3AF;
     display: inline-block;
@@ -180,9 +188,9 @@
   .nav-tabs {
     display: flex;
     justify-content: center;
-    gap: 6px;
+    gap: 4px;
     background: #FFFFFF;
-    padding: 5px;
+    padding: 4px;
     border-radius: 999px;
     border: 1.5px solid var(--line);
     box-shadow: var(--shadow-sm);
@@ -192,16 +200,17 @@
   }
   .nav-tab {
     flex: 1;
-    padding: 8px 14px;
+    padding: 7px 10px;
     border-radius: 999px;
     border: none;
     background: transparent;
     color: var(--ink-soft);
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
     text-align: center;
+    white-space: nowrap;
   }
   .nav-tab.active {
     background: var(--accent);
@@ -212,7 +221,7 @@
   /* 스마트 펜 트레이 */
   .global-pen-container {
     position: sticky;
-    top: 8px;
+    top: 6px;
     z-index: 40;
     display: flex;
     flex-direction: column;
@@ -225,37 +234,37 @@
     border: 1.5px solid var(--line);
     box-shadow: 0 4px 16px rgba(31, 41, 55, 0.08);
     border-radius: 999px;
-    padding: 6px 16px;
+    padding: 5px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: 6px;
   }
   .pen-group-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
   }
   .palette-divider {
     width: 1px;
-    height: 18px;
+    height: 16px;
     background: var(--line);
-    margin: 0 2px;
+    margin: 0 1px;
   }
   .tool-mode-btn {
     border: 1px solid transparent;
     background: transparent;
     color: var(--ink-soft);
-    padding: 5px 12px;
+    padding: 4px 9px;
     border-radius: 999px;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     transition: all 0.15s ease;
+    white-space: nowrap;
   }
   .tool-mode-btn:hover { background: #F3F4F6; color: var(--ink); }
   .tool-mode-btn.active {
@@ -272,18 +281,19 @@
   .current-pen-status {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 11px;
+    gap: 5px;
+    padding: 3px 8px;
     background: #FFFFFF;
     border: 1.5px solid var(--line);
     border-radius: 999px;
-    font-size: 11.5px;
+    font-size: 11px;
     font-family: var(--font-mono);
     color: var(--ink-soft);
+    white-space: nowrap;
   }
   .current-color-dot {
-    width: 13px;
-    height: 13px;
+    width: 11px;
+    height: 11px;
     border-radius: 50%;
     border: 1px solid rgba(0,0,0,0.15);
     display: inline-block;
@@ -293,14 +303,15 @@
     background: #FFF7ED;
     border: 1px solid #FFEDD5;
     color: var(--accent);
-    padding: 5px 12px;
+    padding: 4px 10px;
     border-radius: 999px;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 700;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
+    white-space: nowrap;
     transition: all 0.15s ease;
   }
   .btn-toggle-options:hover { background: #FFEDD5; }
@@ -315,10 +326,10 @@
     border: 1.5px solid var(--line);
     border-radius: 14px;
     box-shadow: var(--shadow-lg);
-    padding: 14px 18px;
+    padding: 12px 16px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     animation: slideDown 0.18s ease-out;
   }
   @keyframes slideDown {
@@ -329,7 +340,7 @@
   .options-row {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
   }
   .options-label-row {
     display: flex;
@@ -342,17 +353,17 @@
   .palette-chips-wrap {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     flex-wrap: wrap;
   }
   .palette-chip {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     border: 2px solid #FFFFFF;
     box-shadow: 0 0 0 1.5px var(--line);
     cursor: pointer;
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    transition: transform 0.12s ease;
     padding: 0;
   }
   .palette-chip:hover { transform: scale(1.15); }
@@ -361,8 +372,8 @@
     box-shadow: 0 0 0 2.5px var(--accent);
   }
   .color-picker-input {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border: 1.5px solid var(--line);
     border-radius: 50%;
     cursor: pointer;
@@ -374,7 +385,7 @@
   .slider-control-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
   }
   .custom-range {
     flex: 1;
@@ -384,7 +395,7 @@
   }
   .slider-val-badge {
     font-family: var(--font-mono);
-    font-size: 11.5px;
+    font-size: 11px;
     font-weight: 700;
     min-width: 44px;
     text-align: right;
@@ -392,16 +403,16 @@
   }
   .quick-chip-group {
     display: flex;
-    gap: 5px;
+    gap: 4px;
     margin-top: 2px;
     flex-wrap: wrap;
   }
   .quick-chip {
     background: #FFFFFF;
     border: 1px solid var(--line);
-    font-size: 11px;
+    font-size: 10.5px;
     font-family: var(--font-mono);
-    padding: 3px 8px;
+    padding: 2px 7px;
     border-radius: 4px;
     cursor: pointer;
     color: var(--ink-soft);
@@ -414,13 +425,13 @@
     background: var(--paper-card);
     border: 1.5px solid var(--line);
     border-radius: 14px;
-    padding: 18px 20px;
+    padding: 14px 16px;
     box-shadow: var(--shadow-md);
   }
   .top-budget-box {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
   }
 
   /* 날짜 헤더 */
@@ -429,35 +440,37 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
-    padding-bottom: 10px;
+    gap: 8px;
+    padding-bottom: 8px;
     border-bottom: 1.5px solid var(--line);
   }
   .date-nav-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
   }
   .date-display {
     font-family: var(--font-serif);
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
     color: var(--ink);
+    white-space: nowrap;
   }
   .date-nav-btn {
     background: #FFFFFF;
     border: 1.5px solid var(--line);
     color: var(--ink);
     border-radius: 8px;
-    padding: 5px 12px;
-    font-size: 12.5px;
+    padding: 4px 9px;
+    font-size: 11.5px;
     font-weight: 600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
+    white-space: nowrap;
     transition: all 0.15s ease;
   }
   .date-nav-btn:hover {
@@ -470,11 +483,12 @@
     border-color: rgba(194,65,12,0.3);
   }
   .date-status-badge {
-    font-size: 11px;
+    font-size: 10.5px;
     font-family: var(--font-mono);
-    padding: 2px 8px;
+    padding: 2px 7px;
     border-radius: 999px;
     font-weight: 700;
+    white-space: nowrap;
   }
   .badge-today { background: var(--accent); color: #FFFFFF; }
   .badge-tomorrow { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
@@ -485,20 +499,20 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 16px;
+    gap: 10px 14px;
     background: #FAFAFA;
-    padding: 10px 14px;
+    padding: 8px 12px;
     border-radius: 10px;
     border: 1.5px solid var(--line);
   }
   .budget-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
   .meta-tag {
     font-family: var(--font-serif);
-    font-size: 14.5px;
+    font-size: 13.5px;
     font-weight: 700;
     color: var(--accent);
   }
@@ -508,25 +522,26 @@
     background: #FFFFFF;
     border: 1.5px solid var(--line);
     border-radius: 8px;
-    padding: 4px 8px;
+    padding: 3px 6px;
   }
   .num-input {
     border: none;
     background: transparent;
     font-family: var(--font-mono);
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 600;
-    width: 90px;
+    width: 80px;
     text-align: right;
     color: var(--ink);
     outline: none;
   }
   .diff-badge {
-    font-size: 12.5px;
+    font-size: 11.5px;
     font-weight: 700;
-    padding: 3px 10px;
+    padding: 3px 8px;
     border-radius: 6px;
     font-family: var(--font-mono);
+    white-space: nowrap;
   }
   .diff-under { background: #ECFDF5; color: #059669; }
   .diff-over { background: #FEF2F2; color: #DC2626; }
@@ -535,7 +550,7 @@
   .daily-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 14px;
   }
   @media (max-width: 768px) {
     .daily-grid { grid-template-columns: 1fr; }
@@ -543,7 +558,7 @@
   .daily-col {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
   }
 
   /* 고정 루틴 & 캘린더 통합 카드 */
@@ -551,18 +566,18 @@
     background: #FFFFFF;
     border: 1.5px solid var(--line);
     border-radius: 12px;
-    padding: 14px 16px;
+    padding: 12px 14px;
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
   .auto-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1.5px dashed var(--line);
-    padding-bottom: 8px;
+    padding-bottom: 6px;
   }
   .auto-card-title {
     display: flex;
@@ -571,20 +586,20 @@
   }
   .auto-summary-badge {
     font-family: var(--font-mono);
-    font-size: 11.5px;
+    font-size: 11px;
     font-weight: 700;
     background: var(--accent-badge);
     color: var(--accent);
-    padding: 2px 9px;
+    padding: 2px 8px;
     border-radius: 999px;
   }
   .auto-block-section {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
   }
   .block-sub-title {
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 700;
     color: var(--ink-soft);
     display: flex;
@@ -594,15 +609,15 @@
   .check-item-list {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
   }
   .check-item-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 5px 8px;
+    gap: 6px;
+    padding: 4px 6px;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 12.5px;
     transition: background 0.1s ease;
   }
   .check-item-row:hover { background: #F9FAFB; }
@@ -611,15 +626,15 @@
     color: var(--ink-faint);
   }
   .custom-checkbox {
-    width: 17px;
-    height: 17px;
+    width: 16px;
+    height: 16px;
     accent-color: var(--accent);
     cursor: pointer;
   }
   .time-chip {
     font-family: var(--font-mono);
-    font-size: 10.5px;
-    padding: 1px 6px;
+    font-size: 10px;
+    padding: 1px 5px;
     border-radius: 4px;
     background: #FFFFFF;
     border: 1px solid var(--line);
@@ -627,10 +642,10 @@
     font-weight: 600;
   }
   .empty-hint-text {
-    font-size: 12px;
+    font-size: 11.5px;
     color: var(--ink-faint);
     font-style: italic;
-    padding: 2px 6px;
+    padding: 2px 4px;
   }
 
   /* 듀얼 모드 UI */
@@ -638,19 +653,19 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     flex-wrap: wrap;
     gap: 6px;
   }
   .section-title {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
   .canvas-tools {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
   }
   .dual-mode-pill {
     display: inline-flex;
@@ -664,8 +679,8 @@
   .dual-pill-btn {
     border: none;
     background: transparent;
-    padding: 3px 8px;
-    font-size: 11px;
+    padding: 2px 7px;
+    font-size: 10.5px;
     font-weight: 600;
     color: var(--ink-soft);
     border-radius: 999px;
@@ -686,13 +701,14 @@
     border: 1.5px solid var(--line);
     background: #FFFFFF;
     color: var(--ink-soft);
-    padding: 4px 9px;
+    padding: 3px 7px;
     border-radius: 6px;
-    font-size: 11.5px;
+    font-size: 11px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
+    white-space: nowrap;
     transition: all 0.15s ease;
   }
   .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
@@ -714,9 +730,9 @@
   .lined-canvas-wrap {
     background-image: repeating-linear-gradient(
       transparent,
-      transparent 33px,
-      #E5E7EB 33px,
-      #E5E7EB 34.5px
+      transparent 34px,
+      #E5E7EB 34px,
+      #E5E7EB 35px
     );
   }
   .ink-canvas {
@@ -734,17 +750,17 @@
     background-color: #FFFFFF;
     background-image: repeating-linear-gradient(
       transparent,
-      transparent 33px,
-      #E5E7EB 33px,
-      #E5E7EB 34.5px
+      transparent 34px,
+      #E5E7EB 34px,
+      #E5E7EB 35px
     );
     border: none;
     outline: none;
     font-family: var(--font-serif);
-    font-size: 14.5px;
-    line-height: 34.5px;
+    font-size: 14px;
+    line-height: 35px;
     color: #1F2937;
-    padding: 0 14px;
+    padding: 0 12px;
     resize: none;
     box-sizing: border-box;
     overflow: hidden;
@@ -754,7 +770,7 @@
   .diary-lined-textarea::placeholder {
     color: #9CA3AF;
     font-style: italic;
-    font-size: 13px;
+    font-size: 12.5px;
   }
 
   .canvas-expand-bar {
@@ -766,26 +782,26 @@
     padding: 0 2px;
   }
   .expand-indicator {
-    font-size: 10.5px;
+    font-size: 10px;
     color: var(--ink-faint);
     font-family: var(--font-sans);
   }
   .expand-btn-group {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
   }
   .btn-expand {
     background: #FFFFFF;
     border: 1px dashed var(--line);
     color: var(--ink-soft);
-    font-size: 11px;
+    font-size: 10.5px;
     border-radius: 6px;
-    padding: 3px 8px;
+    padding: 2px 7px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     transition: all 0.15s ease;
   }
   .btn-expand:hover {
@@ -797,34 +813,35 @@
   .todo-counter-badge {
     display: inline-flex;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     background: var(--accent-soft);
     border: 1px solid rgba(194,65,12,0.25);
     border-radius: 6px;
-    padding: 2px 7px;
-    font-size: 11.5px;
+    padding: 2px 6px;
+    font-size: 11px;
     font-family: var(--font-mono);
     color: var(--accent);
     font-weight: 700;
+    white-space: nowrap;
   }
   .todo-counter-input {
-    width: 28px;
+    width: 24px;
     text-align: center;
     border: none;
     border-bottom: 1.5px solid var(--accent);
     background: transparent;
     color: var(--accent);
     font-weight: 700;
-    font-size: 12px;
+    font-size: 11.5px;
     outline: none;
   }
 
   .tome-question-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    padding: 8px 12px;
+    gap: 6px;
+    margin-bottom: 6px;
+    padding: 6px 10px;
     background: #FAFAFA;
     border: 1.5px solid var(--line-subtle);
     border-left: 3.5px solid var(--accent);
@@ -834,15 +851,15 @@
     flex: 1;
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: 13.5px;
+    font-size: 12.5px;
     color: var(--ink-soft);
   }
   .tome-shuffle {
     background: #FFFFFF;
     border: 1px solid var(--line);
     border-radius: 6px;
-    padding: 3px 7px;
-    font-size: 12px;
+    padding: 2px 6px;
+    font-size: 11px;
     cursor: pointer;
     color: var(--ink-soft);
   }
@@ -850,25 +867,25 @@
   .stat-grid-3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 14px;
+    gap: 10px;
+    margin-bottom: 12px;
   }
   .stat-card {
     background: #FFFFFF;
     border: 1.5px solid var(--line);
     border-radius: 10px;
-    padding: 10px;
+    padding: 8px;
     text-align: center;
     box-shadow: var(--shadow-sm);
   }
   .stat-label {
-    font-size: 11.5px;
+    font-size: 11px;
     color: var(--ink-soft);
-    margin-bottom: 3px;
+    margin-bottom: 2px;
   }
   .stat-value {
     font-family: var(--font-mono);
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--accent);
   }
@@ -876,8 +893,8 @@
   .week-archive-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 6px;
+    margin-bottom: 14px;
   }
   @media (max-width: 768px) {
     .week-archive-grid { grid-template-columns: 1fr; }
@@ -889,7 +906,7 @@
     padding: 8px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
     cursor: pointer;
     transition: transform 0.1s ease, border-color 0.1s ease;
   }
@@ -902,7 +919,7 @@
     background: #FFF7ED;
   }
   .day-col-title {
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 700;
     display: flex;
     justify-content: space-between;
@@ -913,28 +930,28 @@
   .month-spread-container {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 14px;
     align-items: start;
   }
   @media (min-width: 1100px) {
     .month-spread-container {
       grid-template-columns: 1.25fr 0.75fr;
-      gap: 20px;
+      gap: 18px;
     }
   }
 
   .spread-page-col {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
   }
 
   .month-header-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
-    padding: 4px 2px 10px;
+    margin-bottom: 10px;
+    padding: 4px 2px 8px;
     border-bottom: 1.5px dashed var(--line);
   }
   .month-title-wrap {
@@ -945,15 +962,15 @@
   }
   .month-title-en {
     font-family: var(--font-serif);
-    font-size: 13px;
-    letter-spacing: 0.18em;
+    font-size: 12px;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
     color: var(--ink-faint);
     font-weight: 700;
   }
   .month-title-ko {
     font-family: var(--font-serif);
-    font-size: 21px;
+    font-size: 19px;
     font-weight: 700;
     color: var(--ink);
     letter-spacing: -0.01em;
@@ -968,17 +985,6 @@
     overflow: hidden;
     margin-bottom: 8px;
   }
-  .paper-diary-sheet::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 3px;
-    background: linear-gradient(to right, rgba(0,0,0,0.06), transparent);
-    pointer-events: none;
-    z-index: 10;
-  }
 
   .diary-dow-row {
     display: grid;
@@ -988,9 +994,9 @@
   }
   .diary-dow-cell {
     text-align: center;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 8px 0;
+    padding: 6px 0;
     color: var(--ink-soft);
     font-family: var(--font-serif);
     border-right: 1.5px solid #E5E7EB;
@@ -1006,8 +1012,8 @@
   }
 
   .diary-day-cell {
-    min-height: 98px;
-    padding: 6px 7px;
+    min-height: 85px;
+    padding: 5px;
     display: flex;
     flex-direction: column;
     cursor: pointer;
@@ -1025,15 +1031,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 3px;
-    min-height: 22px;
+    margin-bottom: 2px;
+    min-height: 20px;
   }
   .day-num {
-    font-size: 13.5px;
+    font-size: 12.5px;
     font-family: var(--font-serif);
     font-weight: 700;
     color: var(--ink);
-    padding: 1px 4px;
+    padding: 1px 3px;
     border-radius: 4px;
     line-height: 1;
   }
@@ -1046,42 +1052,40 @@
     background: var(--accent);
     color: #FFFFFF !important;
     border-radius: 999px;
-    padding: 2px 7px;
+    padding: 2px 6px;
     box-shadow: 0 1px 4px rgba(194,65,12,0.3);
   }
 
   .day-badges-wrap {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
   }
   .no-spend-badge {
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 700;
     font-family: var(--font-hand);
     background: #FEF3C7;
     border: 1px solid #FDE68A;
     color: #92400E;
-    padding: 0 4px;
+    padding: 0 3px;
     border-radius: 3px;
-    letter-spacing: -0.02em;
   }
 
   .stamp-done {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     border: 1.5px dashed #DC2626;
     color: #DC2626;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: 10px;
     font-family: var(--font-hand);
     font-weight: 700;
     transform: rotate(-10deg);
     background: rgba(254, 242, 242, 0.9);
-    box-shadow: 0 0 2px rgba(220, 38, 38, 0.35);
     pointer-events: none;
     user-select: none;
   }
@@ -1089,13 +1093,13 @@
   .tape-schedule-list {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
     margin-top: 2px;
     overflow: hidden;
   }
   .washi-tape-item {
-    font-size: 10.5px;
-    padding: 2px 5px;
+    font-size: 10px;
+    padding: 1px 4px;
     border-radius: 2px;
     font-weight: 600;
     white-space: nowrap;
@@ -1103,38 +1107,33 @@
     text-overflow: ellipsis;
     display: flex;
     align-items: center;
-    gap: 3px;
-    position: relative;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    transform: rotate(0.3deg);
-    transition: transform 0.1s ease;
+    gap: 2px;
+    transform: rotate(0.2deg);
   }
-  .washi-tape-item:nth-child(even) { transform: rotate(-0.4deg); }
-  .washi-tape-item:hover { transform: scale(1.02); z-index: 2; }
+  .washi-tape-item:nth-child(even) { transform: rotate(-0.3deg); }
 
-  .tape-color-0 { background: #FEF3C7; color: #78350F; border-left: 2.5px solid #F59E0B; }
-  .tape-color-1 { background: #FFE4E6; color: #9F1239; border-left: 2.5px solid #F43F5E; }
-  .tape-color-2 { background: #DCFCE7; color: #14532D; border-left: 2.5px solid #22C55E; }
-  .tape-color-3 { background: #E0E7FF; color: #3730A3; border-left: 2.5px solid #6366F1; }
-  .tape-color-4 { background: #F3E8FF; color: #581C87; border-left: 2.5px solid #A855F7; }
+  .tape-color-0 { background: #FEF3C7; color: #78350F; border-left: 2px solid #F59E0B; }
+  .tape-color-1 { background: #FFE4E6; color: #9F1239; border-left: 2px solid #F43F5E; }
+  .tape-color-2 { background: #DCFCE7; color: #14532D; border-left: 2px solid #22C55E; }
+  .tape-color-3 { background: #E0E7FF; color: #3730A3; border-left: 2px solid #6366F1; }
+  .tape-color-4 { background: #F3E8FF; color: #581C87; border-left: 2px solid #A855F7; }
 
   .tape-more-hint {
-    font-size: 9.5px;
+    font-size: 9px;
     color: var(--ink-faint);
     text-align: right;
     font-family: var(--font-mono);
-    margin-top: 1px;
   }
 
   .monthly-side-card {
     background: #FFFFFF;
     border: 1.5px solid var(--line);
     border-radius: 12px;
-    padding: 14px 16px;
+    padding: 12px 14px;
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
   .monthly-side-title {
     display: flex;
@@ -1144,16 +1143,16 @@
   .focus-row-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
   .focus-num-badge {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
     color: var(--accent);
     background: var(--accent-soft);
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
@@ -1164,8 +1163,8 @@
     flex: 1;
     border: none;
     border-bottom: 1.5px solid var(--line);
-    padding: 4px 6px;
-    font-size: 13px;
+    padding: 3px 5px;
+    font-size: 12.5px;
     outline: none;
     font-family: var(--font-sans);
     background: transparent;
@@ -1176,8 +1175,8 @@
     width: 100%;
     border: 1.5px solid var(--line);
     border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 13px;
+    padding: 8px 10px;
+    font-size: 12.5px;
     font-family: var(--font-sans);
     line-height: 1.6;
     color: var(--ink);
@@ -1193,7 +1192,7 @@
   }
   .wishlist-memo-area:focus { border-color: var(--accent); }
 
-  /* 토스트 및 모달 (alert/confirm 대체) */
+  /* 토스트 및 모달 */
   .toast-notice {
     position: fixed;
     bottom: 24px;
@@ -1201,9 +1200,9 @@
     transform: translateX(-50%);
     background: rgba(31,41,55,0.92);
     color: #FFFFFF;
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 600;
-    padding: 8px 18px;
+    padding: 7px 16px;
     border-radius: 999px;
     z-index: 1000;
     opacity: 0;
@@ -1225,7 +1224,7 @@
   .modal-card {
     background: #FFFFFF;
     border-radius: 14px;
-    padding: 22px;
+    padding: 20px;
     width: 100%;
     max-width: 440px;
     box-shadow: 0 12px 30px rgba(0,0,0,0.18);
@@ -1235,13 +1234,13 @@
   .modal-actions {
     display: flex;
     gap: 8px;
-    margin-top: 18px;
+    margin-top: 16px;
   }
   .modal-btn {
     flex: 1;
-    padding: 9px 0;
+    padding: 8px 0;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 600;
     cursor: pointer;
     border: 1.5px solid var(--line);
@@ -1263,9 +1262,9 @@
   .routine-manager-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin: 12px 0;
-    max-height: 240px;
+    gap: 6px;
+    margin: 10px 0;
+    max-height: 220px;
     overflow-y: auto;
   }
   .routine-row-item {
@@ -1273,10 +1272,10 @@
     align-items: center;
     justify-content: space-between;
     background: #F9FAFB;
-    padding: 8px 12px;
+    padding: 7px 10px;
     border-radius: 8px;
     border: 1.5px solid var(--line);
-    font-size: 13.5px;
+    font-size: 13px;
   }
   .routine-del-btn {
     border: none;
@@ -1290,27 +1289,27 @@
   .sync-field-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    margin-bottom: 14px;
+    gap: 5px;
+    margin-bottom: 12px;
     text-align: left;
   }
   .sync-label {
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--ink);
   }
   .sync-input {
     border: 1.5px solid var(--line);
     border-radius: 8px;
-    padding: 8px 11px;
-    font-size: 13.5px;
+    padding: 7px 10px;
+    font-size: 13px;
     font-family: var(--font-mono);
     outline: none;
     background: #FFFFFF;
   }
   .sync-input:focus { border-color: var(--accent); }
   .sync-help {
-    font-size: 11.5px;
+    font-size: 11px;
     color: var(--ink-soft);
     line-height: 1.45;
   }
@@ -1318,12 +1317,12 @@
     background: #FAFAFA;
     border: 1.5px solid var(--line);
     border-radius: 8px;
-    padding: 10px 12px;
-    margin-bottom: 14px;
+    padding: 8px 10px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 12.5px;
+    font-size: 12px;
   }
 </style>
 </head>
@@ -1344,7 +1343,7 @@
       <button type="button" class="header-icon-btn" id="btn-open-sync" title="동기화 설정 열기">
         <span class="sync-dot" id="sync-dot"></span>
         <span id="sync-text">로컬 보관</span>
-        <span style="font-size:11px; opacity:0.75;">⚙️</span>
+        <span style="font-size:10px; opacity:0.75;">⚙️</span>
       </button>
     </div>
   </header>
@@ -1356,11 +1355,12 @@
     <button type="button" class="nav-tab" data-tab="tab-month">월간 돌아보기</button>
   </nav>
 
+  <!-- 펜/도구 툴바 -->
   <div class="global-pen-container" id="global-pen-container">
     <div class="global-pen-bar" id="global-pen-bar">
       <div class="pen-group-row">
         <button type="button" class="tool-mode-btn active" id="btn-global-pen" data-tool="pen" title="만년필 필기">✎ 펜</button>
-        <button type="button" class="tool-mode-btn" id="btn-global-highlighter" data-tool="highlighter" title="반투명 소프트 형광펜">🖌️ 형광펜</button>
+        <button type="button" class="tool-mode-btn" id="btn-global-highlighter" data-tool="highlighter" title="반투명 형광펜">🖌️ 형광펜</button>
         <button type="button" class="tool-mode-btn" id="btn-global-eraser" data-tool="eraser" title="획 단위 지우개">⌫ 지우개</button>
         <button type="button" class="tool-mode-btn" id="btn-global-scroll" data-tool="scroll" title="화면 스크롤 터치 이동">✋ 이동</button>
       </div>
@@ -1370,16 +1370,16 @@
       <div class="pen-group-row">
         <div class="current-pen-status" id="current-pen-status" title="현재 도구 설정">
           <span class="current-color-dot" id="preview-color-dot" style="background:#1F2937;"></span>
-          <span id="preview-pen-info">2.0px / 100%</span>
+          <span id="preview-pen-info">2.0px</span>
         </div>
         <button type="button" class="btn-toggle-options" id="btn-toggle-options" title="굵기, 농도, 색상 꾸미기 메뉴 열기">
-          <span>🎨 꾸미기 설정</span>
-          <span id="toggle-arrow" style="font-size:10px;">▼</span>
+          <span>🎨 설정</span>
+          <span id="toggle-arrow" style="font-size:9px;">▼</span>
         </button>
       </div>
     </div>
 
-    <!-- 토글 상세 꾸미기 패널 -->
+    <!-- 토글 꾸미기 패널 -->
     <div class="pen-options-panel" id="pen-options-panel" style="display:none;">
       <div class="options-row">
         <div class="options-label-row">
@@ -1394,7 +1394,7 @@
 
       <div class="options-row">
         <div class="options-label-row">
-          <span>📏 선 굵기 (Stroke Width)</span>
+          <span>📏 선 굵기</span>
           <span class="slider-val-badge" id="label-size-val">2.0 px</span>
         </div>
         <div class="slider-control-row">
@@ -1411,7 +1411,7 @@
 
       <div class="options-row">
         <div class="options-label-row">
-          <span>💧 잉크 농도 (불투명도 / Opacity)</span>
+          <span>💧 잉크 농도 (불투명도)</span>
           <span class="slider-val-badge" id="label-alpha-val">100 %</span>
         </div>
         <div class="slider-control-row">
@@ -1429,7 +1429,7 @@
 
   <!-- 1. 오늘의 페이지 -->
   <main id="tab-today" class="tab-content">
-    <div class="paper-card top-budget-box" style="margin-bottom: 16px;">
+    <div class="paper-card top-budget-box" style="margin-bottom: 14px;">
       
       <!-- 날짜 영역 -->
       <div class="day-header-row">
@@ -1440,7 +1440,7 @@
           <button type="button" class="date-nav-btn" id="btn-next-day" title="내일 계획 작성하기">내일 계획하기 ›</button>
           <button type="button" class="date-nav-btn today-btn" id="btn-goto-today" style="display:none;">오늘로 이동</button>
         </div>
-        <div id="date-sub-hint" style="font-size:12.5px; color:var(--ink-soft); font-family:var(--font-serif);">
+        <div id="date-sub-hint" style="font-size:12px; color:var(--ink-soft); font-family:var(--font-serif);">
           오늘의 투두와 루틴을 완성해보세요.
         </div>
       </div>
@@ -1451,25 +1451,25 @@
           <span class="meta-tag">&lt;예산&gt;</span>
           <div class="num-input-wrap">
             <input type="number" id="input-budget" class="num-input" placeholder="0">
-            <span style="font-size:12px; margin-left:3px; color:var(--ink-soft);">원</span>
+            <span style="font-size:11.5px; margin-left:2px; color:var(--ink-soft);">원</span>
           </div>
         </div>
         <div class="budget-item">
           <span class="meta-tag">&lt;지출&gt;</span>
           <div class="num-input-wrap">
             <input type="number" id="input-spent" class="num-input" placeholder="0">
-            <span style="font-size:12px; margin-left:3px; color:var(--ink-soft);">원</span>
+            <span style="font-size:11.5px; margin-left:2px; color:var(--ink-soft);">원</span>
           </div>
         </div>
         <div id="budget-diff-badge" class="diff-badge diff-under" style="display:none;"></div>
       </div>
 
-      <!-- 소비 피드백 (듀얼 모드) -->
+      <!-- 소비 피드백 (기본 3줄 105px) -->
       <div class="budget-feedback-card-section">
         <div class="section-header">
           <div class="section-title">
             <span class="washi-tape-title tape-peach">소비 피드백</span>
-            <span style="font-size:11.5px; color:var(--ink-faint); font-weight:normal;">(오늘 소비에 대한 짧은 평)</span>
+            <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(오늘 소비에 대한 짧은 평)</span>
           </div>
           <div class="canvas-tools">
             <div class="dual-mode-pill" data-target="budget-feedback">
@@ -1481,16 +1481,17 @@
           </div>
         </div>
         <div class="editor-wrapper-box" id="editor-box-budget-feedback">
-          <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-budget-feedback">
-            <canvas id="canvas-budget-feedback" class="ink-canvas drawing-active" height="85"></canvas>
+          <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-budget-feedback" style="height:105px;">
+            <canvas id="canvas-budget-feedback" class="ink-canvas drawing-active" height="105"></canvas>
           </div>
-          <textarea id="text-budget-feedback" class="diary-lined-textarea" style="height:85px; display:none;" placeholder="오늘의 소비 습관과 감정을 자유롭게 타이핑해보세요..."></textarea>
+          <textarea id="text-budget-feedback" class="diary-lined-textarea" style="height:105px; display:none;" placeholder="오늘의 소비 습관과 감정을 자유롭게 타이핑해보세요..."></textarea>
         </div>
         <div class="canvas-expand-bar">
-          <span class="expand-indicator">수동 조절: 원할 때 버튼으로 높이 조절</span>
+          <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
           <div class="expand-btn-group">
-            <button type="button" class="btn-expand" data-canvas="canvas-budget-feedback" data-action="shrink" title="칸 줄이기">▲ 줄이기</button>
-            <button type="button" class="btn-expand" data-canvas="canvas-budget-feedback" data-action="expand" title="칸 늘리기">▼ + 칸 늘리기</button>
+            <button type="button" class="btn-expand" data-canvas="canvas-budget-feedback" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
+            <button type="button" class="btn-expand" data-canvas="canvas-budget-feedback" data-action="shrink" title="칸 1줄 줄이기">▲ 줄이기</button>
+            <button type="button" class="btn-expand" data-canvas="canvas-budget-feedback" data-action="expand" title="칸 1줄 늘리기">▼ + 칸 늘리기</button>
           </div>
         </div>
       </div>
@@ -1511,7 +1512,7 @@
           <div class="auto-block-section">
             <div class="block-sub-title">
               <span>🔄 고정 루틴 (Daily Habits)</span>
-              <button type="button" class="btn-sm" id="btn-quick-manage-routines" style="padding:2px 7px; font-size:11px;">루틴 관리</button>
+              <button type="button" class="btn-sm" id="btn-quick-manage-routines" style="padding:2px 6px; font-size:10.5px;">루틴 관리</button>
             </div>
             <div class="check-item-list" id="daily-routine-items"></div>
           </div>
@@ -1525,7 +1526,7 @@
           </div>
         </div>
 
-        <!-- 당일 집중 할 일 & 메모 (듀얼 모드) -->
+        <!-- 당일 집중 할 일 & 메모 (기본 6줄 210px) -->
         <div class="paper-card">
           <div class="section-header">
             <div class="section-title">
@@ -1546,26 +1547,27 @@
           </div>
 
           <div class="editor-wrapper-box" id="editor-box-left">
-            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-left">
-              <canvas id="canvas-left" class="ink-canvas drawing-active" height="220"></canvas>
+            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-left" style="height:210px;">
+              <canvas id="canvas-left" class="ink-canvas drawing-active" height="210"></canvas>
             </div>
-            <textarea id="text-left" class="diary-lined-textarea" style="height:220px; display:none;" placeholder="• 오늘 가장 먼저 끝내야 할 중요한 일 3가지..."></textarea>
+            <textarea id="text-left" class="diary-lined-textarea" style="height:210px; display:none;" placeholder="• 오늘 가장 먼저 끝내야 할 중요한 일 3가지..."></textarea>
           </div>
           <div class="canvas-expand-bar">
-            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 높이 조절</span>
+            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
             <div class="expand-btn-group">
-              <button type="button" class="btn-expand" data-canvas="canvas-left" data-action="shrink" title="칸 줄이기">▲ 줄이기</button>
-              <button type="button" class="btn-expand" data-canvas="canvas-left" data-action="expand" title="칸 늘리기">▼ + 칸 늘리기</button>
+              <button type="button" class="btn-expand" data-canvas="canvas-left" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
+              <button type="button" class="btn-expand" data-canvas="canvas-left" data-action="shrink" title="칸 1줄 줄이기">▲ 줄이기</button>
+              <button type="button" class="btn-expand" data-canvas="canvas-left" data-action="expand" title="칸 1줄 늘리기">▼ + 칸 늘리기</button>
             </div>
           </div>
         </div>
 
-        <!-- 당일 투두 피드백 (듀얼 모드) -->
+        <!-- 당일 투두 피드백 (기본 4줄 140px) -->
         <div class="paper-card">
           <div class="section-header">
             <div class="section-title">
               <span class="washi-tape-title tape-sage">투두 피드백</span>
-              <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(실행에 대한 회고와 배움)</span>
+              <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(오늘 실행에 대한 배움)</span>
             </div>
             <div class="canvas-tools">
               <div class="dual-mode-pill" data-target="todo-feedback">
@@ -1577,14 +1579,15 @@
             </div>
           </div>
           <div class="editor-wrapper-box" id="editor-box-todo-feedback">
-            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-todo-feedback">
-              <canvas id="canvas-todo-feedback" class="ink-canvas drawing-active" height="200"></canvas>
+            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-todo-feedback" style="height:140px;">
+              <canvas id="canvas-todo-feedback" class="ink-canvas drawing-active" height="140"></canvas>
             </div>
-            <textarea id="text-todo-feedback" class="diary-lined-textarea" style="height:200px; display:none;" placeholder="계획한 일을 얼마나 지켰나요? 내일 더 잘하기 위한 아이디어는?"></textarea>
+            <textarea id="text-todo-feedback" class="diary-lined-textarea" style="height:140px; display:none;" placeholder="계획한 일을 얼마나 지켰나요? 내일 더 잘하기 위한 아이디어는?"></textarea>
           </div>
           <div class="canvas-expand-bar">
-            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 높이 조절</span>
+            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
             <div class="expand-btn-group">
+              <button type="button" class="btn-expand" data-canvas="canvas-todo-feedback" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
               <button type="button" class="btn-expand" data-canvas="canvas-todo-feedback" data-action="shrink">▲ 줄이기</button>
               <button type="button" class="btn-expand" data-canvas="canvas-todo-feedback" data-action="expand">▼ + 칸 늘리기</button>
             </div>
@@ -1592,7 +1595,7 @@
         </div>
       </div>
 
-      <!-- 우측 열: 감사일기 + TO ME (듀얼 모드) -->
+      <!-- 우측 열: 감사일기 + TO ME (기본 각 5줄 175px) -->
       <div class="daily-col">
         <div class="paper-card">
           <div class="section-header">
@@ -1607,14 +1610,15 @@
             </div>
           </div>
           <div class="editor-wrapper-box" id="editor-box-gratitude">
-            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-gratitude">
-              <canvas id="canvas-gratitude" class="ink-canvas drawing-active" height="240"></canvas>
+            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-gratitude" style="height:175px;">
+              <canvas id="canvas-gratitude" class="ink-canvas drawing-active" height="175"></canvas>
             </div>
-            <textarea id="text-gratitude" class="diary-lined-textarea" style="height:240px; display:none;" placeholder="오늘 하루 나를 미소 짓게 했던 소소하고 고마운 세 가지..."></textarea>
+            <textarea id="text-gratitude" class="diary-lined-textarea" style="height:175px; display:none;" placeholder="오늘 하루 나를 미소 짓게 했던 소소하고 고마운 세 가지..."></textarea>
           </div>
           <div class="canvas-expand-bar">
-            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 높이 조절</span>
+            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
             <div class="expand-btn-group">
+              <button type="button" class="btn-expand" data-canvas="canvas-gratitude" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
               <button type="button" class="btn-expand" data-canvas="canvas-gratitude" data-action="shrink">▲ 줄이기</button>
               <button type="button" class="btn-expand" data-canvas="canvas-gratitude" data-action="expand">▼ + 칸 늘리기</button>
             </div>
@@ -1638,14 +1642,15 @@
             <button type="button" class="tome-shuffle" id="btn-tome-shuffle" title="질문 바꾸기">🔀</button>
           </div>
           <div class="editor-wrapper-box" id="editor-box-tome">
-            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-tome">
-              <canvas id="canvas-tome" class="ink-canvas drawing-active" height="240"></canvas>
+            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-tome" style="height:175px;">
+              <canvas id="canvas-tome" class="ink-canvas drawing-active" height="175"></canvas>
             </div>
-            <textarea id="text-tome" class="diary-lined-textarea" style="height:240px; display:none;" placeholder="수고한 나에게 전하는 진심 어린 다정의 한마디..."></textarea>
+            <textarea id="text-tome" class="diary-lined-textarea" style="height:175px; display:none;" placeholder="수고한 나에게 전하는 진심 어린 다정의 한마디..."></textarea>
           </div>
           <div class="canvas-expand-bar">
-            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 높이 조절</span>
+            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
             <div class="expand-btn-group">
+              <button type="button" class="btn-expand" data-canvas="canvas-tome" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
               <button type="button" class="btn-expand" data-canvas="canvas-tome" data-action="shrink">▲ 줄이기</button>
               <button type="button" class="btn-expand" data-canvas="canvas-tome" data-action="expand">▼ + 칸 늘리기</button>
             </div>
@@ -1657,10 +1662,10 @@
 
   <!-- 2. 주간 돌아보기 -->
   <section id="tab-week" class="tab-content" hidden>
-    <div class="paper-card" style="margin-bottom:16px;">
+    <div class="paper-card" style="margin-bottom:14px;">
       <div class="section-header">
-        <h2 class="washi-tape-title tape-peach" style="font-size:15px;">이번 주 투두 &amp; 루틴 결산</h2>
-        <span id="week-date-range-text" style="font-family:var(--font-mono); font-size:12px; color:var(--ink-soft);"></span>
+        <h2 class="washi-tape-title tape-peach" style="font-size:14px;">이번 주 투두 &amp; 루틴 결산</h2>
+        <span id="week-date-range-text" style="font-family:var(--font-mono); font-size:11.5px; color:var(--ink-soft);"></span>
       </div>
 
       <div class="stat-grid-3">
@@ -1678,8 +1683,8 @@
         </div>
       </div>
 
-      <div class="section-header" style="margin-top:12px;">
-        <span class="washi-tape-title tape-sage" style="font-size:12.5px;">이번 주 7일 투두 &amp; 피드백 아카이브</span>
+      <div class="section-header" style="margin-top:10px;">
+        <span class="washi-tape-title tape-sage" style="font-size:12px;">이번 주 7일 투두 &amp; 피드백 아카이브</span>
       </div>
       <div class="week-archive-grid" id="week-archive-list"></div>
     </div>
@@ -1697,14 +1702,15 @@
         </div>
       </div>
       <div class="editor-wrapper-box" id="editor-box-week-review">
-        <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-week-review">
-          <canvas id="canvas-week-review" class="ink-canvas drawing-active" height="240"></canvas>
+        <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-week-review" style="height:210px;">
+          <canvas id="canvas-week-review" class="ink-canvas drawing-active" height="210"></canvas>
         </div>
-        <textarea id="text-week-review" class="diary-lined-textarea" style="height:240px; display:none;" placeholder="이번 주를 돌아보며 느낀 배움과, 다음 주 나를 위한 새로운 다짐..."></textarea>
+        <textarea id="text-week-review" class="diary-lined-textarea" style="height:210px; display:none;" placeholder="이번 주를 돌아보며 느낀 배움과, 다음 주 나를 위한 새로운 다짐..."></textarea>
       </div>
       <div class="canvas-expand-bar">
-        <span class="expand-indicator">수동 조절: 원할 때 버튼으로 높이 조절</span>
+        <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
         <div class="expand-btn-group">
+          <button type="button" class="btn-expand" data-canvas="canvas-week-review" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
           <button type="button" class="btn-expand" data-canvas="canvas-week-review" data-action="shrink">▲ 줄이기</button>
           <button type="button" class="btn-expand" data-canvas="canvas-week-review" data-action="expand">▼ + 칸 늘리기</button>
         </div>
@@ -1756,16 +1762,15 @@
             <div class="diary-grid-table" id="month-calendar-grid"></div>
           </div>
 
-          <div style="margin-top:14px; border-top:1.5px solid var(--line); padding-top:12px;">
+          <div style="margin-top:12px; border-top:1.5px solid var(--line); padding-top:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span class="washi-tape-title tape-sand" style="font-size:12.5px;">마스킹 테이프 일정 등록</span>
-              <span style="font-size:11.5px; color:var(--ink-soft);">등록 시 파스텔 테이프 조각으로 달력 위에 부착됩니다.</span>
+              <span class="washi-tape-title tape-sand" style="font-size:12px;">마스킹 테이프 일정 등록</span>
             </div>
-            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;">
-              <input type="date" id="new-schedule-date" style="padding:6px 8px; border:1.5px solid var(--line); border-radius:6px; font-size:13px; background:#FFFFFF;">
-              <input type="time" id="new-schedule-time" style="padding:6px 8px; border:1.5px solid var(--line); border-radius:6px; font-size:13px; background:#FFFFFF;">
-              <input type="text" id="new-schedule-text" placeholder="예: 치과 진료, 독서 모임, 생일 파티" style="flex:1; min-width:180px; padding:6px 10px; border:1.5px solid var(--line); border-radius:6px; font-size:13px; background:#FFFFFF;">
-              <button type="button" id="btn-add-schedule" class="btn-sm" style="background:var(--accent); color:#FFFFFF; border:none; padding:6px 14px; font-weight:700;">테이프 붙이기</button>
+            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
+              <input type="date" id="new-schedule-date" style="padding:5px 8px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;">
+              <input type="time" id="new-schedule-time" style="padding:5px 8px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;">
+              <input type="text" id="new-schedule-text" placeholder="예: 치과 진료, 독서 모임, 생일 파티" style="flex:1; min-width:160px; padding:5px 9px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;">
+              <button type="button" id="btn-add-schedule" class="btn-sm" style="background:var(--accent); color:#FFFFFF; border:none; padding:5px 12px; font-weight:700;">테이프 붙이기</button>
             </div>
           </div>
         </div>
@@ -1778,7 +1783,7 @@
             <span class="washi-tape-title tape-peach">THIS MONTH FOCUS</span>
             <span style="font-size:11px; color:var(--accent); font-weight:700;">이달의 핵심 목표 3가지</span>
           </div>
-          <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; flex-direction:column; gap:6px;">
             <div class="focus-row-item">
               <span class="focus-num-badge">1</span>
               <input type="text" id="month-focus-1" class="focus-text-input" placeholder="목표 1 (예: 매일 밤 11시 30분 취침)">
@@ -1815,14 +1820,15 @@
             </div>
           </div>
           <div class="editor-wrapper-box" id="editor-box-month-review">
-            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-month-review">
-              <canvas id="canvas-month-review" class="ink-canvas drawing-active" height="260"></canvas>
+            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-month-review" style="height:210px;">
+              <canvas id="canvas-month-review" class="ink-canvas drawing-active" height="210"></canvas>
             </div>
-            <textarea id="text-month-review" class="diary-lined-textarea" style="height:260px; display:none;" placeholder="한 달을 마감하며 남기는 나의 솔직한 성장 기록..."></textarea>
+            <textarea id="text-month-review" class="diary-lined-textarea" style="height:210px; display:none;" placeholder="한 달을 마감하며 남기는 나의 솔직한 성장 기록..."></textarea>
           </div>
           <div class="canvas-expand-bar">
-            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 높이 조절</span>
+            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
             <div class="expand-btn-group">
+              <button type="button" class="btn-expand" data-canvas="canvas-month-review" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
               <button type="button" class="btn-expand" data-canvas="canvas-month-review" data-action="shrink">▲ 줄이기</button>
               <button type="button" class="btn-expand" data-canvas="canvas-month-review" data-action="expand">▼ + 칸 늘리기</button>
             </div>
@@ -1838,17 +1844,17 @@
 <!-- 고정 루틴 관리 모달 -->
 <div id="routine-modal" class="modal-overlay">
   <div class="modal-card">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="font-family:var(--font-serif); font-size:17px; font-weight:700; color:var(--ink);">🔄 매일 반복 고정 루틴 관리</h3>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h3 style="font-family:var(--font-serif); font-size:16px; font-weight:700; color:var(--ink);">🔄 매일 반복 고정 루틴 관리</h3>
       <button type="button" class="routine-del-btn" id="btn-close-routines" style="font-size:20px;">×</button>
     </div>
-    <p style="font-size:12px; color:var(--ink-soft); margin-bottom:12px;">
+    <p style="font-size:12px; color:var(--ink-soft); margin-bottom:10px;">
       여기에 등록한 습관은 매일 아침 '오늘의 페이지'에 체크박스로 자동 생성됩니다.
     </p>
 
-    <div style="display:flex; gap:6px; margin-bottom:12px;">
-      <input type="text" id="new-routine-text" placeholder="예: 비타민 챙겨먹기, 스트레칭 10분" style="flex:1; padding:8px 10px; border:1.5px solid var(--line); border-radius:6px; font-size:13px; outline:none;">
-      <button type="button" id="btn-add-routine" class="btn-sm" style="background:var(--accent); color:#FFFFFF; border:none; padding:0 14px; font-weight:700;">추가</button>
+    <div style="display:flex; gap:6px; margin-bottom:10px;">
+      <input type="text" id="new-routine-text" placeholder="예: 비타민 챙겨먹기, 스트레칭 10분" style="flex:1; padding:7px 10px; border:1.5px solid var(--line); border-radius:6px; font-size:12.5px; outline:none;">
+      <button type="button" id="btn-add-routine" class="btn-sm" style="background:var(--accent); color:#FFFFFF; border:none; padding:0 12px; font-weight:700;">추가</button>
     </div>
 
     <div class="routine-manager-list" id="routine-manager-list"></div>
@@ -1862,8 +1868,8 @@
 <!-- 동기화 설정 모달 -->
 <div id="sync-modal" class="modal-overlay">
   <div class="modal-card">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-      <h3 style="font-family:var(--font-serif); font-size:17px; font-weight:700; color:var(--ink);">⚙️ 클라우드 동기화 설정</h3>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="font-family:var(--font-serif); font-size:16px; font-weight:700; color:var(--ink);">⚙️ 클라우드 동기화 설정</h3>
       <button type="button" class="routine-del-btn" id="btn-close-sync" style="font-size:20px;">×</button>
     </div>
 
@@ -1875,32 +1881,32 @@
     <div class="sync-field-group">
       <label class="sync-label" for="input-secret-key">나만의 개인 비밀 코드 (Room Key)</label>
       <input type="text" id="input-secret-key" class="sync-input" placeholder="예: my-haru-diary-2026">
-      <p class="sync-help">노트북, 스마트폰, 태블릿에 <strong>동일한 비밀 코드</strong>를 넣으면 실시간으로 양방향 동기화됩니다.</p>
+      <p class="sync-help">동일한 비밀 코드를 넣으면 기기 간에 양방향 실시간 동기화됩니다.</p>
     </div>
 
     <div class="sync-field-group">
       <label class="sync-label" for="input-firebase-config">Firebase 설정값 (JSON 전체)</label>
       <textarea id="input-firebase-config" class="sync-input" rows="4" placeholder='{ "apiKey": "...", "projectId": "...", ... }'></textarea>
-      <p class="sync-help">Google Firebase 콘솔의 웹 앱 구성 객체 <code>{ ... }</code>를 그대로 붙여넣습니다.</p>
+      <p class="sync-help">Google Firebase 콘솔의 웹 구성 객체 <code>{ ... }</code>를 입력합니다.</p>
     </div>
 
-    <div class="modal-actions" style="margin-top:12px;">
+    <div class="modal-actions" style="margin-top:10px;">
       <button type="button" class="modal-btn" id="btn-force-pull-cloud" style="border-color:var(--accent); color:var(--accent);">🔄 최신 데이터 불러오기</button>
       <button type="button" class="modal-btn primary" id="btn-save-sync">저장 및 연동하기</button>
     </div>
 
-    <div style="border-top:1.5px solid var(--line); margin-top:16px; padding-top:14px; display:flex; gap:8px;">
-      <button type="button" class="modal-btn" id="btn-export-backup" style="font-size:11.5px;">💾 백업 파일 다운로드</button>
-      <button type="button" class="modal-btn danger" id="btn-disconnect-sync" style="font-size:11.5px;">연결 해제</button>
+    <div style="border-top:1.5px solid var(--line); margin-top:14px; padding-top:12px; display:flex; gap:8px;">
+      <button type="button" class="modal-btn" id="btn-export-backup" style="font-size:11px;">💾 백업 파일 다운로드</button>
+      <button type="button" class="modal-btn danger" id="btn-disconnect-sync" style="font-size:11px;">연결 해제</button>
     </div>
   </div>
 </div>
 
-<!-- 사용자 확인/경고용 공용 모달 (Browser Dialog Replacement) -->
+<!-- 사용자 확인/경고용 공용 모달 -->
 <div id="confirm-modal" class="modal-overlay">
-  <div class="modal-card" style="max-width:360px;">
-    <h3 id="confirm-modal-title" style="font-family:var(--font-serif); font-size:16px; font-weight:700; margin-bottom:8px;">확인</h3>
-    <p id="confirm-modal-msg" style="font-size:13px; color:var(--ink-soft); line-height:1.5; margin-bottom:16px;"></p>
+  <div class="modal-card" style="max-width:340px;">
+    <h3 id="confirm-modal-title" style="font-family:var(--font-serif); font-size:15px; font-weight:700; margin-bottom:8px;">확인</h3>
+    <p id="confirm-modal-msg" style="font-size:12.5px; color:var(--ink-soft); line-height:1.5; margin-bottom:14px;"></p>
     <div class="modal-actions">
       <button type="button" class="modal-btn" id="confirm-modal-cancel">취소</button>
       <button type="button" class="modal-btn primary" id="confirm-modal-ok">확인</button>
@@ -1914,6 +1920,20 @@
 <script>
 (() => {
   const CLIENT_ID = 'client_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+
+  // 각 영역별 이상적인 기본 높이 (줄 간격 35px 기준)
+  const DEFAULT_CANVAS_HEIGHTS = {
+    'canvas-budget-feedback': 105,  // 3줄
+    'canvas-left': 210,             // 6줄
+    'canvas-todo-feedback': 140,    // 4줄
+    'canvas-gratitude': 175,        // 5줄
+    'canvas-tome': 175,             // 5줄
+    'canvas-week-review': 210,      // 6줄
+    'canvas-month-review': 210       // 6줄
+  };
+
+  const MAX_SAFE_HEIGHT = 560; // 16줄 이상 비정상 확장 방지용 상한선
+  const MIN_SAFE_HEIGHT = 70;  // 2줄 최소치
 
   const PALETTE = [
     { name: '딥 잉크', color: '#1F2937' },
@@ -1956,7 +1976,6 @@
     { id: 'r3', text: '독서 20분 또는 명상 바른자세' }
   ];
   let schedulesMaster = [];
-  let monthMetaMaster = {};
 
   function getTodayStr() {
     const d = new Date();
@@ -1981,7 +2000,6 @@
     setTimeout(() => t.classList.remove('show'), 2200);
   }
 
-  // 브라우저 alert/confirm 완전 대체 모달 헬퍼
   function showConfirmDialog(title, message, isDanger = false) {
     return new Promise(resolve => {
       const modal = document.getElementById('confirm-modal');
@@ -1992,13 +2010,7 @@
 
       titleEl.textContent = title;
       msgEl.textContent = message;
-
-      if (isDanger) {
-        okBtn.className = 'modal-btn danger';
-      } else {
-        okBtn.className = 'modal-btn primary';
-      }
-
+      okBtn.className = isDanger ? 'modal-btn danger' : 'modal-btn primary';
       modal.style.display = 'flex';
 
       const cleanup = () => {
@@ -2028,21 +2040,33 @@
       this.currentStroke = null;
       this.isDrawing = false;
       this.activePointerId = null;
-      this.baseHeight = parseInt(this.canvas.getAttribute('height')) || 200;
+      this.defaultHeight = DEFAULT_CANVAS_HEIGHTS[canvasId] || 175;
 
       this.initEvents();
       this.resizeCanvas();
     }
 
     resizeCanvas() {
+      if (!this.canvas) return;
       const rect = this.canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      const displayWidth = rect.width || this.canvas.parentElement.clientWidth || 320;
-      const displayHeight = parseInt(this.canvas.getAttribute('height')) || this.canvas.height || this.baseHeight;
+      
+      // 모바일에서 렌더링 시 너비 0 오류 방지
+      const parentWidth = this.canvas.parentElement ? this.canvas.parentElement.clientWidth : 0;
+      const displayWidth = rect.width > 0 ? rect.width : (parentWidth > 0 ? parentWidth : 320);
+
+      // 높이 검증 (안전 상한선 이내로 보정)
+      let curH = parseInt(this.canvas.style.height) || parseInt(this.canvas.getAttribute('height')) || this.defaultHeight;
+      if (curH > MAX_SAFE_HEIGHT || curH < MIN_SAFE_HEIGHT) {
+        curH = this.defaultHeight;
+      }
 
       this.canvas.width = Math.round(displayWidth * dpr);
-      this.canvas.height = Math.round(displayHeight * dpr);
-      this.canvas.style.height = `${displayHeight}px`;
+      this.canvas.height = Math.round(curH * dpr);
+      this.canvas.style.height = `${curH}px`;
+      if (this.canvas.parentElement) {
+        this.canvas.parentElement.style.height = `${curH}px`;
+      }
 
       this.ctx.setTransform(1, 0, 0, 1, 0, 0);
       this.ctx.scale(dpr, dpr);
@@ -2050,9 +2074,9 @@
     }
 
     setHeight(newHeight) {
-      const clamped = Math.max(70, Math.min(2000, newHeight));
+      // 35px(줄 간격) 단위로 클램프
+      const clamped = Math.max(MIN_SAFE_HEIGHT, Math.min(MAX_SAFE_HEIGHT, Math.round(newHeight / 35) * 35));
       this.canvas.setAttribute('height', clamped);
-      this.canvas.height = clamped;
       this.canvas.style.height = `${clamped}px`;
       const wrap = this.canvas.parentElement;
       if (wrap) wrap.style.height = `${clamped}px`;
@@ -2092,7 +2116,7 @@
 
       if (currentTool === 'highlighter') {
         strokeSize = Math.max(12, currentPenSize * 2.8);
-        strokeAlpha = Math.min(0.4, currentAlpha / 100);
+        strokeAlpha = Math.min(0.35, currentAlpha / 100);
       } else if (currentTool === 'eraser') {
         this.eraseAt(pos.x, pos.y);
         return;
@@ -2238,6 +2262,11 @@
     loadSchedules();
     initFirebaseIfAvailable();
     switchDate(currentDate);
+
+    // 모바일 뷰포트 변경 및 폰트 렌더 완료 후 재정렬 보장
+    setTimeout(() => {
+      Object.values(canvasControllers).forEach(c => c.resizeCanvas());
+    }, 200);
   }
 
   function initCanvases() {
@@ -2258,7 +2287,7 @@
 
     window.addEventListener('resize', debounce(() => {
       Object.values(canvasControllers).forEach(c => c.resizeCanvas());
-    }, 250));
+    }, 200));
   }
 
   function debounce(fn, delay) {
@@ -2369,7 +2398,7 @@
     const dot = document.getElementById('preview-color-dot');
     const info = document.getElementById('preview-pen-info');
     if (dot) dot.style.backgroundColor = currentColor;
-    if (info) info.textContent = `${currentPenSize.toFixed(1)}px / ${currentAlpha}%`;
+    if (info) info.textContent = `${currentPenSize.toFixed(1)}px`;
   }
 
   function initDualModes() {
@@ -2404,18 +2433,30 @@
       });
     });
 
+    // 칸 늘리기/줄이기/기본복구 버튼
     document.querySelectorAll('.btn-expand').forEach(btn => {
       btn.addEventListener('click', () => {
         const cid = btn.dataset.canvas;
         const action = btn.dataset.action;
         const ctrl = canvasControllers[cid];
         if (!ctrl) return;
-        const cur = ctrl.canvas.clientHeight;
-        const step = cid.includes('feedback') ? 40 : 70;
-        const next = action === 'expand' ? cur + step : cur - step;
-        ctrl.setHeight(next);
+
+        const curH = ctrl.canvas.clientHeight;
+        const step = 35; // 정확히 노트 줄눈 1칸(35px) 단위로 가감
+        let nextH = curH;
+
+        if (action === 'reset') {
+          nextH = DEFAULT_CANVAS_HEIGHTS[cid] || 175;
+          showToast('기본 높이로 복구되었습니다.');
+        } else if (action === 'expand') {
+          nextH = curH + step;
+        } else if (action === 'shrink') {
+          nextH = curH - step;
+        }
+
+        ctrl.setHeight(nextH);
         const txt = document.getElementById(cid.replace('canvas-', 'text-'));
-        if (txt) txt.style.height = `${next}px`;
+        if (txt) txt.style.height = `${nextH}px`;
         saveCurrentDayData(true);
       });
     });
@@ -2433,7 +2474,9 @@
     } else {
       textarea.style.display = 'none';
       wrapCanvas.style.display = 'block';
-      canvasControllers[`canvas-${target}`]?.resizeCanvas();
+      setTimeout(() => {
+        canvasControllers[`canvas-${target}`]?.resizeCanvas();
+      }, 30);
     }
   }
 
@@ -2456,7 +2499,11 @@
 
         if (activeTab === 'tab-week') renderWeekArchive();
         if (activeTab === 'tab-month') renderMonthCalendar();
-        setTimeout(() => Object.values(canvasControllers).forEach(c => c.resizeCanvas()), 60);
+        
+        // 탭 전환 시 모바일 캔버스 너비 0 방지 및 렌더 재동기화
+        setTimeout(() => {
+          Object.values(canvasControllers).forEach(c => c.resizeCanvas());
+        }, 60);
       });
     });
 
@@ -2623,10 +2670,15 @@
       const ctrl = canvasControllers[cid];
       if (ctrl) {
         ctrl.strokes = (day.strokes && day.strokes[cid]) || [];
-        if (day.canvasHeights && day.canvasHeights[cid]) {
-          ctrl.setHeight(day.canvasHeights[cid]);
+        
+        // 과거 비정상적으로 저장된 수천 픽셀의 높이 완전 방어
+        let loadedH = (day.canvasHeights && day.canvasHeights[cid]) || DEFAULT_CANVAS_HEIGHTS[cid] || 175;
+        if (loadedH > MAX_SAFE_HEIGHT || loadedH < MIN_SAFE_HEIGHT) {
+          loadedH = DEFAULT_CANVAS_HEIGHTS[cid] || 175;
         }
-        ctrl.redraw();
+
+        ctrl.setHeight(loadedH);
+        if (txtArea) txtArea.style.height = `${loadedH}px`;
       }
     });
 
@@ -2647,7 +2699,8 @@
       const ctrl = canvasControllers[cid];
       if (ctrl) {
         strokes[cid] = ctrl.strokes;
-        canvasHeights[cid] = ctrl.canvas.clientHeight;
+        // 저장 시에도 최대 안전 상한선 적용
+        canvasHeights[cid] = Math.min(MAX_SAFE_HEIGHT, ctrl.canvas.clientHeight);
       }
       const txt = document.getElementById(`text-${sec}`);
       if (txt) texts[sec] = txt.value;
