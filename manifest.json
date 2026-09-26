@@ -1,0 +1,19 @@
+{
+"name": "하루의 페이지",
+"short_name": "하루",
+"description": "감성 아날로그 손글씨 & 멀티 디바이스 실시간 동기화 다이어리",
+"start_url": "/",
+"scope": "/",
+"display": "standalone",
+"orientation": "any",
+"background_color": "#FFFFFF",
+"theme_color": "#C2410C",
+"icons": [
+{
+"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='120' fill='%23C2410C'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='210' fill='%23FFFFFF' font-family='sans-serif' font-weight='bold'%3E%ED%95%98%EB%A3%A8%3C/text%3E%3C/svg%3E",
+"sizes": "192x192 512x512",
+"type": "image/svg+xml",
+"purpose": "any maskable"
+}
+]
+}
