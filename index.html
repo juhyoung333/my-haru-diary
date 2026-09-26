@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>하루의 페이지</title>
+
+<!-- PWA & Mobile Web App Meta -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#C2410C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="하루의 페이지">
+
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=JetBrains+Mono:wght@400;500;600;700&family=Nanum+Pen+Script&display=swap">
 
 <!-- Firebase SDK (Firestore & Auth Compat) -->
@@ -115,7 +124,7 @@
     border-top: 1px solid rgba(255, 255, 255, 0.65);
   }
 
-  /* 최상단 동기화 상태 바 */
+  /* 최상단 바 */
   .top-bar-row {
     display: flex;
     justify-content: space-between;
@@ -400,7 +409,7 @@
   .quick-chip:hover { border-color: var(--accent); color: var(--accent); }
   .quick-chip.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); font-weight: 700; }
 
-  /* 종이 카드 컨테이너 */
+  /* 종이 카드 */
   .paper-card {
     background: var(--paper-card);
     border: 1.5px solid var(--line);
@@ -539,7 +548,7 @@
     gap: 16px;
   }
 
-  /* 고정 루틴 & 캘린더 일정 통합 카드 */
+  /* 고정 루틴 & 캘린더 일정 카드 */
   .integrated-auto-card {
     background: #FFFFFF;
     border: 1.5px solid var(--line);
@@ -1329,7 +1338,7 @@
     margin-bottom: 14px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
     font-size: 12.5px;
   }
 </style>
@@ -1345,7 +1354,7 @@
       <button type="button" class="header-icon-btn" id="btn-open-routines" title="매일 반복되는 고정 루틴 관리">
         <span>🔄 고정 루틴</span>
       </button>
-      <button type="button" class="header-icon-btn" id="btn-open-sync" title="동기화 설정 열기">
+      <button type="button" class="header-icon-btn" id="btn-open-sync" title="동기화 설정 및 앱 설치 열기">
         <span class="sync-dot" id="sync-dot"></span>
         <span id="sync-text">로컬 보관</span>
         <span style="font-size:11px; opacity:0.75;">⚙️</span>
@@ -1469,7 +1478,7 @@
         <div id="budget-diff-badge" class="diff-badge diff-under" style="display:none;"></div>
       </div>
 
-      <!-- 소비 피드백 (손글씨 & 타이핑 듀얼 모드) -->
+      <!-- 소비 피드백 (듀얼 모드) -->
       <div class="budget-feedback-card-section">
         <div class="section-header">
           <div class="section-title">
@@ -1852,1783 +1861,1502 @@
   <div class="modal-card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
       <h3 style="font-family:var(--font-serif); font-size:17px; font-weight:700; color:var(--ink);">🔄 매일 반복 고정 루틴 관리</h3>
-      <button type="button" id="btn-routine-close" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--ink-soft);">&times;</button>
+      <button type="button" class="routine-del-btn" id="btn-close-routines" style="font-size:20px;">×</button>
     </div>
-    <p style="font-size:12.5px; color:var(--ink-soft); line-height:1.45; margin-bottom:12px;">
-      여기에 등록한 습관들은 매일 새 페이지가 열릴 때마다 <strong>자동으로 체크박스로 생성</strong>되어 매일 다시 적을 필요가 없습니다.
+    <p style="font-size:12px; color:var(--ink-soft); margin-bottom:12px;">
+      여기에 등록한 습관은 매일 아침 '오늘의 페이지'에 체크박스로 자동 생성됩니다.
     </p>
 
     <div style="display:flex; gap:6px; margin-bottom:12px;">
-      <input type="text" id="input-new-routine" class="sync-input" placeholder="새 루틴 (예: 아침 스트레칭, 비타민 복용)" style="flex:1;">
-      <button type="button" id="btn-add-routine" class="modal-btn primary" style="flex:none; padding:0 14px;">추가</button>
+      <input type="text" id="new-routine-text" placeholder="예: 비타민 챙겨먹기, 스트레칭 10분" style="flex:1; padding:8px 10px; border:1.5px solid var(--line); border-radius:6px; font-size:13px; outline:none;">
+      <button type="button" id="btn-add-routine" class="btn-sm" style="background:var(--accent); color:#FFFFFF; border:none; padding:0 14px; font-weight:700;">추가</button>
     </div>
 
-    <div class="routine-manager-list" id="routine-manager-items"></div>
+    <div class="routine-manager-list" id="routine-manager-list"></div>
 
     <div class="modal-actions">
-      <button type="button" class="modal-btn primary" id="btn-routine-done">완료 및 저장</button>
+      <button type="button" class="modal-btn primary" id="btn-save-routines">저장 및 닫기</button>
     </div>
   </div>
 </div>
 
-<!-- 🔐 동기화 설정 모달 -->
+<!-- ⚙️ 동기화 및 PWA 앱 설치 설정 모달 -->
 <div id="sync-modal" class="modal-overlay" style="display:none;">
   <div class="modal-card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-      <h3 style="font-family:var(--font-serif); font-size:17px; font-weight:700; color:var(--ink);">🔐 개인 코드 실시간 동기화</h3>
-      <button type="button" id="btn-sync-close" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--ink-soft);">&times;</button>
+      <h3 style="font-family:var(--font-serif); font-size:17px; font-weight:700; color:var(--ink);">⚙️ 동기화 &amp; 앱 설치 관리</h3>
+      <button type="button" class="routine-del-btn" id="btn-close-sync" style="font-size:20px;">×</button>
+    </div>
+
+    <!-- PWA 앱 설치 배너 -->
+    <div id="pwa-install-banner" style="display:none; background:#FFF7ED; border:1.5px solid #FFEDD5; border-radius:10px; padding:12px; margin-bottom:14px; text-align:center;">
+      <div style="font-size:13px; font-weight:700; color:var(--accent); margin-bottom:4px;">📱 앱 서랍에 정식 앱으로 설치 가능!</div>
+      <div style="font-size:11.5px; color:var(--ink-soft); margin-bottom:8px;">클릭 한 번으로 플레이스토어 앱처럼 앱 서랍에 쏙 등록됩니다.</div>
+      <button type="button" id="btn-pwa-install-action" class="modal-btn primary" style="padding:7px 0; font-size:12.5px;">하루의 페이지 앱 서랍에 설치</button>
     </div>
 
     <div class="sync-box-status">
-      <span class="sync-dot" id="modal-sync-dot"></span>
-      <span id="modal-sync-status-text" style="font-weight:600;">로컬 전용 (동기화 비활성)</span>
+      <span>현재 상태:</span>
+      <span id="modal-sync-status-badge" style="font-weight:700; color:var(--ink-soft);">⚪ 로컬 보관 중</span>
     </div>
 
     <div class="sync-field-group">
-      <label class="sync-label" for="input-secret-code">나만의 개인 비밀 코드 (사물함 열쇠)</label>
-      <input type="text" id="input-secret-code" class="sync-input" placeholder="예: my-haru-7788">
-      <div class="sync-help">
-        태블릿과 스마트폰에 <strong>똑같은 코드</strong>를 입력해 두면, 두 기기가 하나의 다이어리처럼 실시간으로 연결됩니다.
-      </div>
+      <label class="sync-label" for="input-secret-key">나만의 개인 비밀 코드 (Room Key)</label>
+      <input type="text" id="input-secret-key" class="sync-input" placeholder="예: my-haru-diary-2026">
+      <p class="sync-help">노트북, 폰, 태블릿에 <strong>100% 동일한 비밀 코드</strong>를 넣어야 한 방에서 실시간으로 글씨가 오고 갑니다.</p>
     </div>
 
     <div class="sync-field-group">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <label class="sync-label" for="input-firebase-config">Firebase 설정값 (JSON)</label>
-        <button type="button" id="btn-firebase-guide-toggle" style="background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; text-decoration:underline;">설정 안내 보기</button>
-      </div>
-      <textarea id="input-firebase-config" class="sync-input" rows="4" style="font-size:11.5px; resize:vertical;" placeholder='{ "apiKey": "...", "projectId": "...", ... }'></textarea>
-      <div id="firebase-guide-box" style="display:none; background:#FFF7ED; border:1px solid #FFEDD5; border-radius:8px; padding:10px; margin-top:6px; font-size:11.5px; color:var(--ink-soft); line-height:1.5;">
-        <strong>📌 무료 Firebase 설정 3단계:</strong><br>
-        1. Firebase 콘솔에서 새 프로젝트 생성<br>
-        2. Firestore 데이터베이스 생성 (테스트 모드로 시작)<br>
-        3. 프로젝트 설정 &gt; 웹 앱(&lt;/&gt;) 추가 후 나오는 <code>firebaseConfig</code> 복사해 위 칸에 붙여넣기
-      </div>
+      <label class="sync-label" for="input-firebase-config">Firebase 설정값 (JSON 전체)</label>
+      <textarea id="input-firebase-config" class="sync-input" rows="4" placeholder='{ "apiKey": "...", "projectId": "...", ... }'></textarea>
+      <p class="sync-help">Google Firebase 콘솔에서 복사한 중괄호 <code>{ ... }</code> 내용을 그대로 붙여넣습니다.</p>
     </div>
 
-    <div style="border-top:1.5px solid var(--line); padding-top:12px; margin-top:10px;">
-      <span style="font-size:12px; font-weight:700; color:var(--ink);">💾 데이터 파일 백업 &amp; 복원</span>
-      <div style="display:flex; gap:8px; margin-top:8px;">
-        <button type="button" id="btn-export-backup" class="modal-btn" style="font-size:12px;">전체 백업 다운로드</button>
-        <label class="modal-btn" style="font-size:12px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer;">
-          백업 파일 복원
-          <input type="file" id="file-import-backup" accept=".json" style="display:none;">
-        </label>
-      </div>
+    <div class="modal-actions" style="margin-top:12px;">
+      <button type="button" class="modal-btn" id="btn-force-pull-cloud" style="border-color:var(--accent); color:var(--accent);">🔄 최신 데이터 불러오기</button>
+      <button type="button" class="modal-btn primary" id="btn-save-sync">저장 및 연동하기</button>
     </div>
 
-    <div class="modal-actions">
-      <button type="button" class="modal-btn" id="btn-sync-disconnect">연동 해제</button>
-      <button type="button" class="modal-btn primary" id="btn-sync-save">저장 및 연동하기</button>
+    <div style="border-top:1.5px solid var(--line); margin-top:16px; padding-top:14px; display:flex; gap:8px;">
+      <button type="button" class="modal-btn" id="btn-export-backup" style="font-size:11.5px;">💾 백업 파일 다운로드</button>
+      <button type="button" class="modal-btn danger" id="btn-disconnect-sync" style="font-size:11.5px;">연결 해제</button>
     </div>
   </div>
 </div>
 
-<!-- 손글씨 전체 지우기 모달 -->
-<div id="confirm-modal" class="modal-overlay" style="display:none;">
-  <div class="modal-card" style="max-width:320px; text-align:center;">
-    <h3 style="font-family:var(--font-serif); font-size:16px; margin-bottom:8px;">손글씨 전체 지우기</h3>
-    <p style="font-size:13px; color:var(--ink-soft);">이 칸에 쓴 손글씨를 모두 지우시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
-    <div class="modal-actions">
-      <button type="button" class="modal-btn" id="modal-btn-cancel">취소</button>
-      <button type="button" class="modal-btn danger" id="modal-btn-confirm">지우기</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast-notice" class="toast-notice">저장되었습니다</div>
+<!-- 알림 토스트 -->
+<div id="toast-notice" class="toast-notice">저장되었습니다.</div>
 
 <script>
-(function(){
-  "use strict";
+(() => {
+  // PWA 설치 프롬프트 핸들러
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.style.display = 'block';
+  });
 
-  // 1. 날짜 유틸리티
-  var realToday = new Date();
-  var pad = function(n){ return String(n).padStart(2, '0'); };
-  var toIso = function(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
-  var realTodayIso = toIso(realToday);
+  document.getElementById('btn-pwa-install-action')?.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      const banner = document.getElementById('pwa-install-banner');
+      if (banner) banner.style.display = 'none';
+      showToast(outcome === 'accepted' ? '앱이 설치되었습니다!' : '설치가 취소되었습니다.');
+    }
+  });
 
-  var viewingDate = new Date();
-  var currentIso = realTodayIso;
+  const CLIENT_ID = 'client_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
 
-  var MONTH_NAMES_EN = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+  const PALETTE = [
+    { name: '딥 잉크', color: '#1F2937' },
+    { name: '세피아 브라운', color: '#78350F' },
+    { name: '테라코타 오렌지', color: '#C2410C' },
+    { name: '포레스트 그린', color: '#15803D' },
+    { name: '인디고 블루', color: '#1D4ED8' },
+    { name: '로즈 버건디', color: '#BE123C' },
+    { name: '파스텔 옐로우', color: '#FACC15' },
+    { name: '소프트 민트', color: '#4ADE80' },
+    { name: '밀크 라벤더', color: '#C084FC' }
   ];
 
-  var DEFAULT_ROUTINES = [
-    { id: "r1", text: "아침 기상 후 물 한 잔 & 가벼운 스트레칭" },
-    { id: "r2", text: "종합 비타민 및 유산균 챙겨먹기" },
-    { id: "r3", text: "독서 20분 또는 관심 분야 아티클 읽기" }
+  const TOME_PROMPTS = [
+    "오늘 하루를 마친 나에게, 전하고 싶은 따뜻한 응원은?",
+    "오늘 가장 나답게 빛났던 순간은 언제였나요?",
+    "지치고 힘든 순간, 나를 묵묵히 버티게 해준 생각은?",
+    "오늘 내가 해낸 작지만 소중한 성취 한 가지는?",
+    "내일의 나를 위해 오늘 밤 건네고 싶은 한마디는?"
   ];
 
-  var DEFAULT_CANVAS_HEIGHTS = {
-    "canvas-left": 220,
-    "canvas-todo-feedback": 200,
-    "canvas-gratitude": 240,
-    "canvas-tome": 240,
-    "canvas-budget-feedback": 85,
-    "canvas-week-review": 240,
-    "canvas-month-review": 260
-  };
+  let currentTool = 'pen';
+  let currentColor = '#1F2937';
+  let currentPenSize = 2.0;
+  let currentAlpha = 100;
+  let activeTab = 'tab-today';
+  let currentDate = getTodayStr();
+  let currentMonthView = { year: 2026, month: 9 };
 
-  // 고유 기기 세션 ID (내가 전송한 데이터가 메아리로 돌아와 내 화면을 덮어쓰는 버그 원천 차단)
-  var CLIENT_ID = "client_" + Math.random().toString(36).substring(2, 10) + "_" + Date.now();
+  let isRemoteApplying = false;
+  let unsubscribeFirestore = null;
+  let firestoreDb = null;
+  let isFirestoreOnline = false;
 
-  // 객체 내 undefined 제거 유틸리티 (Firestore 쓰기 오류 완전 차단)
+  const canvasControllers = {};
+
+  const daysCache = {};
+  let routinesMaster = [
+    { id: 'r1', text: '기상 직후 물 한 잔 & 가벼운 스트레칭' },
+    { id: 'r2', text: '종합 비타민 및 유산균 챙겨먹기' },
+    { id: 'r3', text: '독서 20분 또는 명상 바른자세' }
+  ];
+  let schedulesMaster = [];
+  let monthMetaMaster = {};
+
+  function getTodayStr() {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function formatDisplayDate(dateStr) {
+    const [y, m, d] = dateStr.split('-');
+    const dateObj = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+    const dows = ['일', '월', '화', '수', '목', '금', '토'];
+    return `${y.slice(2)} / ${m} / ${d} (${dows[dateObj.getDay()]})`;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast-notice');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
   function sanitizeForFirestore(obj) {
-    return JSON.parse(JSON.stringify(obj, function(k, v){
-      return v === undefined ? "" : v;
-    }));
+    return JSON.parse(JSON.stringify(obj, (k, v) => (v === undefined ? null : v)));
   }
 
-  function createDefaultDayState(){
-    return {
-      budget: 0,
-      spent: 0,
-      todoDone: "",
-      todoTotal: "",
-      routineDone: {},
-      canvasHeights: Object.assign({}, DEFAULT_CANVAS_HEIGHTS),
-      rev: 1, // 버전 카운터 (기기 간 시계 오차 완전 극복)
-      lastEditor: CLIENT_ID,
-      updatedAt: 0,
-      strokes: {
-        "canvas-left": [],
-        "canvas-todo-feedback": [],
-        "canvas-gratitude": [],
-        "canvas-tome": [],
-        "canvas-budget-feedback": []
-      },
-      texts: {
-        "budget-feedback": "",
-        "left": "",
-        "todo-feedback": "",
-        "gratitude": "",
-        "tome": ""
-      },
-      inputModes: {
-        "budget-feedback": "pen",
-        "left": "pen",
-        "todo-feedback": "pen",
-        "gratitude": "pen",
-        "tome": "pen"
-      }
-    };
-  }
+  class SmoothCanvas {
+    constructor(canvasId) {
+      this.canvas = document.getElementById(canvasId);
+      this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
+      this.id = canvasId;
+      this.strokes = [];
+      this.currentStroke = null;
+      this.isDrawing = false;
+      this.activePointerId = null;
+      this.baseHeight = parseInt(this.canvas.getAttribute('height')) || 200;
 
-  var state = {
-    today: createDefaultDayState(),
-    weekReview: { strokes: [], text: "", inputMode: "pen", height: 240, rev: 1, lastEditor: CLIENT_ID, updatedAt: 0 },
-    monthReview: { strokes: [], text: "", inputMode: "pen", height: 260, focus1: "", focus2: "", focus3: "", wishlist: "", rev: 1, lastEditor: CLIENT_ID, updatedAt: 0 }
-  };
-
-  var STORAGE_KEY_PREFIX = "haru_day_";
-  var STORAGE_WEEK_PREFIX = "haru_week_";
-  var STORAGE_MONTH_PREFIX = "haru_month_";
-  var STORAGE_SCHEDULES_KEY = "haru_schedules_v1";
-  var STORAGE_ROUTINES_KEY = "haru_master_routines_v1";
-  var STORAGE_SYNC_SECRET = "haru_sync_secret_code_v1";
-  var STORAGE_SYNC_FBCONFIG = "haru_sync_firebase_config_v1";
-
-  function getStorage(key, fallback){
-    try {
-      var v = localStorage.getItem(key);
-      return v ? JSON.parse(v) : fallback;
-    } catch(e) { return fallback; }
-  }
-  function setStorage(key, data){
-    try { localStorage.setItem(key, JSON.stringify(data)); } catch(e){}
-  }
-
-  function showToast(msg){
-    var el = document.getElementById("toast-notice");
-    el.textContent = msg;
-    el.classList.add("show");
-    setTimeout(function(){ el.classList.remove("show"); }, 1800);
-  }
-
-  function getMasterRoutines(){ return getStorage(STORAGE_ROUTINES_KEY, DEFAULT_ROUTINES); }
-  function saveMasterRoutines(routines){
-    setStorage(STORAGE_ROUTINES_KEY, routines);
-    syncService.pushRoutines(routines);
-  }
-
-  function getSchedules(){ return getStorage(STORAGE_SCHEDULES_KEY, []); }
-  function saveSchedules(arr){
-    setStorage(STORAGE_SCHEDULES_KEY, arr);
-    syncService.pushSchedules(arr);
-  }
-
-  // 3. 🔐 실시간 동기화 서비스 (무제한 양방향 영구 연동 엔진)
-  var syncService = {
-    active: false,
-    db: null,
-    secretCode: "",
-    unsubDay: null,
-    unsubSchedules: null,
-    unsubRoutines: null,
-
-    init: function(){
-      var savedCode = localStorage.getItem(STORAGE_SYNC_SECRET) || "";
-      var savedConfig = localStorage.getItem(STORAGE_SYNC_FBCONFIG) || "";
-      if (savedCode) document.getElementById("input-secret-code").value = savedCode;
-      if (savedConfig) document.getElementById("input-firebase-config").value = savedConfig;
-
-      if (savedCode && savedConfig) {
-        this.connect(savedCode, savedConfig, false);
-      } else {
-        this.updateStatusUI("local");
-      }
-    },
-
-    connect: function(secretCode, configStr, showNotice){
-      var self = this;
-      self.updateStatusUI("syncing");
-
-      try {
-        var config = typeof configStr === "string" ? JSON.parse(configStr) : configStr;
-        if (!config || !config.apiKey || !config.projectId) throw new Error("Firebase 설정 오류");
-
-        var app = !firebase.apps.length ? firebase.initializeApp(config) : firebase.app();
-        self.db = app.firestore();
-        self.secretCode = secretCode.trim();
-        self.active = true;
-
-        localStorage.setItem(STORAGE_SYNC_SECRET, self.secretCode);
-        localStorage.setItem(STORAGE_SYNC_FBCONFIG, typeof configStr === "string" ? configStr : JSON.stringify(configStr));
-
-        // Firestore 오프라인 영속성 최적화 & 인증
-        firebase.auth().signInAnonymously().catch(function(err){
-          console.warn("익명 인증 알림:", err);
-        }).finally(function(){
-          self.updateStatusUI("online");
-          self.listenToCurrentDay();
-          self.listenToSchedules();
-          self.listenToRoutines();
-          if (showNotice) showToast("실시간 클라우드 사물함 연결 완료!");
-        });
-      } catch(err) {
-        self.active = false;
-        self.updateStatusUI("error");
-        if (showNotice) showToast("동기화 연결 실패: 설정을 확인해주세요.");
-      }
-    },
-
-    disconnect: function(){
-      if (this.unsubDay) this.unsubDay();
-      if (this.unsubSchedules) this.unsubSchedules();
-      if (this.unsubRoutines) this.unsubRoutines();
-      this.active = false;
-      this.db = null;
-      this.secretCode = "";
-      localStorage.removeItem(STORAGE_SYNC_SECRET);
-      document.getElementById("input-secret-code").value = "";
-      this.updateStatusUI("local");
-      showToast("동기화가 해제되었습니다 (로컬 보관 모드)");
-    },
-
-    updateStatusUI: function(status){
-      var dot = document.getElementById("sync-dot");
-      var text = document.getElementById("sync-text");
-      var mDot = document.getElementById("modal-sync-dot");
-      var mText = document.getElementById("modal-sync-status-text");
-
-      dot.className = "sync-dot " + status;
-      mDot.className = "sync-dot " + status;
-
-      if (status === "online") {
-        text.textContent = "실시간 연동 중";
-        mText.textContent = "🟢 실시간 사물함 연동 중 (" + this.secretCode + ")";
-      } else if (status === "syncing") {
-        text.textContent = "동기화 중...";
-        mText.textContent = "🟡 연결 확인 및 전송 중...";
-      } else if (status === "error") {
-        text.textContent = "연결 오류";
-        mText.textContent = "🔴 연결 실패 (설정값 확인 필요)";
-      } else {
-        text.textContent = "로컬 보관";
-        mText.textContent = "⚪ 로컬 전용 (동기화 비활성)";
-      }
-    },
-
-    listenToCurrentDay: function(){
-      var self = this;
-      if (!self.active || !self.db) return;
-      if (self.unsubDay) self.unsubDay();
-
-      var docRef = self.db.collection("haru_diaries").doc(self.secretCode)
-                          .collection("days").doc(currentIso);
-
-      // includeMetadataChanges를 통해 로컬 변경과 서버 원격 변경을 정밀 분리
-      self.unsubDay = docRef.onSnapshot({ includeMetadataChanges: true }, function(doc){
-        if (doc.exists) {
-          // 내가 로컬에서 방금 작성하여 서버로 전송 중인 이벤트(hasPendingWrites)는 내 UI를 리셋하지 않음
-          if (doc.metadata.hasPendingWrites) return;
-
-          var cloudData = doc.data();
-          if (!cloudData) return;
-
-          // ⭐️ 핵심 수정: 내가 방금 쓴 데이터가 서버에서 다시 내려올 때는(메아리 현상)
-          // 펜으로 필기 중인 현재 캔버스를 절대 덮어쓰지 않음!
-          if (cloudData.lastEditor === CLIENT_ID) return;
-
-          if (!isCurrentlyDrawing) {
-            var cloudRev = cloudData.rev || 0;
-            var localRev = state.today.rev || 0;
-
-            // 상대 기기에서 실제로 새로 쓴 최신 데이터일 때만 동기화
-            if (cloudRev > localRev || (!cloudRev && cloudData.updatedAt !== state.today.updatedAt)) {
-              var activeEl = document.activeElement;
-              var activeId = activeEl ? activeEl.id : null;
-
-              state.today = Object.assign(state.today, cloudData);
-              setStorage(STORAGE_KEY_PREFIX + currentIso, state.today);
-              syncUIFromState(activeId);
-            }
-          }
-        }
-      }, function(err){
-        console.error("Firestore onSnapshot error:", err);
-      });
-    },
-
-    listenToSchedules: function(){
-      var self = this;
-      if (!self.active || !self.db) return;
-      if (self.unsubSchedules) self.unsubSchedules();
-
-      var docRef = self.db.collection("haru_diaries").doc(self.secretCode)
-                          .collection("meta").doc("schedules");
-
-      self.unsubSchedules = docRef.onSnapshot({ includeMetadataChanges: true }, function(doc){
-        if (doc.exists && !doc.metadata.hasPendingWrites) {
-          setStorage(STORAGE_SCHEDULES_KEY, doc.data().items || []);
-          renderIntegratedChecklist();
-          renderMonthlyCalendar();
-        }
-      });
-    },
-
-    listenToRoutines: function(){
-      var self = this;
-      if (!self.active || !self.db) return;
-      if (self.unsubRoutines) self.unsubRoutines();
-
-      var docRef = self.db.collection("haru_diaries").doc(self.secretCode)
-                          .collection("meta").doc("routines");
-
-      self.unsubRoutines = docRef.onSnapshot({ includeMetadataChanges: true }, function(doc){
-        if (doc.exists && !doc.metadata.hasPendingWrites) {
-          setStorage(STORAGE_ROUTINES_KEY, doc.data().items || []);
-          renderIntegratedChecklist();
-          renderRoutineManagerModalList();
-        }
-      });
-    },
-
-    pushDayData: function(){
-      var self = this;
-      if (!self.active || !self.db) return;
-      self.updateStatusUI("syncing");
-
-      // 버전 번호 증가 및 작성 기기 ID 부여
-      state.today.rev = (state.today.rev || 0) + 1;
-      state.today.lastEditor = CLIENT_ID;
-      state.today.updatedAt = Date.now();
-
-      var sanitized = sanitizeForFirestore(state.today);
-
-      self.db.collection("haru_diaries").doc(self.secretCode)
-             .collection("days").doc(currentIso)
-             .set(sanitized, { merge: true })
-             .then(function(){
-               self.updateStatusUI("online");
-             })
-             .catch(function(err){
-               console.error("Firestore 전송 실패:", err);
-               self.updateStatusUI("error");
-             });
-    },
-
-    pushSchedules: function(items){
-      if (!this.active || !this.db) return;
-      var clean = sanitizeForFirestore({ items: items, lastEditor: CLIENT_ID, updatedAt: Date.now() });
-      this.db.collection("haru_diaries").doc(this.secretCode)
-             .collection("meta").doc("schedules")
-             .set(clean, { merge: true });
-    },
-
-    pushRoutines: function(items){
-      if (!this.active || !this.db) return;
-      var clean = sanitizeForFirestore({ items: items, lastEditor: CLIENT_ID, updatedAt: Date.now() });
-      this.db.collection("haru_diaries").doc(this.secretCode)
-             .collection("meta").doc("routines")
-             .set(clean, { merge: true });
-    },
-
-    pushWeekReview: function(weekIso, data){
-      if (!this.active || !this.db) return;
-      data.rev = (data.rev || 0) + 1;
-      data.lastEditor = CLIENT_ID;
-      var clean = sanitizeForFirestore(data);
-      this.db.collection("haru_diaries").doc(this.secretCode)
-             .collection("reviews").doc("week_" + weekIso)
-             .set(clean, { merge: true });
-    },
-
-    pushMonthReview: function(yearMonth, data){
-      if (!this.active || !this.db) return;
-      data.rev = (data.rev || 0) + 1;
-      data.lastEditor = CLIENT_ID;
-      var clean = sanitizeForFirestore(data);
-      this.db.collection("haru_diaries").doc(this.secretCode)
-             .collection("reviews").doc("month_" + yearMonth)
-             .set(clean, { merge: true });
-    }
-  };
-
-  // 4. 고정 루틴 & 캘린더 일정 렌더링
-  function renderIntegratedChecklist(){
-    var routines = getMasterRoutines();
-    var schedules = getSchedules();
-    var todayScheds = schedules.filter(function(s){ return s.date === currentIso; });
-
-    var routineListEl = document.getElementById("daily-routine-items");
-    var calendarListEl = document.getElementById("daily-calendar-items");
-    var badgeEl = document.getElementById("auto-summary-badge");
-    var schedCountEl = document.getElementById("calendar-schedule-count");
-
-    routineListEl.innerHTML = "";
-    calendarListEl.innerHTML = "";
-
-    var totalItems = 0;
-    var completedItems = 0;
-
-    if (!state.today.routineDone) state.today.routineDone = {};
-
-    if (routines.length === 0) {
-      routineListEl.innerHTML = '<div class="empty-hint-text">등록된 고정 루틴이 없습니다. [루틴 관리]에서 추가해보세요.</div>';
-    } else {
-      routines.forEach(function(r){
-        totalItems++;
-        var isDone = !!state.today.routineDone[r.id];
-        if (isDone) completedItems++;
-
-        var row = document.createElement("label");
-        row.className = "check-item-row" + (isDone ? " done" : "");
-
-        var chk = document.createElement("input");
-        chk.type = "checkbox";
-        chk.className = "custom-checkbox";
-        chk.checked = isDone;
-        chk.addEventListener("change", function(){
-          state.today.routineDone[r.id] = chk.checked;
-          saveTodayData();
-          renderIntegratedChecklist();
-          renderMonthlyCalendar();
-        });
-
-        var textSpan = document.createElement("span");
-        textSpan.textContent = r.text;
-
-        row.appendChild(chk);
-        row.appendChild(textSpan);
-        routineListEl.appendChild(row);
-      });
+      this.initEvents();
+      this.resizeCanvas();
     }
 
-    schedCountEl.textContent = todayScheds.length + "건";
-    if (todayScheds.length === 0) {
-      calendarListEl.innerHTML = '<div class="empty-hint-text">월간 캘린더에 등록된 오늘 일정이 없습니다.</div>';
-    } else {
-      todayScheds.sort(function(a, b){ return (a.time || "99:99").localeCompare(b.time || "99:99"); });
-      todayScheds.forEach(function(item){
-        totalItems++;
-        if (item.done) completedItems++;
+    resizeCanvas() {
+      const rect = this.canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const displayWidth = rect.width || this.canvas.parentElement.clientWidth || 320;
+      const displayHeight = this.canvas.height;
 
-        var row = document.createElement("label");
-        row.className = "check-item-row" + (item.done ? " done" : "");
+      this.canvas.width = Math.round(displayWidth * dpr);
+      this.canvas.height = Math.round(displayHeight * dpr);
+      this.canvas.style.height = `${displayHeight}px`;
 
-        var chk = document.createElement("input");
-        chk.type = "checkbox";
-        chk.className = "custom-checkbox";
-        chk.checked = !!item.done;
-        chk.addEventListener("change", function(){
-          item.done = chk.checked;
-          saveSchedules(schedules);
-          renderIntegratedChecklist();
-          renderMonthlyCalendar();
-        });
-
-        row.appendChild(chk);
-        if (item.time) {
-          var timeChip = document.createElement("span");
-          timeChip.className = "time-chip";
-          timeChip.textContent = item.time;
-          row.appendChild(timeChip);
-        }
-        var textSpan = document.createElement("span");
-        textSpan.textContent = item.text;
-        row.appendChild(textSpan);
-        calendarListEl.appendChild(row);
-      });
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      this.ctx.scale(dpr, dpr);
+      this.redraw();
     }
 
-    badgeEl.textContent = "달성 " + completedItems + " / " + totalItems;
-  }
-
-  // 5. 듀얼 모드 UI 및 동기화
-  var DUAL_TARGETS = [
-    { target: "budget-feedback", canvasId: "canvas-budget-feedback", wrapId: "wrap-canvas-budget-feedback", textId: "text-budget-feedback" },
-    { target: "left", canvasId: "canvas-left", wrapId: "wrap-canvas-left", textId: "text-left" },
-    { target: "todo-feedback", canvasId: "canvas-todo-feedback", wrapId: "wrap-canvas-todo-feedback", textId: "text-todo-feedback" },
-    { target: "gratitude", canvasId: "canvas-gratitude", wrapId: "wrap-canvas-gratitude", textId: "text-gratitude" },
-    { target: "tome", canvasId: "canvas-tome", wrapId: "wrap-canvas-tome", textId: "text-tome" }
-  ];
-
-  function autoResizeTextarea(textareaEl, baseMinHeight){
-    if (!textareaEl) return;
-    var target = textareaEl.id.replace("text-", "");
-    var minH = baseMinHeight || DEFAULT_CANVAS_HEIGHTS["canvas-" + target] || 85;
-    
-    textareaEl.style.height = "auto";
-    var calculatedH = textareaEl.scrollHeight;
-    var finalH = Math.max(minH, calculatedH);
-    textareaEl.style.height = finalH + "px";
-
-    var canvasId = "canvas-" + target;
-    if (activeCanvases[canvasId]) {
-      activeCanvases[canvasId].setCanvasHeight(finalH, false);
-    }
-  }
-
-  function applyInputMode(target, mode){
-    var item = DUAL_TARGETS.find(function(t){ return t.target === target; });
-    var canvasWrap, textarea, pill;
-
-    if (item) {
-      canvasWrap = document.getElementById(item.wrapId);
-      textarea = document.getElementById(item.textId);
-      pill = document.querySelector('.dual-mode-pill[data-target="' + target + '"]');
-    } else if (target === "week-review") {
-      canvasWrap = document.getElementById("wrap-canvas-week-review");
-      textarea = document.getElementById("text-week-review");
-      pill = document.querySelector('.dual-mode-pill[data-target="week-review"]');
-    } else if (target === "month-review") {
-      canvasWrap = document.getElementById("wrap-canvas-month-review");
-      textarea = document.getElementById("text-month-review");
-      pill = document.querySelector('.dual-mode-pill[data-target="month-review"]');
+    setHeight(newHeight) {
+      const clamped = Math.max(70, Math.min(1800, newHeight));
+      this.canvas.height = clamped;
+      this.canvas.style.height = `${clamped}px`;
+      const wrap = this.canvas.parentElement;
+      if (wrap) wrap.style.height = `${clamped}px`;
+      this.resizeCanvas();
     }
 
-    if (!canvasWrap || !textarea) return;
-
-    if (mode === "type") {
-      canvasWrap.style.display = "none";
-      textarea.style.display = "block";
-      autoResizeTextarea(textarea);
-    } else {
-      canvasWrap.style.display = "block";
-      textarea.style.display = "none";
-      var cId = item ? item.canvasId : ("canvas-" + target);
-      if (activeCanvases[cId] && activeCanvases[cId].resizeBacking) {
-        activeCanvases[cId].resizeBacking();
-      }
+    initEvents() {
+      this.canvas.addEventListener('pointerdown', (e) => this.onDown(e));
+      window.addEventListener('pointermove', (e) => this.onMove(e));
+      window.addEventListener('pointerup', (e) => this.onUp(e));
+      window.addEventListener('pointercancel', (e) => this.onUp(e));
     }
 
-    if (pill) {
-      pill.querySelectorAll(".dual-pill-btn").forEach(function(b){
-        b.classList.toggle("active", b.getAttribute("data-mode") === mode);
-      });
-    }
-  }
-
-  function syncUIFromState(skipElementId){
-    if (skipElementId !== "input-budget") document.getElementById("input-budget").value = state.today.budget || "";
-    if (skipElementId !== "input-spent") document.getElementById("input-spent").value = state.today.spent || "";
-    updateBudgetDiff();
-
-    if (skipElementId !== "input-todo-done") document.getElementById("input-todo-done").value = (state.today.todoDone !== undefined && state.today.todoDone !== null) ? state.today.todoDone : "";
-    if (skipElementId !== "input-todo-total") document.getElementById("input-todo-total").value = (state.today.todoTotal !== undefined && state.today.todoTotal !== null) ? state.today.todoTotal : "";
-
-    renderIntegratedChecklist();
-
-    if (!state.today.texts) state.today.texts = {};
-    if (!state.today.inputModes) state.today.inputModes = {};
-
-    DUAL_TARGETS.forEach(function(item){
-      var tVal = state.today.texts[item.target] || "";
-      var textEl = document.getElementById(item.textId);
-      if (textEl && textEl.id !== skipElementId) {
-        textEl.value = tVal;
-        autoResizeTextarea(textEl);
-      }
-
-      var mode = state.today.inputModes[item.target] || "pen";
-      applyInputMode(item.target, mode);
-    });
-
-    for (var k in activeCanvases) {
-      if (k.startsWith("canvas-week-") || k.startsWith("canvas-month-")) continue;
-      if (state.today.canvasHeights && state.today.canvasHeights[k]) {
-        activeCanvases[k].setCanvasHeight(state.today.canvasHeights[k], false);
-      } else {
-        activeCanvases[k].redraw();
-      }
-    }
-  }
-
-  function loadDayData(iso){
-    currentIso = iso;
-    var saved = getStorage(STORAGE_KEY_PREFIX + currentIso, null);
-    state.today = createDefaultDayState();
-    if (saved) {
-      state.today = Object.assign(state.today, saved);
-      if (!state.today.strokes) state.today.strokes = {};
-      if (!state.today.texts) state.today.texts = {};
-      if (!state.today.inputModes) state.today.inputModes = {};
-      if (!state.today.routineDone) state.today.routineDone = {};
-      if (!state.today.canvasHeights) state.today.canvasHeights = Object.assign({}, DEFAULT_CANVAS_HEIGHTS);
-      ["canvas-left", "canvas-todo-feedback", "canvas-gratitude", "canvas-tome", "canvas-budget-feedback"].forEach(function(k){
-        if (!state.today.strokes[k]) state.today.strokes[k] = [];
-      });
+    getPointerPos(e) {
+      const rect = this.canvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+        pressure: e.pressure && e.pressure > 0 ? e.pressure : 0.5
+      };
     }
 
-    var yy = String(viewingDate.getFullYear()).slice(-2);
-    var mm = pad(viewingDate.getMonth() + 1);
-    var dd = pad(viewingDate.getDate());
-    var DOW_KO = ["일", "월", "화", "수", "목", "금", "토"];
-    document.getElementById("today-date-text").textContent = yy + " / " + mm + " / " + dd + " (" + DOW_KO[viewingDate.getDay()] + ")";
+    onDown(e) {
+      if (currentTool === 'scroll') return;
+      if (e.pointerType === 'touch' && e.buttons === 0 && e.pressure === 0) return;
 
-    var badgeEl = document.getElementById("date-status-badge");
-    var hintEl = document.getElementById("date-sub-hint");
-    var gotoTodayBtn = document.getElementById("btn-goto-today");
-    var nextBtn = document.getElementById("btn-next-day");
+      this.activePointerId = e.pointerId;
+      this.isDrawing = true;
+      this.canvas.setPointerCapture?.(e.pointerId);
 
-    if (currentIso === realTodayIso) {
-      badgeEl.className = "date-status-badge badge-today";
-      badgeEl.textContent = "오늘";
-      hintEl.textContent = "오늘의 투두와 루틴을 완성해보세요.";
-      gotoTodayBtn.style.display = "none";
-      nextBtn.innerHTML = "내일 계획하기 ›";
-    } else if (currentIso > realTodayIso) {
-      badgeEl.className = "date-status-badge badge-tomorrow";
-      badgeEl.textContent = "미리 작성 중";
-      hintEl.textContent = "내일의 일정과 계획을 차분히 세워보세요.";
-      gotoTodayBtn.style.display = "inline-flex";
-      nextBtn.innerHTML = "다음 날 ›";
-    } else {
-      badgeEl.className = "date-status-badge badge-past";
-      badgeEl.textContent = "과거 기록";
-      hintEl.textContent = "이 날에 작성했던 소중한 기록입니다.";
-      gotoTodayBtn.style.display = "inline-flex";
-      nextBtn.innerHTML = "다음 날 ›";
-    }
+      const pos = this.getPointerPos(e);
+      let strokeColor = currentColor;
+      let strokeSize = currentPenSize;
+      let strokeAlpha = currentAlpha / 100;
 
-    syncUIFromState();
-    syncService.listenToCurrentDay();
-  }
-
-  var syncDebounceTimer = null;
-  function saveTodayData(){
-    setStorage(STORAGE_KEY_PREFIX + currentIso, state.today);
-    clearTimeout(syncDebounceTimer);
-    syncDebounceTimer = setTimeout(function(){ syncService.pushDayData(); }, 300);
-  }
-
-  function changeViewingDay(deltaDays){
-    saveTodayData();
-    viewingDate.setDate(viewingDate.getDate() + deltaDays);
-    loadDayData(toIso(viewingDate));
-  }
-
-  function goToTodayDate(){
-    saveTodayData();
-    viewingDate = new Date(realToday.getTime());
-    loadDayData(toIso(viewingDate));
-  }
-
-  function updateBudgetDiff(){
-    var b = parseInt(document.getElementById("input-budget").value, 10) || 0;
-    var s = parseInt(document.getElementById("input-spent").value, 10) || 0;
-    var badge = document.getElementById("budget-diff-badge");
-    if (!b && !s) { badge.style.display = "none"; return; }
-    badge.style.display = "inline-block";
-    var diff = b - s;
-    if (diff >= 0) {
-      badge.className = "diff-badge diff-under";
-      badge.textContent = "남음: " + diff.toLocaleString() + "원";
-    } else {
-      badge.className = "diff-badge diff-over";
-      badge.textContent = "초과: " + Math.abs(diff).toLocaleString() + "원";
-    }
-  }
-
-  // 6. 감성 펜 & 형광펜
-  var PEN_PALETTES = [
-    { name: "먹색(기본)", color: "#2C2825" },
-    { name: "테라코타 버건디", color: "#C2410C" },
-    { name: "클래식 네이비", color: "#1E3A8A" },
-    { name: "포레스트 그린", color: "#14532D" },
-    { name: "세피아 브라운", color: "#78350F" },
-    { name: "소프트 바이올렛", color: "#6D28D9" },
-    { name: "차콜 블랙", color: "#0F172A" }
-  ];
-
-  var HIGHLIGHTER_PALETTES = [
-    { name: "레몬 옐로우", color: "#FDE047" },
-    { name: "소프트 코랄", color: "#FDA4AF" },
-    { name: "민트 그린", color: "#86EFAC" },
-    { name: "베이비 블루", color: "#93C5FD" },
-    { name: "라벤더 퍼플", color: "#D8B4FE" },
-    { name: "크림 오렌지", color: "#FED7AA" }
-  ];
-
-  var globalPen = {
-    mode: "pen",
-    penColor: "#2C2825",
-    penSize: 2.0,
-    penAlpha: 1.0,
-    highlighterColor: "#FDE047",
-    highlighterSize: 14.0,
-    highlighterAlpha: 0.40
-  };
-
-  function getCurrentColor(){ return globalPen.mode === "highlighter" ? globalPen.highlighterColor : globalPen.penColor; }
-  function getCurrentSize(){ return globalPen.mode === "highlighter" ? globalPen.highlighterSize : globalPen.penSize; }
-  function getCurrentAlpha(){ return globalPen.mode === "highlighter" ? globalPen.highlighterAlpha : globalPen.penAlpha; }
-
-  function updatePenStatusDisplay(){
-    var color = getCurrentColor();
-    var size = getCurrentSize();
-    var alphaPercent = Math.round(getCurrentAlpha() * 100);
-
-    var dot = document.getElementById("preview-color-dot");
-    dot.style.backgroundColor = color;
-    dot.style.opacity = getCurrentAlpha();
-
-    var info = document.getElementById("preview-pen-info");
-    var modeName = globalPen.mode === "highlighter" ? "형광펜" : "펜";
-    info.textContent = modeName + " " + size.toFixed(1) + "px / " + alphaPercent + "%";
-
-    document.getElementById("slider-pen-size").value = size;
-    document.getElementById("label-size-val").textContent = size.toFixed(1) + " px";
-
-    document.getElementById("slider-pen-alpha").value = alphaPercent;
-    document.getElementById("label-alpha-val").textContent = alphaPercent + " %";
-
-    document.getElementById("custom-color-picker").value = color;
-  }
-
-  function renderPaletteChips(){
-    var container = document.getElementById("palette-chips-container");
-    container.innerHTML = "";
-    var list = (globalPen.mode === "highlighter") ? HIGHLIGHTER_PALETTES : PEN_PALETTES;
-    var curColor = getCurrentColor();
-    var labelText = document.getElementById("palette-label-text");
-    labelText.textContent = globalPen.mode === "highlighter" ? "🖌️ 형광 마커 컬러 팔레트" : "✒️ 만년필 잉크 컬러 팔레트";
-
-    list.forEach(function(item){
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "palette-chip" + (item.color.toLowerCase() === curColor.toLowerCase() ? " active" : "");
-      btn.style.backgroundColor = item.color;
-      btn.title = item.name + " (" + item.color + ")";
-
-      btn.addEventListener("click", function(){
-        if (globalPen.mode === "highlighter") {
-          globalPen.highlighterColor = item.color;
-        } else {
-          globalPen.penColor = item.color;
-          if (globalPen.mode !== "pen") setPenMode("pen");
-        }
-        renderPaletteChips();
-        updatePenStatusDisplay();
-      });
-
-      container.appendChild(btn);
-    });
-  }
-
-  function setPenMode(mode){
-    globalPen.mode = mode;
-    document.querySelectorAll(".tool-mode-btn").forEach(function(b){
-      b.classList.remove("active", "highlighter-active");
-    });
-
-    if (mode === "pen") {
-      document.getElementById("btn-global-pen").classList.add("active");
-    } else if (mode === "highlighter") {
-      document.getElementById("btn-global-highlighter").classList.add("highlighter-active");
-    } else if (mode === "eraser") {
-      document.getElementById("btn-global-eraser").classList.add("active");
-    } else if (mode === "scroll") {
-      document.getElementById("btn-global-scroll").classList.add("active");
-    }
-
-    for (var k in activeCanvases) {
-      if (activeCanvases[k].updateModeClass) activeCanvases[k].updateModeClass(mode);
-    }
-
-    renderPaletteChips();
-    updatePenStatusDisplay();
-  }
-
-  // 7. 캔버스 엔진
-  var activeCanvases = {};
-  var isCurrentlyDrawing = false;
-
-  function pointDist(p1, p2) {
-    var dx = p1.x - p2.x, dy = p1.y - p2.y;
-    return Math.sqrt(dx*dx + dy*dy);
-  }
-
-  function distToSegment(p, v, w) {
-    var l2 = (v.x - w.x)*(v.x - w.x) + (v.y - w.y)*(v.y - w.y);
-    if (l2 === 0) return pointDist(p, v);
-    var t = ((p.x - v.x)*(w.x - v.x) + (p.y - v.y)*(w.y - v.y)) / l2;
-    t = Math.max(0, Math.min(1, t));
-    return pointDist(p, { x: v.x + t*(w.x - v.x), y: v.y + t*(w.y - v.y) });
-  }
-
-  function strokeIntersects(stroke, pt, radius) {
-    var pts = stroke.pts || stroke;
-    for (var i = 0; i < pts.length - 1; i++) {
-      if (distToSegment(pt, pts[i], pts[i+1]) <= radius) return true;
-    }
-    return false;
-  }
-
-  function initInkCanvas(canvasId, getStrokesFn, onSaveFn, heightStoreGetter, heightStoreSetter){
-    var canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-    var ctx = canvas.getContext("2d");
-    var drawing = false;
-    var currentStroke = null;
-    var currentHeight = parseInt(canvas.getAttribute("height"), 10) || 200;
-    var activePointerId = null; // ⭐️ 활성화된 포인터 ID 추적 (손바닥/펜 충돌 완벽 방지)
-
-    function resizeBacking(){
-      var rect = canvas.getBoundingClientRect();
-      if (rect.width === 0) return;
-      var dpr = window.devicePixelRatio || 1;
-      canvas.width = Math.round(rect.width * dpr);
-      canvas.height = Math.round(currentHeight * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      redraw();
-    }
-
-    function setCanvasHeight(newH, shouldSave){
-      var minH = DEFAULT_CANVAS_HEIGHTS[canvasId] || 85;
-      currentHeight = Math.max(minH, Math.min(1500, newH));
-      canvas.setAttribute("height", currentHeight);
-      canvas.style.height = currentHeight + "px";
-
-      var correspondingTarget = canvasId.replace("canvas-", "");
-      var textareaEl = document.getElementById("text-" + correspondingTarget);
-      if (textareaEl) textareaEl.style.height = currentHeight + "px";
-
-      resizeBacking();
-
-      if (heightStoreSetter) {
-        heightStoreSetter(currentHeight);
-      } else {
-        if (!state.today.canvasHeights) state.today.canvasHeights = {};
-        state.today.canvasHeights[canvasId] = currentHeight;
-      }
-
-      if (shouldSave) onSaveFn();
-    }
-
-    function drawStroke(stroke){
-      var pts = stroke.pts || stroke;
-      if (!pts || pts.length === 0) return;
-      ctx.beginPath();
-      ctx.save();
-      ctx.strokeStyle = stroke.color || "#2C2825";
-      ctx.globalAlpha = (stroke.alpha !== undefined) ? stroke.alpha : 1.0;
-      ctx.lineWidth = stroke.width || 2.0;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-
-      if (stroke.mode === "highlighter") {
-        ctx.globalCompositeOperation = "multiply";
-      } else {
-        ctx.globalCompositeOperation = "source-over";
-      }
-
-      ctx.moveTo(pts[0].x, pts[0].y);
-      if (pts.length === 1) {
-        // 단일 점(Dot) 찍기 렌더링 지원
-        ctx.lineTo(pts[0].x + 0.2, pts[0].y + 0.2);
-      } else {
-        for (var i = 1; i < pts.length; i++){
-          ctx.lineTo(pts[i].x, pts[i].y);
-        }
-      }
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    function redraw(){
-      var rect = canvas.getBoundingClientRect();
-      if (rect.width === 0) return;
-      ctx.clearRect(0, 0, rect.width, currentHeight);
-      var strokes = getStrokesFn();
-      for (var i = 0; i < strokes.length; i++){
-        drawStroke(strokes[i]);
-      }
-      if (currentStroke && currentStroke.pts && currentStroke.pts.length > 0){
-        drawStroke(currentStroke);
-      }
-    }
-
-    function getPos(e){
-      var rect = canvas.getBoundingClientRect();
-      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    }
-
-    function eraseAt(pt){
-      var strokes = getStrokesFn();
-      var changed = false;
-      for (var i = strokes.length - 1; i >= 0; i--){
-        if (strokeIntersects(strokes[i], pt, 16)) {
-          strokes.splice(i, 1);
-          changed = true;
-        }
-      }
-      if (changed) {
-        redraw();
-        onSaveFn();
-      }
-    }
-
-    canvas.addEventListener("pointerdown", function(e){
-      var isPen = (e.pointerType === "pen");
-
-      // 이동 모드일 때는 터치/마우스 스크롤 허용
-      if (!isPen && globalPen.mode === "scroll") return;
-
-      // ⭐️ 팜 리젝션: 이미 한 펜/손가락으로 그리고 있는데 손바닥(다른 포인터)이 닿으면 즉시 무시
-      if (drawing && activePointerId !== null && activePointerId !== e.pointerId) {
+      if (currentTool === 'highlighter') {
+        strokeSize = Math.max(12, currentPenSize * 2.5);
+        strokeAlpha = Math.min(0.45, currentAlpha / 100);
+      } else if (currentTool === 'eraser') {
+        this.eraseAt(pos.x, pos.y);
         return;
       }
 
-      e.preventDefault();
-      activePointerId = e.pointerId;
-      try { canvas.setPointerCapture(e.pointerId); } catch(err){}
-
-      var pos = getPos(e);
-      if (globalPen.mode === "eraser") {
-        drawing = true;
-        isCurrentlyDrawing = true;
-        eraseAt(pos);
-      } else {
-        drawing = true;
-        isCurrentlyDrawing = true;
-        var baseW = getCurrentSize();
-        var calcW = globalPen.mode === "highlighter" ? baseW : (isPen ? (e.pressure ? Math.max(1.0, e.pressure * baseW * 1.8) : baseW) : baseW);
-
-        currentStroke = {
-          pts: [pos],
-          color: getCurrentColor(),
-          alpha: getCurrentAlpha(),
-          mode: globalPen.mode,
-          width: calcW
-        };
-      }
-    });
-
-    canvas.addEventListener("pointermove", function(e){
-      if (!drawing || e.pointerId !== activePointerId) return;
-      var pos = getPos(e);
-      if (globalPen.mode === "eraser") {
-        eraseAt(pos);
-      } else {
-        if (globalPen.mode !== "highlighter" && e.pointerType === "pen" && e.pressure) {
-          currentStroke.width = Math.max(1.0, e.pressure * getCurrentSize() * 1.8);
-        }
-        currentStroke.pts.push(pos);
-        redraw();
-      }
-    });
-
-    function endDrawing(e){
-      if (!drawing) return;
-      if (e && e.pointerId !== undefined && activePointerId !== null && e.pointerId !== activePointerId) return;
-
-      drawing = false;
-      isCurrentlyDrawing = false;
-      activePointerId = null;
-
-      if ((globalPen.mode === "pen" || globalPen.mode === "highlighter") && currentStroke && currentStroke.pts && currentStroke.pts.length > 0){
-        // ⭐️ 점(Dot)을 찍었을 때(길이 1)도 버리지 않고 정상 획으로 등록
-        if (currentStroke.pts.length === 1) {
-          currentStroke.pts.push({ x: currentStroke.pts[0].x + 0.2, y: currentStroke.pts[0].y + 0.2 });
-        }
-
-        getStrokesFn().push(currentStroke);
-
-        var maxY = 0;
-        var pts = currentStroke.pts;
-        for (var i = 0; i < pts.length; i++) {
-          if (pts[i].y > maxY) maxY = pts[i].y;
-        }
-        if (maxY > (currentHeight - 35) && currentHeight < 1400) {
-          setCanvasHeight(currentHeight + 70, true);
-          showToast("필기 공간이 자동으로 확장되었습니다 (+70px)");
-        } else {
-          onSaveFn();
-        }
-      }
-      currentStroke = null;
-      redraw();
+      this.currentStroke = {
+        tool: currentTool,
+        color: strokeColor,
+        size: strokeSize,
+        alpha: strokeAlpha,
+        points: [pos]
+      };
+      this.drawSinglePoint(pos, this.currentStroke);
     }
 
-    canvas.addEventListener("pointerup", endDrawing);
-    canvas.addEventListener("pointercancel", endDrawing);
+    onMove(e) {
+      if (!this.isDrawing || e.pointerId !== this.activePointerId) return;
+      const pos = this.getPointerPos(e);
 
-    window.addEventListener("resize", function(){ setTimeout(resizeBacking, 100); });
-    resizeBacking();
-
-    activeCanvases[canvasId] = {
-      resizeBacking: resizeBacking,
-      redraw: redraw,
-      getCanvasHeight: function(){ return currentHeight; },
-      setCanvasHeight: setCanvasHeight,
-      updateModeClass: function(mode){
-        canvas.className = (mode === "scroll") ? "ink-canvas scroll-active" : "ink-canvas drawing-active";
-      },
-      undo: function(){
-        var strokes = getStrokesFn();
-        if (strokes.length > 0) {
-          strokes.pop();
-          redraw();
-          onSaveFn();
-        }
-      },
-      clear: function(){
-        var strokes = getStrokesFn();
-        strokes.length = 0;
-        redraw();
-        onSaveFn();
+      if (currentTool === 'eraser') {
+        this.eraseAt(pos.x, pos.y);
+        return;
       }
+
+      if (this.currentStroke) {
+        this.currentStroke.points.push(pos);
+        this.drawSegment(this.currentStroke);
+
+        if (pos.y > this.canvas.clientHeight - 35) {
+          this.setHeight(this.canvas.clientHeight + 70);
+          saveCurrentDayData(true);
+        }
+      }
+    }
+
+    onUp(e) {
+      if (!this.isDrawing || e.pointerId !== this.activePointerId) return;
+      this.isDrawing = false;
+      this.activePointerId = null;
+
+      if (this.currentStroke && this.currentStroke.points.length > 0) {
+        this.strokes.push(this.currentStroke);
+        this.currentStroke = null;
+        saveCurrentDayData();
+      }
+    }
+
+    eraseAt(x, y) {
+      const radius = 22;
+      const origLen = this.strokes.length;
+      this.strokes = this.strokes.filter(s => {
+        return !s.points.some(p => Math.hypot(p.x - x, p.y - y) < radius);
+      });
+      if (origLen !== this.strokes.length) {
+        this.redraw();
+        saveCurrentDayData();
+      }
+    }
+
+    undo() {
+      if (this.strokes.length > 0) {
+        this.strokes.pop();
+        this.redraw();
+        saveCurrentDayData();
+      }
+    }
+
+    clear() {
+      if (this.strokes.length === 0) return;
+      this.strokes = [];
+      this.redraw();
+      saveCurrentDayData();
+    }
+
+    drawSinglePoint(p, stroke) {
+      this.ctx.save();
+      this.ctx.beginPath();
+      this.ctx.fillStyle = stroke.color;
+      this.ctx.globalAlpha = stroke.alpha;
+      this.ctx.arc(p.x, p.y, Math.max(1, stroke.size / 2), 0, Math.PI * 2);
+      this.ctx.fill();
+      this.ctx.restore();
+    }
+
+    drawSegment(stroke) {
+      const pts = stroke.points;
+      if (pts.length < 2) return;
+      const p1 = pts[pts.length - 2];
+      const p2 = pts[pts.length - 1];
+
+      this.ctx.save();
+      this.ctx.beginPath();
+      this.ctx.strokeStyle = stroke.color;
+      this.ctx.globalAlpha = stroke.alpha;
+      this.ctx.lineWidth = stroke.size;
+      this.ctx.lineCap = 'round';
+      this.ctx.lineJoin = 'round';
+
+      if (stroke.tool === 'highlighter') {
+        this.ctx.globalCompositeOperation = 'multiply';
+      }
+
+      this.ctx.moveTo(p1.x, p1.y);
+      this.ctx.lineTo(p2.x, p2.y);
+      this.ctx.stroke();
+      this.ctx.restore();
+    }
+
+    redraw() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      for (const s of this.strokes) {
+        if (!s.points || s.points.length === 0) continue;
+        if (s.points.length === 1) {
+          this.drawSinglePoint(s.points[0], s);
+          continue;
+        }
+
+        this.ctx.save();
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = s.color;
+        this.ctx.globalAlpha = s.alpha || 1;
+        this.ctx.lineWidth = s.size;
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+
+        if (s.tool === 'highlighter') {
+          this.ctx.globalCompositeOperation = 'multiply';
+        }
+
+        this.ctx.moveTo(s.points[0].x, s.points[0].y);
+        for (let i = 1; i < s.points.length; i++) {
+          this.ctx.lineTo(s.points[i].x, s.points[i].y);
+        }
+        this.ctx.stroke();
+        this.ctx.restore();
+      }
+    }
+  }
+
+  function initApp() {
+    loadLocalSettings();
+    initPenToolbar();
+    initCanvases();
+    initDualModes();
+    initEventListeners();
+    initMonthSpread();
+    loadRoutines();
+    loadSchedules();
+    initFirebaseIfAvailable();
+    switchDate(currentDate);
+    updateAppDrawerPwaState();
+  }
+
+  function updateAppDrawerPwaState() {
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+      const banner = document.getElementById('pwa-install-banner');
+      if (banner) banner.style.display = 'none';
+    }
+  }
+
+  function initCanvases() {
+    const list = [
+      'canvas-budget-feedback',
+      'canvas-left',
+      'canvas-todo-feedback',
+      'canvas-gratitude',
+      'canvas-tome',
+      'canvas-week-review',
+      'canvas-month-review'
+    ];
+    list.forEach(id => {
+      if (document.getElementById(id)) {
+        canvasControllers[id] = new SmoothCanvas(id);
+      }
+    });
+
+    window.addEventListener('resize', debounce(() => {
+      Object.values(canvasControllers).forEach(c => c.resizeCanvas());
+    }, 250));
+  }
+
+  function debounce(fn, delay) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), delay);
     };
   }
 
-  // 8. 듀얼 모드 토글 & 텍스트 저장
-  document.querySelectorAll(".dual-mode-pill").forEach(function(pill){
-    var target = pill.getAttribute("data-target");
-    pill.querySelectorAll(".dual-pill-btn").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        var mode = btn.getAttribute("data-mode");
-        if (target === "week-review") {
-          state.weekReview.inputMode = mode;
-          saveCurrentWeekReview();
-        } else if (target === "month-review") {
-          state.monthReview.inputMode = mode;
-          saveCurrentMonthBoard();
+  function initPenToolbar() {
+    const chipsContainer = document.getElementById('palette-chips-container');
+    chipsContainer.innerHTML = '';
+    PALETTE.forEach((item, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `palette-chip ${idx === 0 ? 'active' : ''}`;
+      btn.style.backgroundColor = item.color;
+      btn.title = item.name;
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.palette-chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        currentColor = item.color;
+        document.getElementById('custom-color-picker').value = item.color;
+        updatePenPreview();
+      });
+      chipsContainer.appendChild(btn);
+    });
+
+    document.querySelectorAll('.tool-mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tool-mode-btn').forEach(b => {
+          b.classList.remove('active', 'highlighter-active');
+        });
+        currentTool = btn.dataset.tool;
+
+        if (currentTool === 'highlighter') {
+          btn.classList.add('highlighter-active');
         } else {
-          if (!state.today.inputModes) state.today.inputModes = {};
-          state.today.inputModes[target] = mode;
-          saveTodayData();
+          btn.classList.add('active');
         }
-        applyInputMode(target, mode);
-        showToast(mode === "type" ? "⌨️ 키보드 타이핑 모드로 전환되었습니다" : "✍️ 손글씨 펜 모드로 전환되었습니다");
+
+        Object.values(canvasControllers).forEach(c => {
+          if (currentTool === 'scroll') {
+            c.canvas.classList.remove('drawing-active');
+            c.canvas.classList.add('scroll-active');
+          } else {
+            c.canvas.classList.remove('scroll-active');
+            c.canvas.classList.add('drawing-active');
+          }
+        });
+        updatePenPreview();
       });
     });
-  });
 
-  DUAL_TARGETS.forEach(function(item){
-    var el = document.getElementById(item.textId);
-    if (el) {
-      el.addEventListener("input", function(){
-        if (!state.today.texts) state.today.texts = {};
-        state.today.texts[item.target] = el.value;
-        autoResizeTextarea(el);
-        saveTodayData();
+    document.getElementById('btn-toggle-options')?.addEventListener('click', (e) => {
+      const p = document.getElementById('pen-options-panel');
+      const isOpen = p.style.display !== 'none';
+      p.style.display = isOpen ? 'none' : 'flex';
+      e.currentTarget.classList.toggle('open', !isOpen);
+      document.getElementById('toggle-arrow').textContent = isOpen ? '▼' : '▲';
+    });
+
+    const sizeSlider = document.getElementById('slider-pen-size');
+    sizeSlider?.addEventListener('input', (e) => {
+      currentPenSize = parseFloat(e.target.value);
+      document.getElementById('label-size-val').textContent = `${currentPenSize.toFixed(1)} px`;
+      updatePenPreview();
+    });
+
+    const alphaSlider = document.getElementById('slider-pen-alpha');
+    alphaSlider?.addEventListener('input', (e) => {
+      currentAlpha = parseInt(e.target.value, 10);
+      document.getElementById('label-alpha-val').textContent = `${currentAlpha} %`;
+      updatePenPreview();
+    });
+
+    document.getElementById('custom-color-picker')?.addEventListener('input', (e) => {
+      currentColor = e.target.value;
+      document.querySelectorAll('.palette-chip').forEach(c => c.classList.remove('active'));
+      updatePenPreview();
+    });
+
+    document.querySelectorAll('#quick-size-chips .quick-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#quick-size-chips .quick-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentPenSize = parseFloat(chip.dataset.size);
+        sizeSlider.value = currentPenSize;
+        document.getElementById('label-size-val').textContent = `${currentPenSize.toFixed(1)} px`;
+        updatePenPreview();
+      });
+    });
+
+    document.querySelectorAll('#quick-alpha-chips .quick-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#quick-alpha-chips .quick-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentAlpha = parseInt(chip.dataset.alpha, 10);
+        alphaSlider.value = currentAlpha;
+        document.getElementById('label-alpha-val').textContent = `${currentAlpha} %`;
+        updatePenPreview();
+      });
+    });
+  }
+
+  function updatePenPreview() {
+    const dot = document.getElementById('preview-color-dot');
+    const info = document.getElementById('preview-pen-info');
+    if (dot) dot.style.backgroundColor = currentColor;
+    if (info) info.textContent = `${currentPenSize.toFixed(1)}px / ${currentAlpha}%`;
+  }
+
+  function initDualModes() {
+    document.querySelectorAll('.dual-mode-pill').forEach(pill => {
+      const target = pill.dataset.target;
+      pill.querySelectorAll('.dual-pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          pill.querySelectorAll('.dual-pill-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const mode = btn.dataset.mode;
+          switchEditorMode(target, mode);
+          saveCurrentDayData();
+        });
+      });
+    });
+
+    document.querySelectorAll('.undo-canvas').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.canvas;
+        canvasControllers[id]?.undo();
+      });
+    });
+
+    document.querySelectorAll('.clear-canvas').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.canvas;
+        if (confirm('이 칸의 손글씨를 모두 지우시겠습니까?')) {
+          canvasControllers[id]?.clear();
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-expand').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cid = btn.dataset.canvas;
+        const action = btn.dataset.action;
+        const ctrl = canvasControllers[cid];
+        if (!ctrl) return;
+        const cur = ctrl.canvas.clientHeight;
+        const step = cid.includes('feedback') ? 40 : 70;
+        const next = action === 'expand' ? cur + step : cur - step;
+        ctrl.setHeight(next);
+        const txt = document.getElementById(cid.replace('canvas-', 'text-'));
+        if (txt) txt.style.height = `${next}px`;
+        saveCurrentDayData(true);
+      });
+    });
+  }
+
+  function switchEditorMode(target, mode) {
+    const wrapCanvas = document.getElementById(`wrap-canvas-${target}`);
+    const textarea = document.getElementById(`text-${target}`);
+    if (!wrapCanvas || !textarea) return;
+
+    if (mode === 'type') {
+      wrapCanvas.style.display = 'none';
+      textarea.style.display = 'block';
+      textarea.focus();
+    } else {
+      textarea.style.display = 'none';
+      wrapCanvas.style.display = 'block';
+      canvasControllers[`canvas-${target}`]?.resizeCanvas();
+    }
+  }
+
+  function initEventListeners() {
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        activeTab = tab.dataset.tab;
+
+        document.querySelectorAll('.tab-content').forEach(c => {
+          c.hidden = true;
+          c.style.display = 'none';
+        });
+        const activeContent = document.getElementById(activeTab);
+        if (activeContent) {
+          activeContent.hidden = false;
+          activeContent.style.display = 'block';
+        }
+
+        if (activeTab === 'tab-week') renderWeekArchive();
+        if (activeTab === 'tab-month') renderMonthCalendar();
+        setTimeout(() => Object.values(canvasControllers).forEach(c => c.resizeCanvas()), 50);
+      });
+    });
+
+    document.getElementById('btn-prev-day')?.addEventListener('click', () => moveDay(-1));
+    document.getElementById('btn-next-day')?.addEventListener('click', () => moveDay(1));
+    document.getElementById('btn-goto-today')?.addEventListener('click', () => switchDate(getTodayStr()));
+
+    ['input-budget', 'input-spent', 'input-todo-done', 'input-todo-total'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', () => {
+        calcBudgetDiff();
+        saveCurrentDayData();
+      });
+    });
+
+    ['text-budget-feedback', 'text-left', 'text-todo-feedback', 'text-gratitude', 'text-tome', 'text-week-review', 'text-month-review'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', debounce(() => {
+        saveCurrentDayData();
+      }, 500));
+    });
+
+    document.getElementById('btn-tome-shuffle')?.addEventListener('click', () => {
+      const q = TOME_PROMPTS[Math.floor(Math.random() * TOME_PROMPTS.length)];
+      document.getElementById('tome-q-text').textContent = q;
+      saveCurrentDayData();
+    });
+
+    document.getElementById('btn-open-routines')?.addEventListener('click', openRoutineModal);
+    document.getElementById('btn-quick-manage-routines')?.addEventListener('click', openRoutineModal);
+    document.getElementById('btn-close-routines')?.addEventListener('click', closeRoutineModal);
+    document.getElementById('btn-save-routines')?.addEventListener('click', closeRoutineModal);
+    document.getElementById('btn-add-routine')?.addEventListener('click', addRoutineItem);
+
+    document.getElementById('btn-open-sync')?.addEventListener('click', openSyncModal);
+    document.getElementById('btn-close-sync')?.addEventListener('click', closeSyncModal);
+    document.getElementById('btn-save-sync')?.addEventListener('click', saveSyncSettings);
+    document.getElementById('btn-force-pull-cloud')?.addEventListener('click', forcePullFromCloud);
+    document.getElementById('btn-disconnect-sync')?.addEventListener('click', disconnectFirebase);
+    document.getElementById('btn-export-backup')?.addEventListener('click', exportFullBackup);
+
+    document.getElementById('btn-month-prev')?.addEventListener('click', () => {
+      currentMonthView.month--;
+      if (currentMonthView.month < 1) {
+        currentMonthView.month = 12;
+        currentMonthView.year--;
+      }
+      renderMonthCalendar();
+    });
+    document.getElementById('btn-month-next')?.addEventListener('click', () => {
+      currentMonthView.month++;
+      if (currentMonthView.month > 12) {
+        currentMonthView.month = 1;
+        currentMonthView.year++;
+      }
+      renderMonthCalendar();
+    });
+
+    document.getElementById('btn-add-schedule')?.addEventListener('click', addScheduleItem);
+
+    ['month-focus-1', 'month-focus-2', 'month-focus-3', 'month-wishlist-memo'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', debounce(saveMonthSideMeta, 500));
+    });
+  }
+
+  function moveDay(offset) {
+    const [y, m, d] = currentDate.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    dateObj.setDate(dateObj.getDate() + offset);
+    const ny = dateObj.getFullYear();
+    const nm = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const nd = String(dateObj.getDate()).padStart(2, '0');
+    switchDate(`${ny}-${nm}-${nd}`);
+  }
+
+  function switchDate(newDateStr) {
+    currentDate = newDateStr;
+    const isToday = currentDate === getTodayStr();
+
+    document.getElementById('today-date-text').textContent = formatDisplayDate(currentDate);
+    const badge = document.getElementById('date-status-badge');
+    const gotoBtn = document.getElementById('btn-goto-today');
+
+    if (badge) {
+      if (isToday) {
+        badge.className = 'date-status-badge badge-today';
+        badge.textContent = '오늘';
+        gotoBtn.style.display = 'none';
+      } else {
+        const todayD = new Date(getTodayStr());
+        const curD = new Date(currentDate);
+        if (curD > todayD) {
+          badge.className = 'date-status-badge badge-tomorrow';
+          badge.textContent = '내일 계획';
+        } else {
+          badge.className = 'date-status-badge badge-past';
+          badge.textContent = '과거 기록';
+        }
+        gotoBtn.style.display = 'inline-flex';
+      }
+    }
+
+    loadDayData(currentDate);
+  }
+
+  function getDayStorageKey(dateStr) {
+    return `haru_day_${dateStr}`;
+  }
+
+  function loadDayData(dateStr) {
+    let day = daysCache[dateStr];
+    if (!day) {
+      const local = localStorage.getItem(getDayStorageKey(dateStr));
+      if (local) {
+        try { day = JSON.parse(local); } catch (e) {}
+      }
+    }
+
+    if (!day) {
+      day = {
+        budget: 0,
+        spent: 0,
+        todoDone: 0,
+        todoTotal: 0,
+        routineChecks: {},
+        calendarChecks: {},
+        inputModes: {
+          'budget-feedback': 'pen',
+          'left': 'pen',
+          'todo-feedback': 'pen',
+          'gratitude': 'pen',
+          'tome': 'pen'
+        },
+        texts: {},
+        strokes: {},
+        canvasHeights: {},
+        tomePrompt: TOME_PROMPTS[0]
+      };
+    }
+
+    document.getElementById('input-budget').value = day.budget || '';
+    document.getElementById('input-spent').value = day.spent || '';
+    document.getElementById('input-todo-done').value = day.todoDone || '';
+    document.getElementById('input-todo-total').value = day.todoTotal || '';
+    calcBudgetDiff();
+
+    if (day.tomePrompt) {
+      document.getElementById('tome-q-text').textContent = day.tomePrompt;
+    }
+
+    const sections = ['budget-feedback', 'left', 'todo-feedback', 'gratitude', 'tome'];
+    sections.forEach(sec => {
+      const mode = (day.inputModes && day.inputModes[sec]) || 'pen';
+      const pill = document.querySelector(`.dual-mode-pill[data-target="${sec}"]`);
+      if (pill) {
+        pill.querySelectorAll('.dual-pill-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.mode === mode);
+        });
+      }
+      switchEditorMode(sec, mode);
+
+      const txtArea = document.getElementById(`text-${sec}`);
+      if (txtArea) txtArea.value = (day.texts && day.texts[sec]) || '';
+
+      const cid = `canvas-${sec}`;
+      const ctrl = canvasControllers[cid];
+      if (ctrl) {
+        ctrl.strokes = (day.strokes && day.strokes[cid]) || [];
+        if (day.canvasHeights && day.canvasHeights[cid]) {
+          ctrl.setHeight(day.canvasHeights[cid]);
+        }
+        ctrl.redraw();
+      }
+    });
+
+    renderDailyIntegratedSection(day);
+  }
+
+  function saveCurrentDayData(heightOnly = false) {
+    if (isRemoteApplying) return;
+
+    const sections = ['budget-feedback', 'left', 'todo-feedback', 'gratitude', 'tome'];
+    const strokes = {};
+    const texts = {};
+    const inputModes = {};
+    const canvasHeights = {};
+
+    sections.forEach(sec => {
+      const cid = `canvas-${sec}`;
+      const ctrl = canvasControllers[cid];
+      if (ctrl) {
+        strokes[cid] = ctrl.strokes;
+        canvasHeights[cid] = ctrl.canvas.clientHeight;
+      }
+      const txt = document.getElementById(`text-${sec}`);
+      if (txt) texts[sec] = txt.value;
+
+      const activePill = document.querySelector(`.dual-mode-pill[data-target="${sec}"] .dual-pill-btn.active`);
+      inputModes[sec] = activePill ? activePill.dataset.mode : 'pen';
+    });
+
+    const routineChecks = {};
+    document.querySelectorAll('#daily-routine-items input[type="checkbox"]').forEach(chk => {
+      routineChecks[chk.dataset.rid] = chk.checked;
+    });
+
+    const calendarChecks = {};
+    document.querySelectorAll('#daily-calendar-items input[type="checkbox"]').forEach(chk => {
+      calendarChecks[chk.dataset.sid] = chk.checked;
+    });
+
+    const dayData = {
+      budget: parseInt(document.getElementById('input-budget').value, 10) || 0,
+      spent: parseInt(document.getElementById('input-spent').value, 10) || 0,
+      todoDone: parseInt(document.getElementById('input-todo-done').value, 10) || 0,
+      todoTotal: parseInt(document.getElementById('input-todo-total').value, 10) || 0,
+      routineChecks,
+      calendarChecks,
+      inputModes,
+      texts,
+      strokes,
+      canvasHeights,
+      tomePrompt: document.getElementById('tome-q-text').textContent,
+      updatedAt: Date.now(),
+      senderId: CLIENT_ID
+    };
+
+    daysCache[currentDate] = dayData;
+    localStorage.setItem(getDayStorageKey(currentDate), JSON.stringify(dayData));
+
+    updateDailySummaryBadge(dayData);
+
+    if (isFirestoreOnline && firestoreDb) {
+      syncDayToFirestore(currentDate, dayData);
+    }
+  }
+
+  function calcBudgetDiff() {
+    const b = parseInt(document.getElementById('input-budget').value, 10) || 0;
+    const s = parseInt(document.getElementById('input-spent').value, 10) || 0;
+    const badge = document.getElementById('budget-diff-badge');
+    if (b === 0 && s === 0) {
+      badge.style.display = 'none';
+      return;
+    }
+    badge.style.display = 'inline-block';
+    const diff = b - s;
+    if (diff >= 0) {
+      badge.className = 'diff-badge diff-under';
+      badge.textContent = `남음: ${diff.toLocaleString()}원`;
+    } else {
+      badge.className = 'diff-badge diff-over';
+      badge.textContent = `초과: ${Math.abs(diff).toLocaleString()}원`;
+    }
+  }
+
+  function renderDailyIntegratedSection(day) {
+    const rContainer = document.getElementById('daily-routine-items');
+    rContainer.innerHTML = '';
+    routinesMaster.forEach(r => {
+      const isDone = !!(day.routineChecks && day.routineChecks[r.id]);
+      const row = document.createElement('div');
+      row.className = `check-item-row ${isDone ? 'done' : ''}`;
+      row.innerHTML = `
+        <input type="checkbox" class="custom-checkbox" data-rid="${r.id}" ${isDone ? 'checked' : ''}>
+        <span>${escapeHtml(r.text)}</span>
+      `;
+      row.querySelector('input').addEventListener('change', (e) => {
+        row.classList.toggle('done', e.target.checked);
+        saveCurrentDayData();
+      });
+      rContainer.appendChild(row);
+    });
+
+    const cContainer = document.getElementById('daily-calendar-items');
+    cContainer.innerHTML = '';
+    const daySchedules = schedulesMaster.filter(s => s.date === currentDate);
+    document.getElementById('calendar-schedule-count').textContent = `${daySchedules.length}건`;
+
+    if (daySchedules.length === 0) {
+      cContainer.innerHTML = '<div class="empty-hint-text">등록된 월간 일정이 없습니다.</div>';
+    } else {
+      daySchedules.forEach(s => {
+        const isDone = !!(day.calendarChecks && day.calendarChecks[s.id]);
+        const row = document.createElement('div');
+        row.className = `check-item-row ${isDone ? 'done' : ''}`;
+        row.innerHTML = `
+          <input type="checkbox" class="custom-checkbox" data-sid="${s.id}" ${isDone ? 'checked' : ''}>
+          <span class="time-chip">${s.time || '종일'}</span>
+          <span>${escapeHtml(s.text)}</span>
+        `;
+        row.querySelector('input').addEventListener('change', (e) => {
+          row.classList.toggle('done', e.target.checked);
+          saveCurrentDayData();
+        });
+        cContainer.appendChild(row);
       });
     }
-  });
 
-  document.getElementById("text-week-review").addEventListener("input", function(){
-    state.weekReview.text = this.value;
-    autoResizeTextarea(this);
-    saveCurrentWeekReview();
-  });
-  document.getElementById("text-month-review").addEventListener("input", function(){
-    state.monthReview.text = this.value;
-    autoResizeTextarea(this);
-    saveCurrentMonthBoard();
-  });
+    updateDailySummaryBadge(day);
+  }
 
-  // 9. 툴바 이벤트
-  document.getElementById("btn-global-pen").addEventListener("click", function(){ setPenMode("pen"); });
-  document.getElementById("btn-global-highlighter").addEventListener("click", function(){ setPenMode("highlighter"); });
-  document.getElementById("btn-global-eraser").addEventListener("click", function(){ setPenMode("eraser"); });
-  document.getElementById("btn-global-scroll").addEventListener("click", function(){ setPenMode("scroll"); });
+  function updateDailySummaryBadge(day) {
+    const rTotal = routinesMaster.length;
+    const rDone = Object.values(day.routineChecks || {}).filter(Boolean).length;
+    const daySchedules = schedulesMaster.filter(s => s.date === currentDate);
+    const sTotal = daySchedules.length;
+    const sDone = Object.values(day.calendarChecks || {}).filter(Boolean).length;
 
-  var optionsPanel = document.getElementById("pen-options-panel");
-  var toggleBtn = document.getElementById("btn-toggle-options");
-  var arrow = document.getElementById("toggle-arrow");
+    const total = rTotal + sTotal;
+    const done = rDone + sDone;
+    document.getElementById('auto-summary-badge').textContent = `달성 ${done} / ${total}`;
+  }
 
-  toggleBtn.addEventListener("click", function(){
-    var isHidden = (optionsPanel.style.display === "none");
-    optionsPanel.style.display = isHidden ? "flex" : "none";
-    toggleBtn.classList.toggle("open", isHidden);
-    arrow.textContent = isHidden ? "▲" : "▼";
-  });
-
-  document.getElementById("custom-color-picker").addEventListener("input", function(e){
-    var col = e.target.value;
-    if (globalPen.mode === "highlighter") {
-      globalPen.highlighterColor = col;
-    } else {
-      globalPen.penColor = col;
-      if (globalPen.mode !== "pen") setPenMode("pen");
+  function loadRoutines() {
+    const saved = localStorage.getItem('haru_routines');
+    if (saved) {
+      try { routinesMaster = JSON.parse(saved); } catch (e) {}
     }
-    renderPaletteChips();
-    updatePenStatusDisplay();
-  });
+  }
 
-  var sizeSlider = document.getElementById("slider-pen-size");
-  sizeSlider.addEventListener("input", function(){
-    var val = parseFloat(this.value);
-    if (globalPen.mode === "highlighter") {
-      globalPen.highlighterSize = val;
-    } else {
-      globalPen.penSize = val;
-    }
-    updatePenStatusDisplay();
-    document.querySelectorAll("#quick-size-chips .quick-chip").forEach(function(c){ c.classList.remove("active"); });
-  });
-
-  document.querySelectorAll("#quick-size-chips .quick-chip").forEach(function(chip){
-    chip.addEventListener("click", function(){
-      document.querySelectorAll("#quick-size-chips .quick-chip").forEach(function(c){ c.classList.remove("active"); });
-      chip.classList.add("active");
-      var val = parseFloat(chip.getAttribute("data-size"));
-      if (globalPen.mode === "highlighter") {
-        globalPen.highlighterSize = val;
-      } else {
-        globalPen.penSize = val;
+  function saveRoutines() {
+    localStorage.setItem('haru_routines', JSON.stringify(routinesMaster));
+    if (isFirestoreOnline && firestoreDb) {
+      const roomKey = getRoomKey();
+      if (roomKey) {
+        firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc('routines').set({
+          list: routinesMaster,
+          updatedAt: Date.now(),
+          senderId: CLIENT_ID
+        }, { merge: true });
       }
-      updatePenStatusDisplay();
-    });
-  });
-
-  var alphaSlider = document.getElementById("slider-pen-alpha");
-  alphaSlider.addEventListener("input", function(){
-    var val = parseInt(this.value, 10) / 100;
-    if (globalPen.mode === "highlighter") {
-      globalPen.highlighterAlpha = val;
-    } else {
-      globalPen.penAlpha = val;
     }
-    updatePenStatusDisplay();
-    document.querySelectorAll("#quick-alpha-chips .quick-chip").forEach(function(c){ c.classList.remove("active"); });
-  });
+    renderDailyIntegratedSection(daysCache[currentDate] || {});
+  }
 
-  document.querySelectorAll("#quick-alpha-chips .quick-chip").forEach(function(chip){
-    chip.addEventListener("click", function(){
-      document.querySelectorAll("#quick-alpha-chips .quick-chip").forEach(function(c){ c.classList.remove("active"); });
-      chip.classList.add("active");
-      var val = parseInt(chip.getAttribute("data-alpha"), 10) / 100;
-      if (globalPen.mode === "highlighter") {
-        globalPen.highlighterAlpha = val;
-      } else {
-        globalPen.penAlpha = val;
+  function openRoutineModal() {
+    renderRoutineManager();
+    document.getElementById('routine-modal').style.display = 'flex';
+  }
+
+  function closeRoutineModal() {
+    document.getElementById('routine-modal').style.display = 'none';
+  }
+
+  function renderRoutineManager() {
+    const list = document.getElementById('routine-manager-list');
+    list.innerHTML = '';
+    routinesMaster.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'routine-row-item';
+      row.innerHTML = `
+        <span>• ${escapeHtml(r.text)}</span>
+        <button type="button" class="routine-del-btn" title="삭제">✕</button>
+      `;
+      row.querySelector('.routine-del-btn').addEventListener('click', () => {
+        routinesMaster = routinesMaster.filter(item => item.id !== r.id);
+        saveRoutines();
+        renderRoutineManager();
+      });
+      list.appendChild(row);
+    });
+  }
+
+  function addRoutineItem() {
+    const inp = document.getElementById('new-routine-text');
+    const txt = inp.value.trim();
+    if (!txt) return;
+    routinesMaster.push({
+      id: 'r_' + Date.now(),
+      text: txt
+    });
+    inp.value = '';
+    saveRoutines();
+    renderRoutineManager();
+  }
+
+  function loadSchedules() {
+    const saved = localStorage.getItem('haru_schedules');
+    if (saved) {
+      try { schedulesMaster = JSON.parse(saved); } catch (e) {}
+    }
+  }
+
+  function saveSchedules() {
+    localStorage.setItem('haru_schedules', JSON.stringify(schedulesMaster));
+    if (isFirestoreOnline && firestoreDb) {
+      const roomKey = getRoomKey();
+      if (roomKey) {
+        firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc('schedules').set({
+          list: schedulesMaster,
+          updatedAt: Date.now(),
+          senderId: CLIENT_ID
+        }, { merge: true });
       }
-      updatePenStatusDisplay();
-    });
-  });
-
-  document.querySelectorAll(".btn-expand").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      var canvasId = btn.getAttribute("data-canvas");
-      var action = btn.getAttribute("data-action");
-      if (!activeCanvases[canvasId]) return;
-
-      var curH = activeCanvases[canvasId].getCanvasHeight();
-      var delta = (action === "expand") ? 70 : -70;
-      var newH = curH + delta;
-
-      activeCanvases[canvasId].setCanvasHeight(newH, true);
-      showToast(action === "expand" ? "작성 공간을 늘렸습니다 (+70px)" : "작성 공간을 줄였습니다 (-70px)");
-    });
-  });
-
-  var pendingClearCanvasId = null;
-  var confirmModal = document.getElementById("confirm-modal");
-
-  document.querySelectorAll(".clear-canvas").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      pendingClearCanvasId = btn.getAttribute("data-canvas");
-      confirmModal.style.display = "flex";
-    });
-  });
-
-  document.getElementById("modal-btn-cancel").addEventListener("click", function(){
-    confirmModal.style.display = "none";
-    pendingClearCanvasId = null;
-  });
-
-  document.getElementById("modal-btn-confirm").addEventListener("click", function(){
-    if (pendingClearCanvasId && activeCanvases[pendingClearCanvasId]) {
-      activeCanvases[pendingClearCanvasId].clear();
-      showToast("손글씨가 모두 지워졌습니다");
     }
-    confirmModal.style.display = "none";
-    pendingClearCanvasId = null;
-  });
+    renderDailyIntegratedSection(daysCache[currentDate] || {});
+    renderMonthCalendar();
+  }
 
-  document.querySelectorAll(".undo-canvas").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      var id = btn.getAttribute("data-canvas");
-      if (activeCanvases[id]) activeCanvases[id].undo();
-    });
-  });
+  function addScheduleItem() {
+    const dInp = document.getElementById('new-schedule-date');
+    const tInp = document.getElementById('new-schedule-time');
+    const txtInp = document.getElementById('new-schedule-text');
 
-  document.getElementById("btn-prev-day").addEventListener("click", function(){ changeViewingDay(-1); });
-  document.getElementById("btn-next-day").addEventListener("click", function(){ changeViewingDay(1); });
-  document.getElementById("btn-goto-today").addEventListener("click", function(){ goToTodayDate(); });
-
-  document.getElementById("input-budget").addEventListener("input", function(){
-    state.today.budget = parseInt(this.value, 10) || 0;
-    updateBudgetDiff();
-    saveTodayData();
-    renderMonthlyCalendar();
-  });
-  document.getElementById("input-spent").addEventListener("input", function(){
-    state.today.spent = parseInt(this.value, 10) || 0;
-    updateBudgetDiff();
-    saveTodayData();
-    renderMonthlyCalendar();
-  });
-  document.getElementById("input-todo-done").addEventListener("input", function(){
-    state.today.todoDone = this.value;
-    saveTodayData();
-  });
-  document.getElementById("input-todo-total").addEventListener("input", function(){
-    state.today.todoTotal = this.value;
-    saveTodayData();
-  });
-
-  var TOME_QUESTIONS = [
-    "오늘 하루를 마친 나에게, 전하고 싶은 따뜻한 응원은?",
-    "오늘 가장 나답게 용기 냈던 순간은 언제였나요?",
-    "지치고 힘들었던 나를 위해 오늘 건네고 싶은 한마디는?",
-    "내일의 나에게 미리 선물하고 싶은 마음가짐이 있다면?",
-    "오늘 스스로에게 가장 칭찬해주고 싶은 것은 무엇인가요?"
-  ];
-  document.getElementById("btn-tome-shuffle").addEventListener("click", function(){
-    var currentQ = document.getElementById("tome-q-text").textContent;
-    var filtered = TOME_QUESTIONS.filter(function(q){ return q !== currentQ; });
-    document.getElementById("tome-q-text").textContent = filtered[Math.floor(Math.random() * filtered.length)];
-  });
-
-  var routineModal = document.getElementById("routine-modal");
-  function renderRoutineManagerModalList(){
-    var list = getMasterRoutines();
-    var container = document.getElementById("routine-manager-items");
-    container.innerHTML = "";
-
-    if (list.length === 0) {
-      container.innerHTML = '<div style="font-size:12.5px; color:var(--ink-faint); text-align:center; padding:12px;">등록된 고정 루틴이 없습니다.</div>';
+    const d = dInp.value;
+    const txt = txtInp.value.trim();
+    if (!d || !txt) {
+      alert('날짜와 일정 내용을 입력해 주세요.');
       return;
     }
 
-    list.forEach(function(item, idx){
-      var row = document.createElement("div");
-      row.className = "routine-row-item";
-      row.innerHTML = '<span>' + (idx + 1) + '. ' + item.text + '</span>';
-
-      var delBtn = document.createElement("button");
-      delBtn.className = "routine-del-btn";
-      delBtn.innerHTML = "&times;";
-      delBtn.addEventListener("click", function(){
-        list.splice(idx, 1);
-        saveMasterRoutines(list);
-        renderRoutineManagerModalList();
-        renderIntegratedChecklist();
-        renderMonthlyCalendar();
-      });
-
-      row.appendChild(delBtn);
-      container.appendChild(row);
-    });
-  }
-
-  function openRoutineModal(){
-    renderRoutineManagerModalList();
-    routineModal.style.display = "flex";
-  }
-
-  document.getElementById("btn-open-routines").addEventListener("click", openRoutineModal);
-  document.getElementById("btn-quick-manage-routines").addEventListener("click", openRoutineModal);
-  document.getElementById("btn-routine-close").addEventListener("click", function(){ routineModal.style.display = "none"; });
-  document.getElementById("btn-routine-done").addEventListener("click", function(){
-    routineModal.style.display = "none";
-    showToast("고정 루틴 설정이 반영되었습니다.");
-  });
-
-  document.getElementById("btn-add-routine").addEventListener("click", function(){
-    var input = document.getElementById("input-new-routine");
-    var txt = input.value.trim();
-    if (!txt) return;
-
-    var list = getMasterRoutines();
-    list.push({ id: "r_" + Date.now(), text: txt });
-    saveMasterRoutines(list);
-
-    input.value = "";
-    renderRoutineManagerModalList();
-    renderIntegratedChecklist();
-    renderMonthlyCalendar();
-    showToast("새 고정 루틴이 등록되었습니다.");
-  });
-
-  function saveCurrentWeekReview(){
-    var rangeText = document.getElementById("week-date-range-text").textContent;
-    var weekKey = rangeText ? rangeText.slice(0, 5).replace('/', '-') : currentIso;
-    state.weekReview.updatedAt = Date.now();
-    setStorage(STORAGE_WEEK_PREFIX + weekKey, state.weekReview);
-    syncService.pushWeekReview(weekKey, state.weekReview);
-  }
-
-  function saveCurrentMonthBoard(){
-    var monthKey = calYear + '-' + pad(calMonth + 1);
-    state.monthReview.focus1 = document.getElementById("month-focus-1").value;
-    state.monthReview.focus2 = document.getElementById("month-focus-2").value;
-    state.monthReview.focus3 = document.getElementById("month-focus-3").value;
-    state.monthReview.wishlist = document.getElementById("month-wishlist-memo").value;
-    state.monthReview.updatedAt = Date.now();
-
-    setStorage(STORAGE_MONTH_PREFIX + monthKey, state.monthReview);
-    syncService.pushMonthReview(monthKey, state.monthReview);
-  }
-
-  document.getElementById("month-focus-1").addEventListener("input", saveCurrentMonthBoard);
-  document.getElementById("month-focus-2").addEventListener("input", saveCurrentMonthBoard);
-  document.getElementById("month-focus-3").addEventListener("input", saveCurrentMonthBoard);
-  document.getElementById("month-wishlist-memo").addEventListener("input", saveCurrentMonthBoard);
-
-  document.querySelectorAll(".nav-tab").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      document.querySelectorAll(".nav-tab").forEach(function(b){ b.classList.remove("active"); });
-      document.querySelectorAll(".tab-content").forEach(function(c){ c.hidden = true; });
-      btn.classList.add("active");
-      var target = document.getElementById(btn.getAttribute("data-tab"));
-      if (target) target.hidden = false;
-
-      setTimeout(function(){
-        for (var k in activeCanvases) {
-          if (activeCanvases[k].resizeBacking) activeCanvases[k].resizeBacking();
-        }
-      }, 40);
-
-      if (btn.getAttribute("data-tab") === "tab-week") renderWeeklyReview();
-      if (btn.getAttribute("data-tab") === "tab-month") renderMonthlyCalendar();
-    });
-  });
-
-  // 10. 주간 및 월간 렌더링
-  function renderWeeklyReview(){
-    var now = new Date(viewingDate.getTime());
-    var dayOfWeek = now.getDay();
-    var diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
-    var monday = new Date(now);
-    monday.setDate(now.getDate() + diffToMonday);
-
-    var weekDates = [];
-    for (var i = 0; i < 7; i++){
-      var d = new Date(monday);
-      d.setDate(monday.getDate() + i);
-      weekDates.push(toIso(d));
-    }
-
-    var weekKey = weekDates[0];
-    document.getElementById("week-date-range-text").textContent =
-      weekDates[0].slice(5).replace('-', '/') + " ~ " + weekDates[6].slice(5).replace('-', '/');
-
-    var listEl = document.getElementById("week-archive-list");
-    listEl.innerHTML = "";
-
-    var totalDone = 0;
-    var totalTasks = 0;
-    var feedbackDayCount = 0;
-    var routines = getMasterRoutines();
-    var schedules = getSchedules();
-    var DOW_MAP = ["월", "화", "수", "목", "금", "토", "일"];
-
-    weekDates.forEach(function(iso, idx){
-      var dayData = getStorage(STORAGE_KEY_PREFIX + iso, null);
-      var dayDone = 0, dayTotal = 0;
-
-      var routineDoneObj = (dayData && dayData.routineDone) ? dayData.routineDone : {};
-      routines.forEach(function(r){
-        dayTotal++;
-        if (routineDoneObj[r.id]) dayDone++;
-      });
-
-      var dayScheds = schedules.filter(function(s){ return s.date === iso; });
-      dayTotal += dayScheds.length;
-      dayDone += dayScheds.filter(function(s){ return s.done; }).length;
-
-      if (dayData && dayData.todoDone !== "" && dayData.todoTotal !== "" && dayData.todoTotal > 0) {
-        dayDone += parseInt(dayData.todoDone, 10) || 0;
-        dayTotal += parseInt(dayData.todoTotal, 10) || 0;
-      }
-
-      totalDone += dayDone;
-      totalTasks += dayTotal;
-
-      var hasFeedback = dayData && ((dayData.strokes && dayData.strokes["canvas-todo-feedback"] && dayData.strokes["canvas-todo-feedback"].length > 0) || (dayData.texts && dayData.texts["todo-feedback"] && dayData.texts["todo-feedback"].trim().length > 0));
-      if (hasFeedback) feedbackDayCount++;
-
-      var col = document.createElement("div");
-      col.className = "day-archive-col" + (iso === realTodayIso ? " is-today" : "");
-
-      var title = document.createElement("div");
-      title.className = "day-col-title";
-      title.innerHTML = '<span>' + iso.slice(8) + '일 (' + DOW_MAP[idx] + ')</span>' +
-                        '<span style="font-family:var(--font-mono); font-size:11px; color:var(--accent);">' + dayDone + '/' + dayTotal + '</span>';
-      col.appendChild(title);
-
-      var thumb = document.createElement("canvas");
-      thumb.className = "mini-canvas-thumb";
-      thumb.height = 70;
-      col.appendChild(thumb);
-
-      setTimeout(function(){
-        var ctx = thumb.getContext("2d");
-        var dpr = window.devicePixelRatio || 1;
-        var r = thumb.getBoundingClientRect();
-        if (r.width === 0) return;
-        thumb.width = r.width * dpr;
-        thumb.height = 70 * dpr;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-        if (dayData && dayData.strokes && dayData.strokes["canvas-todo-feedback"]) {
-          var strokes = dayData.strokes["canvas-todo-feedback"];
-          for (var s = 0; s < strokes.length; s++){
-            var st = strokes[s];
-            var pts = st.pts || st;
-            if (!pts || pts.length < 2) continue;
-            ctx.beginPath();
-            ctx.save();
-            ctx.strokeStyle = st.color || "#2C2825";
-            ctx.globalAlpha = st.alpha !== undefined ? st.alpha : 1.0;
-            ctx.lineWidth = 1.2;
-            ctx.lineCap = "round";
-            ctx.moveTo(pts[0].x * 0.45, pts[0].y * 0.55);
-            for (var p = 1; p < pts.length; p++){
-              ctx.lineTo(pts[p].x * 0.45, pts[p].y * 0.55);
-            }
-            ctx.stroke();
-            ctx.restore();
-          }
-        }
-      }, 50);
-
-      listEl.appendChild(col);
+    schedulesMaster.push({
+      id: 's_' + Date.now(),
+      date: d,
+      time: tInp.value,
+      text: txt,
+      color: Math.floor(Math.random() * 5)
     });
 
-    var rate = totalTasks > 0 ? Math.round((totalDone / totalTasks) * 100) : 0;
-    document.getElementById("week-todo-rate").textContent = rate + "%";
-    document.getElementById("week-todo-count").textContent = totalDone + " / " + totalTasks;
-    document.getElementById("week-feedback-days").textContent = feedbackDayCount + " / 7일";
-
-    var savedWeek = getStorage(STORAGE_WEEK_PREFIX + weekKey, { strokes: [], text: "", inputMode: "pen", height: 240, rev: 1, updatedAt: 0 });
-    state.weekReview = savedWeek;
-    document.getElementById("text-week-review").value = savedWeek.text || "";
-    applyInputMode("week-review", savedWeek.inputMode || "pen");
-
-    if (activeCanvases["canvas-week-review"]) {
-      activeCanvases["canvas-week-review"].setCanvasHeight(savedWeek.height || 240, false);
-    }
+    txtInp.value = '';
+    tInp.value = '';
+    saveSchedules();
+    showToast('마스킹 테이프 일정이 달력에 부착되었습니다!');
   }
 
-  var calYear = realToday.getFullYear();
-  var calMonth = realToday.getMonth();
+  function initMonthSpread() {
+    document.getElementById('new-schedule-date').value = currentDate;
+  }
 
-  function renderMonthlyCalendar(){
-    var enMonth = MONTH_NAMES_EN[calMonth];
-    document.getElementById("month-title-en").textContent = enMonth + " " + calYear;
-    document.getElementById("month-title-text").textContent = calYear + "년 " + (calMonth + 1) + "월의 기록";
+  function renderMonthCalendar() {
+    const { year, month } = currentMonthView;
+    const monthNamesEn = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    document.getElementById('month-title-en').textContent = `${monthNamesEn[month - 1]} ${year}`;
+    document.getElementById('month-title-text').textContent = `${year}년 ${month}월의 기록`;
 
-    var grid = document.getElementById("month-calendar-grid");
-    grid.innerHTML = "";
+    loadMonthSideMeta(`${year}-${String(month).padStart(2, '0')}`);
 
-    var firstDay = new Date(calYear, calMonth, 1).getDay();
-    var lastDate = new Date(calYear, calMonth + 1, 0).getDate();
-    var prevLastDate = new Date(calYear, calMonth, 0).getDate();
+    const grid = document.getElementById('month-calendar-grid');
+    grid.innerHTML = '';
 
-    for (var p = firstDay - 1; p >= 0; p--){
-      var cellP = document.createElement("div");
-      cellP.className = "diary-day-cell other-month";
-      cellP.innerHTML = '<div class="day-top-row"><span class="day-num">' + (prevLastDate - p) + '</span></div>';
-      grid.appendChild(cellP);
+    const firstDay = new Date(year, month - 1, 1).getDay();
+    const lastDate = new Date(year, month, 0).getDate();
+    const prevLastDate = new Date(year, month - 1, 0).getDate();
+
+    let cellCount = 0;
+
+    for (let i = firstDay - 1; i >= 0; i--) {
+      const d = prevLastDate - i;
+      grid.appendChild(createDayCell(d, true, false, false, ''));
+      cellCount++;
     }
 
-    var totalSpent = 0;
-    var practicedDays = 0;
-    var routines = getMasterRoutines();
-    var schedules = getSchedules();
+    let monthSpentTotal = 0;
+    let completedDays = 0;
+    const todayStr = getTodayStr();
 
-    for (var day = 1; day <= lastDate; day++){
-      var curDateObj = new Date(calYear, calMonth, day);
-      var curDayOfWeek = curDateObj.getDay();
-      var curIso = calYear + '-' + pad(calMonth + 1) + '-' + pad(day);
-      var dayData = getStorage(STORAGE_KEY_PREFIX + curIso, null);
+    for (let d = 1; d <= lastDate; d++) {
+      const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const isToday = dateStr === todayStr;
+      const dow = (cellCount % 7);
+      const isSun = dow === 0;
+      const isSat = dow === 6;
 
-      var cell = document.createElement("div");
-      var dowCls = (curDayOfWeek === 0) ? " sun" : (curDayOfWeek === 6 ? " sat" : "");
-      cell.className = "diary-day-cell" + dowCls + (curIso === realTodayIso ? " is-today" : "");
-
-      var topRow = document.createElement("div");
-      topRow.className = "day-top-row";
-
-      var numSpan = document.createElement("span");
-      numSpan.className = "day-num";
-      numSpan.textContent = day;
-      topRow.appendChild(numSpan);
-
-      var badgesWrap = document.createElement("div");
-      badgesWrap.className = "day-badges-wrap";
-
-      if (dayData && dayData.spent !== undefined && dayData.spent !== null) {
-        var spentNum = parseInt(dayData.spent, 10);
-        if (spentNum === 0 && (dayData.budget > 0 || (dayData.strokes && dayData.strokes["canvas-budget-feedback"].length > 0) || (dayData.texts && dayData.texts["budget-feedback"] && dayData.texts["budget-feedback"].length > 0))) {
-          var noSpendBadge = document.createElement("span");
-          noSpendBadge.className = "no-spend-badge";
-          noSpendBadge.textContent = "☕無지출";
-          noSpendBadge.title = "지출 0원! 훌륭한 절약 데이";
-          badgesWrap.appendChild(noSpendBadge);
-        }
+      const dayData = daysCache[dateStr] || getLocalDayData(dateStr);
+      if (dayData) {
+        monthSpentTotal += (dayData.spent || 0);
+        const rDone = Object.values(dayData.routineChecks || {}).filter(Boolean).length;
+        if (rDone > 0) completedDays++;
       }
 
-      var routineDoneObj = (dayData && dayData.routineDone) ? dayData.routineDone : {};
-      var isRoutineAllDone = false;
-      if (routines.length > 0) {
-        var completedCount = 0;
-        routines.forEach(function(r){
-          if (routineDoneObj[r.id]) completedCount++;
-        });
-        if (completedCount === routines.length && completedCount > 0) {
-          isRoutineAllDone = true;
-        }
+      grid.appendChild(createDayCell(d, false, isSun, isSat, dateStr, isToday, dayData));
+      cellCount++;
+    }
+
+    const remain = (7 - (cellCount % 7)) % 7;
+    for (let i = 1; i <= remain; i++) {
+      grid.appendChild(createDayCell(i, true, false, false, ''));
+      cellCount++;
+    }
+
+    document.getElementById('month-spent-total').textContent = `${monthSpentTotal.toLocaleString()}원`;
+    document.getElementById('month-todo-days').textContent = `${completedDays}일`;
+    const rate = lastDate > 0 ? Math.round((completedDays / lastDate) * 100) : 0;
+    document.getElementById('month-avg-rate').textContent = `${rate}%`;
+  }
+
+  function getLocalDayData(dateStr) {
+    const raw = localStorage.getItem(getDayStorageKey(dateStr));
+    if (raw) {
+      try { return JSON.parse(raw); } catch (e) {}
+    }
+    return null;
+  }
+
+  function createDayCell(dayNum, isOtherMonth, isSun, isSat, dateStr, isToday = false, dayData = null) {
+    const cell = document.createElement('div');
+    cell.className = `diary-day-cell ${isOtherMonth ? 'other-month' : ''} ${isSun ? 'sun' : ''} ${isSat ? 'sat' : ''} ${isToday ? 'is-today' : ''}`;
+
+    const topRow = document.createElement('div');
+    topRow.className = 'day-top-row';
+
+    const numSpan = document.createElement('span');
+    numSpan.className = 'day-num';
+    numSpan.textContent = dayNum;
+    topRow.appendChild(numSpan);
+
+    const badgesWrap = document.createElement('div');
+    badgesWrap.className = 'day-badges-wrap';
+
+    if (!isOtherMonth && dayData) {
+      if (dayData.spent === 0 && (dayData.budget > 0 || dayData.todoDone > 0)) {
+        const noSpend = document.createElement('span');
+        noSpend.className = 'no-spend-badge';
+        noSpend.textContent = '☕ 無지출';
+        badgesWrap.appendChild(noSpend);
       }
 
-      if (isRoutineAllDone) {
-        var stamp = document.createElement("span");
-        stamp.className = "stamp-done";
-        stamp.textContent = "DONE";
-        stamp.title = "오늘의 고정 루틴 100% 완수!";
+      const rTotal = routinesMaster.length;
+      const rDone = Object.values(dayData.routineChecks || {}).filter(Boolean).length;
+      if (rTotal > 0 && rDone >= rTotal) {
+        const stamp = document.createElement('span');
+        stamp.className = 'stamp-done';
+        stamp.textContent = 'DONE';
         badgesWrap.appendChild(stamp);
       }
+    }
+    topRow.appendChild(badgesWrap);
+    cell.appendChild(topRow);
 
-      topRow.appendChild(badgesWrap);
-      cell.appendChild(topRow);
+    if (!isOtherMonth && dateStr) {
+      const tapeList = document.createElement('div');
+      tapeList.className = 'tape-schedule-list';
 
-      if (dayData && dayData.spent) totalSpent += parseInt(dayData.spent, 10);
-      var hasRoutineDone = dayData && dayData.routineDone && Object.values(dayData.routineDone).some(function(v){ return !!v; });
-      if (hasRoutineDone || (dayData && (dayData.todoDone !== "" || (dayData.strokes && dayData.strokes["canvas-left"].length > 0) || (dayData.texts && dayData.texts["left"] && dayData.texts["left"].length > 0)))) {
-        practicedDays++;
+      const schedules = schedulesMaster.filter(s => s.date === dateStr);
+      schedules.slice(0, 3).forEach(s => {
+        const item = document.createElement('div');
+        item.className = `washi-tape-item tape-color-${s.color || 0}`;
+        item.textContent = s.text;
+        item.title = `${s.time || ''} ${s.text}`;
+        tapeList.appendChild(item);
+      });
+
+      if (schedules.length > 3) {
+        const more = document.createElement('div');
+        more.className = 'tape-more-hint';
+        more.textContent = `+${schedules.length - 3}건`;
+        tapeList.appendChild(more);
       }
+      cell.appendChild(tapeList);
 
-      var dayScheds = schedules.filter(function(s){ return s.date === curIso; });
-      if (dayScheds.length > 0) {
-        dayScheds.sort(function(a, b){ return (a.time || "99:99").localeCompare(b.time || "99:99"); });
-        var tapeList = document.createElement("div");
-        tapeList.className = "tape-schedule-list";
-
-        var maxShow = 2;
-        for (var t = 0; t < Math.min(dayScheds.length, maxShow); t++){
-          var sc = dayScheds[t];
-          var tape = document.createElement("div");
-          var colorIndex = (day + t) % 5;
-          tape.className = "washi-tape-item tape-color-" + colorIndex;
-          if (sc.done) tape.style.opacity = "0.55";
-
-          var iconSpan = document.createElement("span");
-          iconSpan.textContent = sc.done ? "✓" : "•";
-          var txtSpan = document.createElement("span");
-          txtSpan.textContent = (sc.time ? sc.time + " " : "") + sc.text;
-
-          tape.appendChild(iconSpan);
-          tape.appendChild(txtSpan);
-          tapeList.appendChild(tape);
-        }
-
-        if (dayScheds.length > maxShow) {
-          var more = document.createElement("div");
-          more.className = "tape-more-hint";
-          more.textContent = "+" + (dayScheds.length - maxShow) + "건";
-          tapeList.appendChild(more);
-        }
-
-        cell.appendChild(tapeList);
-      }
-
-      (function(targetIso){
-        cell.addEventListener("click", function(){
-          viewingDate = new Date(calYear, calMonth, parseInt(targetIso.slice(8), 10));
-          document.querySelector('[data-tab="tab-today"]').click();
-          loadDayData(targetIso);
-        });
-      })(curIso);
-
-      grid.appendChild(cell);
+      cell.addEventListener('click', () => {
+        switchDate(dateStr);
+        document.querySelector('.nav-tab[data-tab="tab-today"]')?.click();
+      });
     }
 
-    var totalCells = firstDay + lastDate;
-    var remaining = (7 - (totalCells % 7)) % 7;
-    for (var n = 1; n <= remaining; n++){
-      var cellN = document.createElement("div");
-      cellN.className = "diary-day-cell other-month";
-      cellN.innerHTML = '<div class="day-top-row"><span class="day-num">' + n + '</span></div>';
-      grid.appendChild(cellN);
+    return cell;
+  }
+
+  function loadMonthSideMeta(monthKey) {
+    const saved = localStorage.getItem(`haru_meta_${monthKey}`);
+    let data = null;
+    if (saved) {
+      try { data = JSON.parse(saved); } catch (e) {}
     }
+    document.getElementById('month-focus-1').value = data?.focus1 || '';
+    document.getElementById('month-focus-2').value = data?.focus2 || '';
+    document.getElementById('month-focus-3').value = data?.focus3 || '';
+    document.getElementById('month-wishlist-memo').value = data?.wishlist || '';
+  }
 
-    document.getElementById("month-spent-total").textContent = totalSpent.toLocaleString() + "원";
-    document.getElementById("month-todo-days").textContent = practicedDays + "일";
-    document.getElementById("month-avg-rate").textContent = (practicedDays > 0 ? Math.round((practicedDays / lastDate) * 100) : 0) + "%";
+  function saveMonthSideMeta() {
+    const { year, month } = currentMonthView;
+    const monthKey = `${year}-${String(month).padStart(2, '0')}`;
+    const data = {
+      focus1: document.getElementById('month-focus-1').value,
+      focus2: document.getElementById('month-focus-2').value,
+      focus3: document.getElementById('month-focus-3').value,
+      wishlist: document.getElementById('month-wishlist-memo').value,
+      updatedAt: Date.now()
+    };
+    localStorage.setItem(`haru_meta_${monthKey}`, JSON.stringify(data));
 
-    var monthKey = calYear + '-' + pad(calMonth + 1);
-    var savedMonth = getStorage(STORAGE_MONTH_PREFIX + monthKey, { strokes: [], text: "", inputMode: "pen", height: 260, focus1: "", focus2: "", focus3: "", wishlist: "", rev: 1, updatedAt: 0 });
-    state.monthReview = savedMonth;
-
-    document.getElementById("month-focus-1").value = savedMonth.focus1 || "";
-    document.getElementById("month-focus-2").value = savedMonth.focus2 || "";
-    document.getElementById("month-focus-3").value = savedMonth.focus3 || "";
-    document.getElementById("month-wishlist-memo").value = savedMonth.wishlist || "";
-    document.getElementById("text-month-review").value = savedMonth.text || "";
-
-    applyInputMode("month-review", savedMonth.inputMode || "pen");
-
-    if (activeCanvases["canvas-month-review"]) {
-      activeCanvases["canvas-month-review"].setCanvasHeight(savedMonth.height || 260, false);
+    if (isFirestoreOnline && firestoreDb) {
+      const roomKey = getRoomKey();
+      if (roomKey) {
+        firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc(`month_${monthKey}`).set(data, { merge: true });
+      }
     }
   }
 
-  document.getElementById("btn-month-prev").addEventListener("click", function(){
-    calMonth--;
-    if (calMonth < 0) { calMonth = 11; calYear--; }
-    renderMonthlyCalendar();
-  });
-  document.getElementById("btn-month-next").addEventListener("click", function(){
-    calMonth++;
-    if (calMonth > 11) { calMonth = 0; calYear++; }
-    renderMonthlyCalendar();
-  });
+  function renderWeekArchive() {
+    const [y, m, d] = currentDate.split('-').map(Number);
+    const cur = new Date(y, m - 1, d);
+    const dayDow = cur.getDay();
 
-  document.getElementById("btn-add-schedule").addEventListener("click", function(){
-    var d = document.getElementById("new-schedule-date").value;
-    var t = document.getElementById("new-schedule-time").value;
-    var txt = document.getElementById("new-schedule-text").value.trim();
+    const start = new Date(cur);
+    start.setDate(cur.getDate() - dayDow);
 
-    if (!d || !txt) {
-      showToast("날짜와 일정 내용을 입력해주세요");
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+
+    document.getElementById('week-date-range-text').textContent =
+      `${start.getFullYear()}.${start.getMonth() + 1}.${start.getDate()} ~ ${end.getFullYear()}.${end.getMonth() + 1}.${end.getDate()}`;
+
+    const container = document.getElementById('week-archive-list');
+    container.innerHTML = '';
+
+    let totalTodos = 0;
+    let doneTodos = 0;
+    let feedbackDays = 0;
+    const dows = ['일', '월', '화', '수', '목', '금', '토'];
+
+    for (let i = 0; i < 7; i++) {
+      const targetD = new Date(start);
+      targetD.setDate(start.getDate() + i);
+      const ds = `${targetD.getFullYear()}-${String(targetD.getMonth() + 1).padStart(2, '0')}-${String(targetD.getDate()).padStart(2, '0')}`;
+      const dayData = daysCache[ds] || getLocalDayData(ds);
+
+      const col = document.createElement('div');
+      col.className = `day-archive-col ${ds === getTodayStr() ? 'is-today' : ''}`;
+
+      let rateText = '0%';
+      let todoCnt = '0/0';
+
+      if (dayData) {
+        const rTotal = routinesMaster.length;
+        const rDone = Object.values(dayData.routineChecks || {}).filter(Boolean).length;
+        const dayS = schedulesMaster.filter(s => s.date === ds);
+        const sTotal = dayS.length;
+        const sDone = Object.values(dayData.calendarChecks || {}).filter(Boolean).length;
+
+        const allTotal = rTotal + sTotal + (dayData.todoTotal || 0);
+        const allDone = rDone + sDone + (dayData.todoDone || 0);
+
+        totalTodos += allTotal;
+        doneTodos += allDone;
+        if (allTotal > 0) rateText = `${Math.round((allDone / allTotal) * 100)}%`;
+        todoCnt = `${allDone}/${allTotal}`;
+
+        const hasFeedback = (dayData.texts && dayData.texts['todo-feedback'] && dayData.texts['todo-feedback'].trim()) ||
+          (dayData.strokes && dayData.strokes['canvas-todo-feedback'] && dayData.strokes['canvas-todo-feedback'].length > 0);
+        if (hasFeedback) feedbackDays++;
+      }
+
+      col.innerHTML = `
+        <div class="day-col-title">
+          <span>${targetD.getMonth() + 1}/${targetD.getDate()} (${dows[i]})</span>
+          <span style="color:var(--accent); font-family:var(--font-mono); font-size:11px;">${rateText}</span>
+        </div>
+        <div style="font-size:11px; color:var(--ink-soft); font-family:var(--font-mono);">완료: ${todoCnt}</div>
+        <div style="font-size:11px; color:var(--ink-soft); white-space:pre-wrap; max-height:80px; overflow-y:auto; border-top:1px dashed var(--line); padding-top:4px;">
+          ${escapeHtml(dayData?.texts?.['todo-feedback'] || '(피드백 없음)')}
+        </div>
+      `;
+
+      col.addEventListener('click', () => {
+        switchDate(ds);
+        document.querySelector('.nav-tab[data-tab="tab-today"]')?.click();
+      });
+      container.appendChild(col);
+    }
+
+    const overallRate = totalTodos > 0 ? Math.round((doneTodos / totalTodos) * 100) : 0;
+    document.getElementById('week-todo-rate').textContent = `${overallRate}%`;
+    document.getElementById('week-todo-count').textContent = `${doneTodos} / ${totalTodos}`;
+    document.getElementById('week-feedback-days').textContent = `${feedbackDays} / 7일`;
+  }
+
+  function getRoomKey() {
+    const raw = localStorage.getItem('haru_room_key') || '';
+    return raw.trim().toLowerCase();
+  }
+
+  function loadLocalSettings() {
+    const key = localStorage.getItem('haru_room_key') || '';
+    const config = localStorage.getItem('haru_firebase_config') || '';
+    if (document.getElementById('input-secret-key')) document.getElementById('input-secret-key').value = key;
+    if (document.getElementById('input-firebase-config')) document.getElementById('input-firebase-config').value = config;
+  }
+
+  function openSyncModal() {
+    loadLocalSettings();
+    document.getElementById('sync-modal').style.display = 'flex';
+  }
+
+  function closeSyncModal() {
+    document.getElementById('sync-modal').style.display = 'none';
+  }
+
+  function updateSyncStatusUI(status, text) {
+    const dot = document.getElementById('sync-dot');
+    const txt = document.getElementById('sync-text');
+    const modalBadge = document.getElementById('modal-sync-status-badge');
+
+    dot.className = `sync-dot ${status}`;
+    txt.textContent = text;
+    modalBadge.textContent = text;
+    modalBadge.style.color = status === 'online' ? '#10B981' : status === 'syncing' ? '#F59E0B' : status === 'error' ? '#EF4444' : 'var(--ink-soft)';
+  }
+
+  function saveSyncSettings() {
+    const rawKey = document.getElementById('input-secret-key').value.trim();
+    const configStr = document.getElementById('input-firebase-config').value.trim();
+
+    if (!rawKey || !configStr) {
+      alert('비밀 코드와 Firebase 설정값 JSON을 모두 입력해 주세요.');
       return;
     }
 
-    var list = getSchedules();
-    list.push({ date: d, time: t, text: txt, done: false });
-    saveSchedules(list);
+    const key = rawKey.toLowerCase();
+    localStorage.setItem('haru_room_key', key);
+    localStorage.setItem('haru_firebase_config', configStr);
 
-    document.getElementById("new-schedule-text").value = "";
-    showToast("마스킹 테이프 일정이 달력 줄눈 위에 부착되었습니다!");
-    renderMonthlyCalendar();
-    renderIntegratedChecklist();
-  });
+    closeSyncModal();
+    initFirebaseIfAvailable();
+    showToast('동기화 정보가 저장되었습니다. 클라우드 연결을 시작합니다.');
+  }
 
-  document.getElementById("new-schedule-date").value = realTodayIso;
+  function disconnectFirebase() {
+    if (!confirm('Firebase 동기화 연결을 해제하시겠습니까? (로컬 데이터는 그대로 보존됩니다)')) return;
+    if (unsubscribeFirestore) unsubscribeFirestore();
+    localStorage.removeItem('haru_room_key');
+    localStorage.removeItem('haru_firebase_config');
+    isFirestoreOnline = false;
+    firestoreDb = null;
+    updateSyncStatusUI('', '로컬 보관');
+    closeSyncModal();
+    showToast('클라우드 연결이 해제되었습니다.');
+  }
 
-  // 11. 동기화 모달
-  var syncModal = document.getElementById("sync-modal");
-  document.getElementById("btn-open-sync").addEventListener("click", function(){ syncModal.style.display = "flex"; });
-  document.getElementById("btn-sync-close").addEventListener("click", function(){ syncModal.style.display = "none"; });
-  document.getElementById("btn-firebase-guide-toggle").addEventListener("click", function(){
-    var guide = document.getElementById("firebase-guide-box");
-    guide.style.display = guide.style.display === "none" ? "block" : "none";
-  });
+  function initFirebaseIfAvailable() {
+    const roomKey = getRoomKey();
+    const configStr = localStorage.getItem('haru_firebase_config');
 
-  document.getElementById("btn-sync-save").addEventListener("click", function(){
-    var code = document.getElementById("input-secret-code").value.trim();
-    var config = document.getElementById("input-firebase-config").value.trim();
-    if (!code) { showToast("개인 비밀 코드를 입력해주세요."); return; }
-    if (!config) { showToast("Firebase 설정값을 입력해주세요."); return; }
-    syncService.connect(code, config, true);
-    syncModal.style.display = "none";
-  });
+    if (!roomKey || !configStr) {
+      updateSyncStatusUI('', '로컬 보관');
+      return;
+    }
 
-  document.getElementById("btn-sync-disconnect").addEventListener("click", function(){
-    syncService.disconnect();
-    syncModal.style.display = "none";
-  });
+    try {
+      const config = JSON.parse(configStr);
+      if (!firebase.apps.length) {
+        firebase.initializeApp(config);
+      }
+      firestoreDb = firebase.firestore();
+      isFirestoreOnline = true;
+      updateSyncStatusUI('online', '실시간 연동 중');
+      listenToRoomChanges(roomKey);
+      listenToMetaChanges(roomKey);
+    } catch (e) {
+      console.error(e);
+      isFirestoreOnline = false;
+      updateSyncStatusUI('error', '연결 오류');
+    }
+  }
 
-  document.getElementById("btn-export-backup").addEventListener("click", function(){
-    var backupData = {};
-    for (var i = 0; i < localStorage.length; i++){
-      var key = localStorage.key(i);
-      if (key && key.startsWith("haru_")) {
-        backupData[key] = getStorage(key, null);
+  function listenToRoomChanges(roomKey) {
+    if (unsubscribeFirestore) unsubscribeFirestore();
+
+    const daysCol = firestoreDb.collection('haru_diaries').doc(roomKey).collection('days');
+    unsubscribeFirestore = daysCol.onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+        const data = change.doc.data();
+        const dateKey = change.doc.id;
+        if (!data) return;
+
+        if (data.senderId === CLIENT_ID) return;
+
+        daysCache[dateKey] = data;
+        localStorage.setItem(getDayStorageKey(dateKey), JSON.stringify(data));
+
+        if (dateKey === currentDate) {
+          isRemoteApplying = true;
+          loadDayData(currentDate);
+          isRemoteApplying = false;
+        }
+      });
+    }, err => {
+      console.error(err);
+      updateSyncStatusUI('error', '수신 오류');
+    });
+  }
+
+  function listenToMetaChanges(roomKey) {
+    const metaCol = firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta');
+    metaCol.onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+        const docId = change.doc.id;
+        const data = change.doc.data();
+        if (!data || data.senderId === CLIENT_ID) return;
+
+        if (docId === 'routines' && data.list) {
+          routinesMaster = data.list;
+          localStorage.setItem('haru_routines', JSON.stringify(routinesMaster));
+          renderDailyIntegratedSection(daysCache[currentDate] || {});
+        } else if (docId === 'schedules' && data.list) {
+          schedulesMaster = data.list;
+          localStorage.setItem('haru_schedules', JSON.stringify(schedulesMaster));
+          renderDailyIntegratedSection(daysCache[currentDate] || {});
+          renderMonthCalendar();
+        }
+      });
+    });
+  }
+
+  function syncDayToFirestore(dateStr, data) {
+    const roomKey = getRoomKey();
+    if (!roomKey || !firestoreDb) return;
+
+    updateSyncStatusUI('syncing', '클라우드 저장 중');
+    const cleanData = sanitizeForFirestore(data);
+
+    firestoreDb.collection('haru_diaries')
+      .doc(roomKey)
+      .collection('days')
+      .doc(dateStr)
+      .set(cleanData, { merge: true })
+      .then(() => {
+        updateSyncStatusUI('online', '실시간 연동 중');
+      })
+      .catch(err => {
+        console.error(err);
+        updateSyncStatusUI('error', '저장 오류');
+      });
+  }
+
+  async function forcePullFromCloud() {
+    const roomKey = getRoomKey();
+    if (!roomKey || !firestoreDb) {
+      alert('Firebase 연결 설정을 먼저 완료해 주세요.');
+      return;
+    }
+    try {
+      updateSyncStatusUI('syncing', '데이터 가져오는 중');
+      const snap = await firestoreDb.collection('haru_diaries').doc(roomKey).collection('days').get();
+      snap.forEach(doc => {
+        const d = doc.data();
+        daysCache[doc.id] = d;
+        localStorage.setItem(getDayStorageKey(doc.id), JSON.stringify(d));
+      });
+      loadDayData(currentDate);
+      updateSyncStatusUI('online', '실시간 연동 중');
+      showToast('클라우드에서 최신 데이터를 모두 불러왔습니다!');
+    } catch (e) {
+      console.error(e);
+      alert('데이터 가져오기 실패: ' + e.message);
+      updateSyncStatusUI('error', '오류 발생');
+    }
+  }
+
+  function exportFullBackup() {
+    const backup = {
+      exportTime: new Date().toISOString(),
+      roomKey: getRoomKey(),
+      routines: routinesMaster,
+      schedules: schedulesMaster,
+      days: {}
+    };
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('haru_day_')) {
+        try {
+          backup.days[k.replace('haru_day_', '')] = JSON.parse(localStorage.getItem(k));
+        } catch (e) {}
       }
     }
-    var blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
+
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
     a.href = url;
-    a.download = "haru_diary_backup_" + realTodayIso + ".json";
+    a.download = `하루의페이지_전체백업_${getTodayStr()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast("전체 다이어리 백업 파일이 저장되었습니다.");
-  });
+    showToast('백업 파일이 안전하게 다운로드되었습니다.');
+  }
 
-  document.getElementById("file-import-backup").addEventListener("change", function(e){
-    var file = e.target.files[0];
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function(evt){
-      try {
-        var data = JSON.parse(evt.target.result);
-        for (var k in data) {
-          if (k.startsWith("haru_")) setStorage(k, data[k]);
-        }
-        showToast("백업 데이터가 성공적으로 복원되었습니다!");
-        loadDayData(currentIso);
-        renderMonthlyCalendar();
-        syncModal.style.display = "none";
-      } catch(err) {
-        showToast("올바른 백업 JSON 파일이 아닙니다.");
-      }
-    };
-    reader.readAsText(file);
-  });
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag));
+  }
 
-  // 12. 캔버스 초기화
-  initInkCanvas("canvas-left", function(){ return state.today.strokes["canvas-left"]; }, saveTodayData);
-  initInkCanvas("canvas-todo-feedback", function(){ return state.today.strokes["canvas-todo-feedback"]; }, saveTodayData);
-  initInkCanvas("canvas-gratitude", function(){ return state.today.strokes["canvas-gratitude"]; }, saveTodayData);
-  initInkCanvas("canvas-tome", function(){ return state.today.strokes["canvas-tome"]; }, saveTodayData);
-  initInkCanvas("canvas-budget-feedback", function(){ return state.today.strokes["canvas-budget-feedback"]; }, saveTodayData);
-
-  initInkCanvas("canvas-week-review", function(){ return state.weekReview.strokes; }, function(){
-    saveCurrentWeekReview();
-    showToast("주간 회고가 저장되었습니다");
-  }, function(){ return state.weekReview.height || 240; }, function(h){ state.weekReview.height = h; });
-
-  initInkCanvas("canvas-month-review", function(){ return state.monthReview.strokes; }, function(){
-    saveCurrentMonthBoard();
-    showToast("월간 회고가 저장되었습니다");
-  }, function(){ return state.monthReview.height || 260; }, function(h){ state.monthReview.height = h; });
-
-  renderPaletteChips();
-  updatePenStatusDisplay();
-  loadDayData(realTodayIso);
-  syncService.init();
-
+  document.addEventListener('DOMContentLoaded', initApp);
 })();
 </script>
 </body>
