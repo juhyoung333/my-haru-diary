@@ -44,7 +44,6 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* 반응형 컨테이너: PC 대화면에서는 1380px까지 시원하게 확장 */
   .app-container {
     max-width: 960px;
     margin: 0 auto;
@@ -59,9 +58,7 @@
     }
   }
 
-  /* ========================================================
-     🏷️ 뜯어진 마스킹 테이프 타이틀 (Torn Washi Tape Header)
-     ======================================================== */
+  /* 🏷️ 뜯어진 마스킹 테이프 타이틀 */
   .washi-tape-title {
     display: inline-flex;
     align-items: center;
@@ -76,8 +73,6 @@
     user-select: none;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     transition: transform 0.15s ease;
-
-    /* 손으로 찍 찢은 듯한 지그재그 엣지 효과 */
     clip-path: polygon(
       0% 0%, 100% 0%,
       98% 25%, 100% 50%, 98% 75%, 100% 100%,
@@ -206,7 +201,7 @@
     box-shadow: 0 2px 6px rgba(194,65,12,0.3);
   }
 
-  /* 상단 고정 스마트 펜 & 형광펜 트레이 */
+  /* 스마트 펜 & 형광펜 트레이 */
   .global-pen-container {
     position: sticky;
     top: 8px;
@@ -420,7 +415,7 @@
     gap: 14px;
   }
 
-  /* 날짜 네비게이션 헤더 */
+  /* 날짜 헤더 */
   .day-header-row {
     display: flex;
     justify-content: space-between;
@@ -632,9 +627,7 @@
     padding: 2px 6px;
   }
 
-  /* ========================================================
-     ⌨️ [✍️ 펜 | ⌨️ 타자] 듀얼 입력 모드 스위치 & UI 컴포넌트
-     ======================================================== */
+  /* 듀얼 모드 UI */
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -654,7 +647,6 @@
     gap: 6px;
   }
 
-  /* 듀얼 모드 토글 캡슐 버튼 */
   .dual-mode-pill {
     display: inline-flex;
     align-items: center;
@@ -701,7 +693,6 @@
   }
   .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* 캔버스 및 텍스트 래퍼 */
   .editor-wrapper-box {
     position: relative;
     border: 1.5px solid var(--line-rule);
@@ -733,7 +724,7 @@
   .ink-canvas.drawing-active { touch-action: none; }
   .ink-canvas.scroll-active { touch-action: pan-y; cursor: grab; }
 
-  /* ⌨️ 종이 다이어리 줄눈 맞춤 타이핑 텍스트 에어리어 */
+  /* 종이 줄눈 텍스트 에어리어 */
   .diary-lined-textarea {
     width: 100%;
     display: block;
@@ -753,7 +744,7 @@
     padding: 0 14px;
     resize: none;
     box-sizing: border-box;
-    overflow: hidden; /* 내부 스크롤바 완전 제거 및 전체 캡처 최적화 */
+    overflow: hidden;
     transition: height 0.15s ease-out;
     background-attachment: local;
   }
@@ -763,7 +754,6 @@
     font-size: 13px;
   }
 
-  /* 캔버스 확장 바 */
   .canvas-expand-bar {
     display: flex;
     justify-content: space-between;
@@ -801,7 +791,6 @@
     background: #FFF7ED;
   }
 
-  /* 수동 추가 할일 카운터 */
   .todo-counter-badge {
     display: inline-flex;
     align-items: center;
@@ -827,7 +816,6 @@
     outline: none;
   }
 
-  /* To Me 질문 */
   .tome-question-row {
     display: flex;
     align-items: center;
@@ -856,7 +844,6 @@
     color: var(--ink-soft);
   }
 
-  /* 통계 지표 */
   .stat-grid-3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -883,7 +870,6 @@
     color: var(--accent);
   }
 
-  /* 주간 아카이브 */
   .week-archive-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -920,7 +906,7 @@
     background: #FFFFFF;
   }
 
-  /* 양면 스프레드(Two-Page Spread) */
+  /* 양면 스프레드 */
   .month-spread-container {
     display: grid;
     grid-template-columns: 1fr;
@@ -940,7 +926,6 @@
     gap: 16px;
   }
 
-  /* 월간 헤더 바 */
   .month-header-bar {
     display: flex;
     justify-content: space-between;
@@ -971,7 +956,6 @@
     letter-spacing: -0.01em;
   }
 
-  /* 순백색 일체형 종이 다이어리 속지 */
   .paper-diary-sheet {
     background-color: #FFFFFF;
     border: 1.5px solid #D1D5DB;
@@ -1150,7 +1134,6 @@
     margin-top: 1px;
   }
 
-  /* 우측 페이지 먼슬리 사이드 카드 */
   .monthly-side-card {
     background: #FFFFFF;
     border: 1.5px solid var(--line);
@@ -1518,7 +1501,7 @@
       </div>
     </div>
 
-    <!-- 2단 손글씨 다이어리 레이아웃 -->
+    <!-- 2단 레이아웃 -->
     <div class="daily-grid">
       
       <!-- 좌측 열 -->
@@ -1549,7 +1532,7 @@
           </div>
         </div>
 
-        <!-- 당일 집중 할 일 & 메모 (220px) (듀얼 모드) -->
+        <!-- 당일 집중 할 일 & 메모 (듀얼 모드) -->
         <div class="paper-card">
           <div class="section-header">
             <div class="section-title">
@@ -1584,7 +1567,7 @@
           </div>
         </div>
 
-        <!-- 당일 투두 피드백 (200px) (듀얼 모드) -->
+        <!-- 당일 투두 피드백 (듀얼 모드) -->
         <div class="paper-card">
           <div class="section-header">
             <div class="section-title">
@@ -1708,7 +1691,6 @@
       <div class="week-archive-grid" id="week-archive-list"></div>
     </div>
 
-    <!-- 주간 총평 손글씨/타이핑 듀얼 모드 -->
     <div class="paper-card">
       <div class="section-header">
         <span class="washi-tape-title tape-sand">주간 총평 &amp; 다음 주 다짐</span>
@@ -1737,15 +1719,14 @@
     </div>
   </section>
 
-  <!-- 3. 월간 돌아보기 (방안 A: 양면 스프레드 Two-Page Spread) -->
+  <!-- 3. 월간 돌아보기 -->
   <section id="tab-month" class="tab-content" hidden>
     
     <div class="month-spread-container">
       
-      <!-- 좌측 페이지: 7x5 월간 달력 & 마스킹 테이프 일정 -->
+      <!-- 좌측 페이지: 7x5 월간 달력 -->
       <div class="spread-page-col">
         <div class="paper-card">
-          <!-- 상단 헤더 -->
           <div class="month-header-bar">
             <button type="button" class="btn-sm" id="btn-month-prev">‹ 이전 달</button>
             <div class="month-title-wrap">
@@ -1770,7 +1751,6 @@
             </div>
           </div>
 
-          <!-- 순백색 종이 다이어리 속지 스프레드 -->
           <div class="paper-diary-sheet">
             <div class="diary-dow-row">
               <div class="diary-dow-cell sun">SUN</div>
@@ -1785,7 +1765,6 @@
             <div class="diary-grid-table" id="month-calendar-grid"></div>
           </div>
 
-          <!-- 월간 캘린더 일정 등록 통합 허브 -->
           <div style="margin-top:14px; border-top:1.5px solid var(--line); padding-top:12px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span class="washi-tape-title tape-sand" style="font-size:12.5px;">마스킹 테이프 일정 등록</span>
@@ -1801,10 +1780,9 @@
         </div>
       </div>
 
-      <!-- 우측 페이지: 이달의 목표, 위시리스트 & 월간 회고 (듀얼 모드) -->
+      <!-- 우측 페이지: 목표, 위시리스트 & 월간 회고 -->
       <div class="spread-page-col">
         
-        <!-- 📌 This Month's Focus (핵심 목표 3가지) -->
         <div class="monthly-side-card">
           <div class="monthly-side-title">
             <span class="washi-tape-title tape-peach">THIS MONTH FOCUS</span>
@@ -1826,7 +1804,6 @@
           </div>
         </div>
 
-        <!-- 🛒 Monthly Wishlist & Memo (위시/메모) -->
         <div class="monthly-side-card">
           <div class="monthly-side-title">
             <span class="washi-tape-title tape-sage">WISHLIST &amp; MEMO</span>
@@ -1835,7 +1812,6 @@
           <textarea id="month-wishlist-memo" class="wishlist-memo-area" rows="3" placeholder="• 가을 트렌치코트 구경 가기&#10;• 국립현대미술관 전시 관람 예매"></textarea>
         </div>
 
-        <!-- ✍️ 월간 회고 (손글씨 & 타이핑 듀얼 모드) -->
         <div class="paper-card">
           <div class="section-header">
             <span class="washi-tape-title tape-sand">이번 달의 성장과 배움</span>
@@ -1924,7 +1900,7 @@
       <textarea id="input-firebase-config" class="sync-input" rows="4" style="font-size:11.5px; resize:vertical;" placeholder='{ "apiKey": "...", "projectId": "...", ... }'></textarea>
       <div id="firebase-guide-box" style="display:none; background:#FFF7ED; border:1px solid #FFEDD5; border-radius:8px; padding:10px; margin-top:6px; font-size:11.5px; color:var(--ink-soft); line-height:1.5;">
         <strong>📌 무료 Firebase 설정 3단계:</strong><br>
-        1. <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent); font-weight:700;">Firebase 콘솔</a>에서 새 프로젝트 생성<br>
+        1. Firebase 콘솔에서 새 프로젝트 생성<br>
         2. Firestore 데이터베이스 생성 (테스트 모드로 시작)<br>
         3. 프로젝트 설정 &gt; 웹 앱(&lt;/&gt;) 추가 후 나오는 <code>firebaseConfig</code> 복사해 위 칸에 붙여넣기
       </div>
@@ -1960,7 +1936,6 @@
   </div>
 </div>
 
-<!-- 토스트 안내 -->
 <div id="toast-notice" class="toast-notice">저장되었습니다</div>
 
 <script>
@@ -1997,7 +1972,13 @@
     "canvas-month-review": 260
   };
 
-  // 듀얼 모드 지원을 위한 기본 상태 데이터
+  // 객체 내 undefined 제거 유틸리티 (Firestore 쓰기 오류 완전 차단)
+  function sanitizeForFirestore(obj) {
+    return JSON.parse(JSON.stringify(obj, function(k, v){
+      return v === undefined ? "" : v;
+    }));
+  }
+
   function createDefaultDayState(){
     return {
       budget: 0,
@@ -2006,6 +1987,7 @@
       todoTotal: "",
       routineDone: {},
       canvasHeights: Object.assign({}, DEFAULT_CANVAS_HEIGHTS),
+      rev: 1, // 버전 카운터 (기기 간 시계 오차 완전 극복)
       updatedAt: 0,
       strokes: {
         "canvas-left": [],
@@ -2033,11 +2015,10 @@
 
   var state = {
     today: createDefaultDayState(),
-    weekReview: { strokes: [], text: "", inputMode: "pen", height: 240, updatedAt: 0 },
-    monthReview: { strokes: [], text: "", inputMode: "pen", height: 260, focus1: "", focus2: "", focus3: "", wishlist: "", updatedAt: 0 }
+    weekReview: { strokes: [], text: "", inputMode: "pen", height: 240, rev: 1, updatedAt: 0 },
+    monthReview: { strokes: [], text: "", inputMode: "pen", height: 260, focus1: "", focus2: "", focus3: "", wishlist: "", rev: 1, updatedAt: 0 }
   };
 
-  // 2. 로컬 스토리지
   var STORAGE_KEY_PREFIX = "haru_day_";
   var STORAGE_WEEK_PREFIX = "haru_week_";
   var STORAGE_MONTH_PREFIX = "haru_month_";
@@ -2075,7 +2056,7 @@
     syncService.pushSchedules(arr);
   }
 
-  // 3. 🔐 실시간 동기화 서비스
+  // 3. 🔐 실시간 동기화 서비스 (무제한 양방향 영구 연동 엔진)
   var syncService = {
     active: false,
     db: null,
@@ -2113,8 +2094,9 @@
         localStorage.setItem(STORAGE_SYNC_SECRET, self.secretCode);
         localStorage.setItem(STORAGE_SYNC_FBCONFIG, typeof configStr === "string" ? configStr : JSON.stringify(configStr));
 
+        // Firestore 오프라인 영속성 최적화 & 인증
         firebase.auth().signInAnonymously().catch(function(err){
-          console.warn("인증 알림:", err);
+          console.warn("익명 인증 알림:", err);
         }).finally(function(){
           self.updateStatusUI("online");
           self.listenToCurrentDay();
@@ -2174,15 +2156,31 @@
       var docRef = self.db.collection("haru_diaries").doc(self.secretCode)
                           .collection("days").doc(currentIso);
 
-      self.unsubDay = docRef.onSnapshot(function(doc){
+      // includeMetadataChanges를 통해 로컬 변경과 서버 원격 변경을 정밀 분리
+      self.unsubDay = docRef.onSnapshot({ includeMetadataChanges: true }, function(doc){
         if (doc.exists) {
+          // 내가 로컬에서 방금 작성하여 서버로 전송 중인 이벤트(hasPendingWrites)는 내 UI를 리셋하지 않음
+          if (doc.metadata.hasPendingWrites) return;
+
           var cloudData = doc.data();
-          if (!isCurrentlyDrawing && cloudData && (!state.today.updatedAt || cloudData.updatedAt > state.today.updatedAt)) {
-            state.today = Object.assign(state.today, cloudData);
-            setStorage(STORAGE_KEY_PREFIX + currentIso, state.today);
-            syncUIFromState();
+          if (!isCurrentlyDrawing && cloudData) {
+            var cloudRev = cloudData.rev || 0;
+            var localRev = state.today.rev || 0;
+
+            // 상대 기기에서 변경된 최신 데이터가 감지되면 즉시 반영
+            if (cloudRev >= localRev || (!cloudRev && cloudData.updatedAt !== state.today.updatedAt)) {
+              // 현재 활성 타이핑 포커스가 있는 경우 해당 입력창은 덮어쓰지 않고 보호
+              var activeEl = document.activeElement;
+              var activeId = activeEl ? activeEl.id : null;
+
+              state.today = Object.assign(state.today, cloudData);
+              setStorage(STORAGE_KEY_PREFIX + currentIso, state.today);
+              syncUIFromState(activeId);
+            }
           }
         }
+      }, function(err){
+        console.error("Firestore onSnapshot error:", err);
       });
     },
 
@@ -2194,8 +2192,8 @@
       var docRef = self.db.collection("haru_diaries").doc(self.secretCode)
                           .collection("meta").doc("schedules");
 
-      self.unsubSchedules = docRef.onSnapshot(function(doc){
-        if (doc.exists) {
+      self.unsubSchedules = docRef.onSnapshot({ includeMetadataChanges: true }, function(doc){
+        if (doc.exists && !doc.metadata.hasPendingWrites) {
           setStorage(STORAGE_SCHEDULES_KEY, doc.data().items || []);
           renderIntegratedChecklist();
           renderMonthlyCalendar();
@@ -2211,8 +2209,8 @@
       var docRef = self.db.collection("haru_diaries").doc(self.secretCode)
                           .collection("meta").doc("routines");
 
-      self.unsubRoutines = docRef.onSnapshot(function(doc){
-        if (doc.exists) {
+      self.unsubRoutines = docRef.onSnapshot({ includeMetadataChanges: true }, function(doc){
+        if (doc.exists && !doc.metadata.hasPendingWrites) {
           setStorage(STORAGE_ROUTINES_KEY, doc.data().items || []);
           renderIntegratedChecklist();
           renderRoutineManagerModalList();
@@ -2224,40 +2222,57 @@
       var self = this;
       if (!self.active || !self.db) return;
       self.updateStatusUI("syncing");
+
+      // 버전 번호 증가 (기기간 시계 오차와 상관없이 항상 최신으로 전진)
+      state.today.rev = (state.today.rev || 0) + 1;
       state.today.updatedAt = Date.now();
+
+      var sanitized = sanitizeForFirestore(state.today);
+
       self.db.collection("haru_diaries").doc(self.secretCode)
              .collection("days").doc(currentIso)
-             .set(state.today, { merge: true }).then(function(){
+             .set(sanitized, { merge: true })
+             .then(function(){
                self.updateStatusUI("online");
+             })
+             .catch(function(err){
+               console.error("Firestore 전송 실패:", err);
+               self.updateStatusUI("error");
              });
     },
 
     pushSchedules: function(items){
       if (!this.active || !this.db) return;
+      var clean = sanitizeForFirestore({ items: items, updatedAt: Date.now() });
       this.db.collection("haru_diaries").doc(this.secretCode)
              .collection("meta").doc("schedules")
-             .set({ items: items, updatedAt: Date.now() }, { merge: true });
+             .set(clean, { merge: true });
     },
 
     pushRoutines: function(items){
       if (!this.active || !this.db) return;
+      var clean = sanitizeForFirestore({ items: items, updatedAt: Date.now() });
       this.db.collection("haru_diaries").doc(this.secretCode)
              .collection("meta").doc("routines")
-             .set({ items: items, updatedAt: Date.now() }, { merge: true });
+             .set(clean, { merge: true });
     },
 
     pushWeekReview: function(weekIso, data){
       if (!this.active || !this.db) return;
+      data.rev = (data.rev || 0) + 1;
+      var clean = sanitizeForFirestore(data);
       this.db.collection("haru_diaries").doc(this.secretCode)
              .collection("reviews").doc("week_" + weekIso)
-             .set(data, { merge: true });
+             .set(clean, { merge: true });
     },
 
     pushMonthReview: function(yearMonth, data){
       if (!this.active || !this.db) return;
+      data.rev = (data.rev || 0) + 1;
+      var clean = sanitizeForFirestore(data);
       this.db.collection("haru_diaries").doc(this.secretCode)
              .collection("reviews").doc("month_" + yearMonth)
-             .set(data, { merge: true });
+             .set(clean, { merge: true });
     }
   };
 
@@ -2351,7 +2366,7 @@
     badgeEl.textContent = "달성 " + completedItems + " / " + totalItems;
   }
 
-  // 5. 듀얼 모드(✍️ 펜 ↔ ⌨️ 타자) 렌더링 및 UI 동기화
+  // 5. 듀얼 모드 UI 및 동기화
   var DUAL_TARGETS = [
     { target: "budget-feedback", canvasId: "canvas-budget-feedback", wrapId: "wrap-canvas-budget-feedback", textId: "text-budget-feedback" },
     { target: "left", canvasId: "canvas-left", wrapId: "wrap-canvas-left", textId: "text-left" },
@@ -2365,14 +2380,11 @@
     var target = textareaEl.id.replace("text-", "");
     var minH = baseMinHeight || DEFAULT_CANVAS_HEIGHTS["canvas-" + target] || 85;
     
-    // 높이 초기화 후 실제 scrollHeight 측정 (줄바꿈/텍스트 삭제 시에도 정확히 계산)
     textareaEl.style.height = "auto";
     var calculatedH = textareaEl.scrollHeight;
     var finalH = Math.max(minH, calculatedH);
-    
     textareaEl.style.height = finalH + "px";
 
-    // 연관된 캔버스 및 래퍼도 함께 늘려 화면 캡처 및 전환 시 일체감 보장
     var canvasId = "canvas-" + target;
     if (activeCanvases[canvasId]) {
       activeCanvases[canvasId].setCanvasHeight(finalH, false);
@@ -2419,24 +2431,23 @@
     }
   }
 
-  function syncUIFromState(){
-    document.getElementById("input-budget").value = state.today.budget || "";
-    document.getElementById("input-spent").value = state.today.spent || "";
+  function syncUIFromState(skipElementId){
+    if (skipElementId !== "input-budget") document.getElementById("input-budget").value = state.today.budget || "";
+    if (skipElementId !== "input-spent") document.getElementById("input-spent").value = state.today.spent || "";
     updateBudgetDiff();
 
-    document.getElementById("input-todo-done").value = (state.today.todoDone !== undefined && state.today.todoDone !== null) ? state.today.todoDone : "";
-    document.getElementById("input-todo-total").value = (state.today.todoTotal !== undefined && state.today.todoTotal !== null) ? state.today.todoTotal : "";
+    if (skipElementId !== "input-todo-done") document.getElementById("input-todo-done").value = (state.today.todoDone !== undefined && state.today.todoDone !== null) ? state.today.todoDone : "";
+    if (skipElementId !== "input-todo-total") document.getElementById("input-todo-total").value = (state.today.todoTotal !== undefined && state.today.todoTotal !== null) ? state.today.todoTotal : "";
 
     renderIntegratedChecklist();
 
-    // 듀얼 모드 입력 데이터 및 상태 복원
     if (!state.today.texts) state.today.texts = {};
     if (!state.today.inputModes) state.today.inputModes = {};
 
     DUAL_TARGETS.forEach(function(item){
       var tVal = state.today.texts[item.target] || "";
       var textEl = document.getElementById(item.textId);
-      if (textEl) {
+      if (textEl && textEl.id !== skipElementId) {
         textEl.value = tVal;
         autoResizeTextarea(textEl);
       }
@@ -2508,10 +2519,9 @@
 
   var syncDebounceTimer = null;
   function saveTodayData(){
-    state.today.updatedAt = Date.now();
     setStorage(STORAGE_KEY_PREFIX + currentIso, state.today);
     clearTimeout(syncDebounceTimer);
-    syncDebounceTimer = setTimeout(function(){ syncService.pushDayData(); }, 350);
+    syncDebounceTimer = setTimeout(function(){ syncService.pushDayData(); }, 300);
   }
 
   function changeViewingDay(deltaDays){
@@ -2542,7 +2552,7 @@
     }
   }
 
-  // 6. 감성 펜 & 형광펜 스타일 팔레트 엔진
+  // 6. 감성 펜 & 형광펜
   var PEN_PALETTES = [
     { name: "먹색(기본)", color: "#2C2825" },
     { name: "테라코타 버건디", color: "#C2410C" },
@@ -2572,15 +2582,9 @@
     highlighterAlpha: 0.40
   };
 
-  function getCurrentColor(){
-    return globalPen.mode === "highlighter" ? globalPen.highlighterColor : globalPen.penColor;
-  }
-  function getCurrentSize(){
-    return globalPen.mode === "highlighter" ? globalPen.highlighterSize : globalPen.penSize;
-  }
-  function getCurrentAlpha(){
-    return globalPen.mode === "highlighter" ? globalPen.highlighterAlpha : globalPen.penAlpha;
-  }
+  function getCurrentColor(){ return globalPen.mode === "highlighter" ? globalPen.highlighterColor : globalPen.penColor; }
+  function getCurrentSize(){ return globalPen.mode === "highlighter" ? globalPen.highlighterSize : globalPen.penSize; }
+  function getCurrentAlpha(){ return globalPen.mode === "highlighter" ? globalPen.highlighterAlpha : globalPen.penAlpha; }
 
   function updatePenStatusDisplay(){
     var color = getCurrentColor();
@@ -2624,9 +2628,7 @@
           globalPen.highlighterColor = item.color;
         } else {
           globalPen.penColor = item.color;
-          if (globalPen.mode !== "pen") {
-            setPenMode("pen");
-          }
+          if (globalPen.mode !== "pen") setPenMode("pen");
         }
         renderPaletteChips();
         updatePenStatusDisplay();
@@ -2653,9 +2655,7 @@
     }
 
     for (var k in activeCanvases) {
-      if (activeCanvases[k].updateModeClass) {
-        activeCanvases[k].updateModeClass(mode);
-      }
+      if (activeCanvases[k].updateModeClass) activeCanvases[k].updateModeClass(mode);
     }
 
     renderPaletteChips();
@@ -2680,8 +2680,9 @@
   }
 
   function strokeIntersects(stroke, pt, radius) {
-    for (var i = 0; i < stroke.length - 1; i++) {
-      if (distToSegment(pt, stroke[i], stroke[i+1]) <= radius) return true;
+    var pts = stroke.pts || stroke;
+    for (var i = 0; i < pts.length - 1; i++) {
+      if (distToSegment(pt, pts[i], pts[i+1]) <= radius) return true;
     }
     return false;
   }
@@ -2710,7 +2711,6 @@
       canvas.setAttribute("height", currentHeight);
       canvas.style.height = currentHeight + "px";
 
-      // 대응되는 textarea의 높이도 일치시켜 전환 시 이질감 제거
       var correspondingTarget = canvasId.replace("canvas-", "");
       var textareaEl = document.getElementById("text-" + correspondingTarget);
       if (textareaEl) textareaEl.style.height = currentHeight + "px";
@@ -2728,7 +2728,8 @@
     }
 
     function drawStroke(stroke){
-      if (stroke.length < 2) return;
+      var pts = stroke.pts || stroke;
+      if (!pts || pts.length < 2) return;
       ctx.beginPath();
       ctx.save();
       ctx.strokeStyle = stroke.color || "#2C2825";
@@ -2743,9 +2744,9 @@
         ctx.globalCompositeOperation = "source-over";
       }
 
-      ctx.moveTo(stroke[0].x, stroke[0].y);
-      for (var i = 1; i < stroke.length; i++){
-        ctx.lineTo(stroke[i].x, stroke[i].y);
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (var i = 1; i < pts.length; i++){
+        ctx.lineTo(pts[i].x, pts[i].y);
       }
       ctx.stroke();
       ctx.restore();
@@ -2759,7 +2760,7 @@
       for (var i = 0; i < strokes.length; i++){
         drawStroke(strokes[i]);
       }
-      if (currentStroke && currentStroke.length > 1){
+      if (currentStroke && currentStroke.pts && currentStroke.pts.length > 1){
         drawStroke(currentStroke);
       }
     }
@@ -2798,17 +2799,16 @@
       } else {
         drawing = true;
         isCurrentlyDrawing = true;
-        currentStroke = [pos];
-        currentStroke.color = getCurrentColor();
-        currentStroke.alpha = getCurrentAlpha();
-        currentStroke.mode = globalPen.mode;
-
         var baseW = getCurrentSize();
-        if (globalPen.mode === "highlighter") {
-          currentStroke.width = baseW;
-        } else {
-          currentStroke.width = isPen ? (e.pressure ? Math.max(1.0, e.pressure * baseW * 1.8) : baseW) : baseW;
-        }
+        var calcW = globalPen.mode === "highlighter" ? baseW : (isPen ? (e.pressure ? Math.max(1.0, e.pressure * baseW * 1.8) : baseW) : baseW);
+
+        currentStroke = {
+          pts: [pos],
+          color: getCurrentColor(),
+          alpha: getCurrentAlpha(),
+          mode: globalPen.mode,
+          width: calcW
+        };
       }
     });
 
@@ -2821,7 +2821,7 @@
         if (globalPen.mode !== "highlighter" && e.pointerType === "pen" && e.pressure) {
           currentStroke.width = Math.max(1.0, e.pressure * getCurrentSize() * 1.8);
         }
-        currentStroke.push(pos);
+        currentStroke.pts.push(pos);
         redraw();
       }
     });
@@ -2830,12 +2830,13 @@
       if (!drawing) return;
       drawing = false;
       isCurrentlyDrawing = false;
-      if ((globalPen.mode === "pen" || globalPen.mode === "highlighter") && currentStroke && currentStroke.length > 1){
+      if ((globalPen.mode === "pen" || globalPen.mode === "highlighter") && currentStroke && currentStroke.pts && currentStroke.pts.length > 1){
         getStrokesFn().push(currentStroke);
 
         var maxY = 0;
-        for (var i = 0; i < currentStroke.length; i++) {
-          if (currentStroke[i].y > maxY) maxY = currentStroke[i].y;
+        var pts = currentStroke.pts;
+        for (var i = 0; i < pts.length; i++) {
+          if (pts[i].y > maxY) maxY = pts[i].y;
         }
         if (maxY > (currentHeight - 35) && currentHeight < 1400) {
           setCanvasHeight(currentHeight + 70, true);
@@ -2860,11 +2861,7 @@
       getCanvasHeight: function(){ return currentHeight; },
       setCanvasHeight: setCanvasHeight,
       updateModeClass: function(mode){
-        if (mode === "scroll") {
-          canvas.className = "ink-canvas scroll-active";
-        } else {
-          canvas.className = "ink-canvas drawing-active";
-        }
+        canvas.className = (mode === "scroll") ? "ink-canvas scroll-active" : "ink-canvas drawing-active";
       },
       undo: function(){
         var strokes = getStrokesFn();
@@ -2883,7 +2880,7 @@
     };
   }
 
-  // 8. 듀얼 모드 토글 이벤트 및 텍스트 자동 저장
+  // 8. 듀얼 모드 토글 & 텍스트 저장
   document.querySelectorAll(".dual-mode-pill").forEach(function(pill){
     var target = pill.getAttribute("data-target");
     pill.querySelectorAll(".dual-pill-btn").forEach(function(btn){
@@ -2906,7 +2903,6 @@
     });
   });
 
-  // 데일리 텍스트 영역 인풋 리스너
   DUAL_TARGETS.forEach(function(item){
     var el = document.getElementById(item.textId);
     if (el) {
@@ -2919,7 +2915,6 @@
     }
   });
 
-  // 주간 및 월간 텍스트 영역 인풋 리스너
   document.getElementById("text-week-review").addEventListener("input", function(){
     state.weekReview.text = this.value;
     autoResizeTextarea(this);
@@ -2931,7 +2926,7 @@
     saveCurrentMonthBoard();
   });
 
-  // 9. 툴바 이벤트 바인딩
+  // 9. 툴바 이벤트
   document.getElementById("btn-global-pen").addEventListener("click", function(){ setPenMode("pen"); });
   document.getElementById("btn-global-highlighter").addEventListener("click", function(){ setPenMode("highlighter"); });
   document.getElementById("btn-global-eraser").addEventListener("click", function(){ setPenMode("eraser"); });
@@ -3201,7 +3196,7 @@
     });
   });
 
-  // 10. 주간 및 월간 렌더링 로직
+  // 10. 주간 및 월간 렌더링
   function renderWeeklyReview(){
     var now = new Date(viewingDate.getTime());
     var dayOfWeek = now.getDay();
@@ -3282,16 +3277,17 @@
           var strokes = dayData.strokes["canvas-todo-feedback"];
           for (var s = 0; s < strokes.length; s++){
             var st = strokes[s];
-            if (st.length < 2) continue;
+            var pts = st.pts || st;
+            if (!pts || pts.length < 2) continue;
             ctx.beginPath();
             ctx.save();
             ctx.strokeStyle = st.color || "#2C2825";
             ctx.globalAlpha = st.alpha !== undefined ? st.alpha : 1.0;
             ctx.lineWidth = 1.2;
             ctx.lineCap = "round";
-            ctx.moveTo(st[0].x * 0.45, st[0].y * 0.55);
-            for (var p = 1; p < st.length; p++){
-              ctx.lineTo(st[p].x * 0.45, st[p].y * 0.55);
+            ctx.moveTo(pts[0].x * 0.45, pts[0].y * 0.55);
+            for (var p = 1; p < pts.length; p++){
+              ctx.lineTo(pts[p].x * 0.45, pts[p].y * 0.55);
             }
             ctx.stroke();
             ctx.restore();
@@ -3307,7 +3303,7 @@
     document.getElementById("week-todo-count").textContent = totalDone + " / " + totalTasks;
     document.getElementById("week-feedback-days").textContent = feedbackDayCount + " / 7일";
 
-    var savedWeek = getStorage(STORAGE_WEEK_PREFIX + weekKey, { strokes: [], text: "", inputMode: "pen", height: 240, updatedAt: 0 });
+    var savedWeek = getStorage(STORAGE_WEEK_PREFIX + weekKey, { strokes: [], text: "", inputMode: "pen", height: 240, rev: 1, updatedAt: 0 });
     state.weekReview = savedWeek;
     document.getElementById("text-week-review").value = savedWeek.text || "";
     applyInputMode("week-review", savedWeek.inputMode || "pen");
@@ -3464,7 +3460,7 @@
     document.getElementById("month-avg-rate").textContent = (practicedDays > 0 ? Math.round((practicedDays / lastDate) * 100) : 0) + "%";
 
     var monthKey = calYear + '-' + pad(calMonth + 1);
-    var savedMonth = getStorage(STORAGE_MONTH_PREFIX + monthKey, { strokes: [], text: "", inputMode: "pen", height: 260, focus1: "", focus2: "", focus3: "", wishlist: "", updatedAt: 0 });
+    var savedMonth = getStorage(STORAGE_MONTH_PREFIX + monthKey, { strokes: [], text: "", inputMode: "pen", height: 260, focus1: "", focus2: "", focus3: "", wishlist: "", rev: 1, updatedAt: 0 });
     state.monthReview = savedMonth;
 
     document.getElementById("month-focus-1").value = savedMonth.focus1 || "";
@@ -3513,7 +3509,7 @@
 
   document.getElementById("new-schedule-date").value = realTodayIso;
 
-  // 11. 동기화 모달 이벤트
+  // 11. 동기화 모달
   var syncModal = document.getElementById("sync-modal");
   document.getElementById("btn-open-sync").addEventListener("click", function(){ syncModal.style.display = "flex"; });
   document.getElementById("btn-sync-close").addEventListener("click", function(){ syncModal.style.display = "none"; });
