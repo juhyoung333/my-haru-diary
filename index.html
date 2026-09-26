@@ -1972,6 +1972,9 @@
     "canvas-month-review": 260
   };
 
+  // 고유 기기 세션 ID (내가 전송한 데이터가 메아리로 돌아와 내 화면을 덮어쓰는 버그 원천 차단)
+  var CLIENT_ID = "client_" + Math.random().toString(36).substring(2, 10) + "_" + Date.now();
+
   // 객체 내 undefined 제거 유틸리티 (Firestore 쓰기 오류 완전 차단)
   function sanitizeForFirestore(obj) {
     return JSON.parse(JSON.stringify(obj, function(k, v){
@@ -1988,6 +1991,7 @@
       routineDone: {},
       canvasHeights: Object.assign({}, DEFAULT_CANVAS_HEIGHTS),
       rev: 1, // 버전 카운터 (기기 간 시계 오차 완전 극복)
+      lastEditor: CLIENT_ID,
       updatedAt: 0,
       strokes: {
         "canvas-left": [],
@@ -2015,8 +2019,8 @@
 
   var state = {
     today: createDefaultDayState(),
-    weekReview: { strokes: [], text: "", inputMode: "pen", height: 240, rev: 1, updatedAt: 0 },
-    monthReview: { strokes: [], text: "", inputMode: "pen", height: 260, focus1: "", focus2: "", focus3: "", wishlist: "", rev: 1, updatedAt: 0 }
+    weekReview: { strokes: [], text: "", inputMode: "pen", height: 240, rev: 1, lastEditor: CLIENT_ID, updatedAt: 0 },
+    monthReview: { strokes: [], text: "", inputMode: "pen", height: 260, focus1: "", focus2: "", focus3: "", wishlist: "", rev: 1, lastEditor: CLIENT_ID, updatedAt: 0 }
   };
 
   var STORAGE_KEY_PREFIX = "haru_day_";
@@ -2163,13 +2167,18 @@
           if (doc.metadata.hasPendingWrites) return;
 
           var cloudData = doc.data();
-          if (!isCurrentlyDrawing && cloudData) {
+          if (!cloudData) return;
+
+          // ⭐️ 핵심 수정: 내가 방금 쓴 데이터가 서버에서 다시 내려올 때는(메아리 현상)
+          // 펜으로 필기 중인 현재 캔버스를 절대 덮어쓰지 않음!
+          if (cloudData.lastEditor === CLIENT_ID) return;
+
+          if (!isCurrentlyDrawing) {
             var cloudRev = cloudData.rev || 0;
             var localRev = state.today.rev || 0;
 
-            // 상대 기기에서 변경된 최신 데이터가 감지되면 즉시 반영
-            if (cloudRev >= localRev || (!cloudRev && cloudData.updatedAt !== state.today.updatedAt)) {
-              // 현재 활성 타이핑 포커스가 있는 경우 해당 입력창은 덮어쓰지 않고 보호
+            // 상대 기기에서 실제로 새로 쓴 최신 데이터일 때만 동기화
+            if (cloudRev > localRev || (!cloudRev && cloudData.updatedAt !== state.today.updatedAt)) {
               var activeEl = document.activeElement;
               var activeId = activeEl ? activeEl.id : null;
 
@@ -2223,8 +2232,9 @@
       if (!self.active || !self.db) return;
       self.updateStatusUI("syncing");
 
-      // 버전 번호 증가 (기기간 시계 오차와 상관없이 항상 최신으로 전진)
+      // 버전 번호 증가 및 작성 기기 ID 부여
       state.today.rev = (state.today.rev || 0) + 1;
+      state.today.lastEditor = CLIENT_ID;
       state.today.updatedAt = Date.now();
 
       var sanitized = sanitizeForFirestore(state.today);
@@ -2243,7 +2253,7 @@
 
     pushSchedules: function(items){
       if (!this.active || !this.db) return;
-      var clean = sanitizeForFirestore({ items: items, updatedAt: Date.now() });
+      var clean = sanitizeForFirestore({ items: items, lastEditor: CLIENT_ID, updatedAt: Date.now() });
       this.db.collection("haru_diaries").doc(this.secretCode)
              .collection("meta").doc("schedules")
              .set(clean, { merge: true });
@@ -2251,7 +2261,7 @@
 
     pushRoutines: function(items){
       if (!this.active || !this.db) return;
-      var clean = sanitizeForFirestore({ items: items, updatedAt: Date.now() });
+      var clean = sanitizeForFirestore({ items: items, lastEditor: CLIENT_ID, updatedAt: Date.now() });
       this.db.collection("haru_diaries").doc(this.secretCode)
              .collection("meta").doc("routines")
              .set(clean, { merge: true });
@@ -2260,6 +2270,7 @@
     pushWeekReview: function(weekIso, data){
       if (!this.active || !this.db) return;
       data.rev = (data.rev || 0) + 1;
+      data.lastEditor = CLIENT_ID;
       var clean = sanitizeForFirestore(data);
       this.db.collection("haru_diaries").doc(this.secretCode)
              .collection("reviews").doc("week_" + weekIso)
@@ -2269,6 +2280,7 @@
     pushMonthReview: function(yearMonth, data){
       if (!this.active || !this.db) return;
       data.rev = (data.rev || 0) + 1;
+      data.lastEditor = CLIENT_ID;
       var clean = sanitizeForFirestore(data);
       this.db.collection("haru_diaries").doc(this.secretCode)
              .collection("reviews").doc("month_" + yearMonth)
@@ -2694,6 +2706,7 @@
     var drawing = false;
     var currentStroke = null;
     var currentHeight = parseInt(canvas.getAttribute("height"), 10) || 200;
+    var activePointerId = null; // ⭐️ 활성화된 포인터 ID 추적 (손바닥/펜 충돌 완벽 방지)
 
     function resizeBacking(){
       var rect = canvas.getBoundingClientRect();
@@ -2729,7 +2742,7 @@
 
     function drawStroke(stroke){
       var pts = stroke.pts || stroke;
-      if (!pts || pts.length < 2) return;
+      if (!pts || pts.length === 0) return;
       ctx.beginPath();
       ctx.save();
       ctx.strokeStyle = stroke.color || "#2C2825";
@@ -2745,8 +2758,13 @@
       }
 
       ctx.moveTo(pts[0].x, pts[0].y);
-      for (var i = 1; i < pts.length; i++){
-        ctx.lineTo(pts[i].x, pts[i].y);
+      if (pts.length === 1) {
+        // 단일 점(Dot) 찍기 렌더링 지원
+        ctx.lineTo(pts[0].x + 0.2, pts[0].y + 0.2);
+      } else {
+        for (var i = 1; i < pts.length; i++){
+          ctx.lineTo(pts[i].x, pts[i].y);
+        }
       }
       ctx.stroke();
       ctx.restore();
@@ -2760,7 +2778,7 @@
       for (var i = 0; i < strokes.length; i++){
         drawStroke(strokes[i]);
       }
-      if (currentStroke && currentStroke.pts && currentStroke.pts.length > 1){
+      if (currentStroke && currentStroke.pts && currentStroke.pts.length > 0){
         drawStroke(currentStroke);
       }
     }
@@ -2774,7 +2792,7 @@
       var strokes = getStrokesFn();
       var changed = false;
       for (var i = strokes.length - 1; i >= 0; i--){
-        if (strokeIntersects(strokes[i], pt, 14)) {
+        if (strokeIntersects(strokes[i], pt, 16)) {
           strokes.splice(i, 1);
           changed = true;
         }
@@ -2787,8 +2805,17 @@
 
     canvas.addEventListener("pointerdown", function(e){
       var isPen = (e.pointerType === "pen");
+
+      // 이동 모드일 때는 터치/마우스 스크롤 허용
       if (!isPen && globalPen.mode === "scroll") return;
+
+      // ⭐️ 팜 리젝션: 이미 한 펜/손가락으로 그리고 있는데 손바닥(다른 포인터)이 닿으면 즉시 무시
+      if (drawing && activePointerId !== null && activePointerId !== e.pointerId) {
+        return;
+      }
+
       e.preventDefault();
+      activePointerId = e.pointerId;
       try { canvas.setPointerCapture(e.pointerId); } catch(err){}
 
       var pos = getPos(e);
@@ -2813,7 +2840,7 @@
     });
 
     canvas.addEventListener("pointermove", function(e){
-      if (!drawing) return;
+      if (!drawing || e.pointerId !== activePointerId) return;
       var pos = getPos(e);
       if (globalPen.mode === "eraser") {
         eraseAt(pos);
@@ -2826,11 +2853,20 @@
       }
     });
 
-    function endDrawing(){
+    function endDrawing(e){
       if (!drawing) return;
+      if (e && e.pointerId !== undefined && activePointerId !== null && e.pointerId !== activePointerId) return;
+
       drawing = false;
       isCurrentlyDrawing = false;
-      if ((globalPen.mode === "pen" || globalPen.mode === "highlighter") && currentStroke && currentStroke.pts && currentStroke.pts.length > 1){
+      activePointerId = null;
+
+      if ((globalPen.mode === "pen" || globalPen.mode === "highlighter") && currentStroke && currentStroke.pts && currentStroke.pts.length > 0){
+        // ⭐️ 점(Dot)을 찍었을 때(길이 1)도 버리지 않고 정상 획으로 등록
+        if (currentStroke.pts.length === 1) {
+          currentStroke.pts.push({ x: currentStroke.pts[0].x + 0.2, y: currentStroke.pts[0].y + 0.2 });
+        }
+
         getStrokesFn().push(currentStroke);
 
         var maxY = 0;
