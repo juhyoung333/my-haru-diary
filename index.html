@@ -704,9 +704,7 @@
     padding: 2px 4px;
   }
 
-  /* ------------------------------------------------------------- */
-  /* [방식 1] 초경량 원터치 미니 아이콘 3개 툴바 (No Popover)      */
-  /* ------------------------------------------------------------- */
+  /* [방식 1] 초경량 원터치 미니 아이콘 3개 툴바 */
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -826,7 +824,7 @@
     font-size: 12.5px;
   }
 
-  /* 카드 하단 미니멀 높이 조절 바 */
+  /* 카드 하단 미니 높이 조절 바 */
   .compact-resize-bar {
     display: flex;
     justify-content: flex-end;
@@ -943,6 +941,19 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .handwrite-feedback-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10.5px;
+    background: #FFF7ED;
+    border: 1px solid #FDE68A;
+    color: var(--accent);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
   }
 
   /* 월간 캘린더 */
@@ -1816,7 +1827,7 @@
             <span class="washi-tape-title tape-peach">소비 피드백</span>
             <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(오늘 소비에 대한 짧은 평)</span>
           </div>
-          <!-- [방식 1] 팝업 없이 즉시 작동하는 미니 아이콘 3개 -->
+          <!-- 팝업 없이 즉시 작동하는 미니 아이콘 3개 -->
           <div class="direct-action-tools">
             <button type="button" class="btn-mini-action btn-mode-toggle" data-target="budget-feedback" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
             <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-budget-feedback" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
@@ -2773,9 +2784,6 @@
     if (info) info.textContent = `${currentPenSize.toFixed(1)}px`;
   }
 
-  /* ------------------------------------------------------------- */
-  /* [방식 1] 즉시 실행 3개 미니 아이콘 이벤트 바인딩               */
-  /* ------------------------------------------------------------- */
   function initDirectTools() {
     // 1. 모드 토글 (✎ 펜 <-> ⌨️ 타자 원터치 스위칭)
     document.querySelectorAll('.btn-mode-toggle').forEach(btn => {
@@ -3833,6 +3841,7 @@
 
       let rateText = '0%';
       let todoCnt = '0/0';
+      let feedbackHtml = '<span style="color:var(--ink-faint); font-style:italic;">(피드백 없음)</span>';
 
       if (dayData) {
         const rTotal = routinesMaster.length;
@@ -3849,9 +3858,16 @@
         if (allTotal > 0) rateText = `${Math.round((allDone / allTotal) * 100)}%`;
         todoCnt = `${allDone}/${allTotal}`;
 
-        const hasFeedback = (dayData.texts && dayData.texts['todo-feedback'] && dayData.texts['todo-feedback'].trim()) ||
-          (dayData.strokes && dayData.strokes['canvas-todo-feedback'] && dayData.strokes['canvas-todo-feedback'].length > 0);
-        if (hasFeedback) feedbackDays++;
+        const textFb = dayData.texts && dayData.texts['todo-feedback'] ? dayData.texts['todo-feedback'].trim() : '';
+        const hasStrokes = dayData.strokes && dayData.strokes['canvas-todo-feedback'] && dayData.strokes['canvas-todo-feedback'].length > 0;
+
+        if (textFb) {
+          feedbackDays++;
+          feedbackHtml = escapeHtml(textFb);
+        } else if (hasStrokes) {
+          feedbackDays++;
+          feedbackHtml = `<span class="handwrite-feedback-pill">✍️ 손글씨 회고 작성됨</span>`;
+        }
       }
 
       col.innerHTML = `
@@ -3861,7 +3877,7 @@
         </div>
         <div style="font-size:11px; color:var(--ink-soft); font-family:var(--font-mono);">완료: ${todoCnt}</div>
         <div style="font-size:11px; color:var(--ink-soft); white-space:pre-wrap; max-height:80px; overflow-y:auto; border-top:1px dashed var(--line); padding-top:4px;">
-          ${escapeHtml(dayData?.texts?.['todo-feedback'] || '(피드백 없음)')}
+          ${feedbackHtml}
         </div>
       `;
 
