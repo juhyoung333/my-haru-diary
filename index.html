@@ -122,7 +122,7 @@
     border-top: 1px solid rgba(255, 255, 255, 0.7);
   }
 
-  /* 중요도(우선순위) 별표 및 하이라이트 스타일 */
+  /* 중요도(우선순위) 별표 및 하이라이트 */
   .priority-star-btn {
     border: none;
     background: transparent;
@@ -213,12 +213,6 @@
   .header-icon-btn:hover {
     border-color: var(--accent);
     color: var(--accent);
-  }
-  .header-icon-btn.active-drawer-btn {
-    background: var(--accent-soft);
-    border-color: var(--accent);
-    color: var(--accent);
-    font-weight: 700;
   }
   .backlog-count-pill {
     background: var(--accent);
@@ -710,71 +704,68 @@
     padding: 2px 4px;
   }
 
-  /* 듀얼 모드 UI */
+  /* ------------------------------------------------------------- */
+  /* [방식 1] 초경량 원터치 미니 아이콘 3개 툴바 (No Popover)      */
+  /* ------------------------------------------------------------- */
   .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 6px;
-    flex-wrap: wrap;
     gap: 6px;
   }
   .section-title {
     display: flex;
     align-items: center;
     gap: 6px;
+    min-width: 0;
   }
-  .canvas-tools {
-    display: flex;
+
+  .direct-action-tools {
+    display: inline-flex;
     align-items: center;
     gap: 4px;
+    flex-shrink: 0;
   }
-  .dual-mode-pill {
-    display: inline-flex;
-    align-items: center;
-    background: #F3F4F6;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 2px;
-    gap: 2px;
-  }
-  .dual-pill-btn {
-    border: none;
-    background: transparent;
-    padding: 2px 7px;
-    font-size: 10.5px;
-    font-weight: 600;
-    color: var(--ink-soft);
-    border-radius: 999px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    transition: all 0.15s ease;
-  }
-  .dual-pill-btn:hover { color: var(--ink); }
-  .dual-pill-btn.active {
-    background: #FFFFFF;
-    color: var(--accent);
-    font-weight: 700;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-  .btn-sm {
-    border: 1.5px solid var(--line);
-    background: #FFFFFF;
-    color: var(--ink-soft);
-    padding: 3px 7px;
-    border-radius: 6px;
-    font-size: 11px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    white-space: nowrap;
-    transition: all 0.15s ease;
-  }
-  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
 
+  .btn-mini-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: #FFFFFF;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.15s ease;
+    padding: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-mini-action:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .btn-mini-action:active {
+    transform: scale(0.92);
+  }
+  .btn-mini-action.type-active {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .btn-mini-action.danger-action:hover {
+    border-color: #EF4444;
+    color: #DC2626;
+    background: #FEF2F2;
+  }
+
+  /* 에디터 박스 & 캔버스 */
   .editor-wrapper-box {
     position: relative;
     border: 1.5px solid var(--line-rule);
@@ -835,38 +826,30 @@
     font-size: 12.5px;
   }
 
-  .canvas-expand-bar {
+  /* 카드 하단 미니멀 높이 조절 바 */
+  .compact-resize-bar {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 6px;
-    margin-top: 5px;
-    padding: 0 2px;
-  }
-  .expand-indicator {
-    font-size: 10px;
-    color: var(--ink-faint);
-    font-family: var(--font-sans);
-  }
-  .expand-btn-group {
-    display: flex;
+    justify-content: flex-end;
     align-items: center;
     gap: 4px;
+    margin-top: 4px;
+    padding: 0 2px;
   }
-  .btn-expand {
+  .btn-mini-resize {
     background: #FFFFFF;
     border: 1px dashed var(--line);
     color: var(--ink-soft);
-    font-size: 10.5px;
-    border-radius: 6px;
+    font-size: 10px;
+    border-radius: 5px;
     padding: 2px 7px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 2px;
     transition: all 0.15s ease;
+    white-space: nowrap;
   }
-  .btn-expand:hover {
+  .btn-mini-resize:hover {
     border-color: var(--accent);
     color: var(--accent);
     background: #FFF7ED;
@@ -1228,7 +1211,6 @@
   }
   .wishlist-memo-area:focus { border-color: var(--accent); }
 
-  /* 월간 백로그 서랍 안내 카드 */
   .month-backlog-callout-card {
     background: #FFFDF9;
     border: 1.5px dashed #FDE68A;
@@ -1248,9 +1230,7 @@
     gap: 6px;
   }
 
-  /* ------------------------------------------------------------- */
-  /* 대안 2: 슬라이드 아웃 서랍 (Slide-Out Backlog Drawer Sheet)   */
-  /* ------------------------------------------------------------- */
+  /* 슬라이드 아웃 백로그 서랍 */
   .backlog-drawer-backdrop {
     position: fixed;
     inset: 0;
@@ -1339,7 +1319,6 @@
     background-color: #FAFAFA;
   }
 
-  /* 서랍 신규 등록 폼 */
   .drawer-add-box {
     background: #FFFFFF;
     border: 1.5px solid var(--line);
@@ -1403,7 +1382,6 @@
     background: var(--accent-hover);
   }
 
-  /* 서랍 리스트 카드 */
   .drawer-item-list {
     display: flex;
     flex-direction: column;
@@ -1495,7 +1473,6 @@
     border-color: var(--accent);
   }
 
-  /* 인라인 날짜 배정기 */
   .inline-schedule-dock {
     background: #FFFDF9;
     border: 1.5px solid #FDE68A;
@@ -1701,7 +1678,6 @@
       <span>하루의 페이지</span>
     </div>
     <div class="top-bar-actions">
-      <!-- 대안 2: 상단 슬라이드 아웃 서랍 버튼 -->
       <button type="button" class="header-icon-btn" id="btn-open-backlog-drawer" title="공부 & 아이디어 백로그 서랍 열기">
         <span>📥 백로그 서랍</span>
         <span class="backlog-count-pill" id="header-backlog-count">0</span>
@@ -1724,7 +1700,7 @@
     <button type="button" class="nav-tab" data-tab="tab-month">월간 돌아보기</button>
   </nav>
 
-  <!-- 펜/도구 툴바 -->
+  <!-- 스마트 펜 트레이 -->
   <div class="global-pen-container" id="global-pen-container">
     <div class="global-pen-bar" id="global-pen-bar">
       <div class="pen-group-row">
@@ -1840,13 +1816,11 @@
             <span class="washi-tape-title tape-peach">소비 피드백</span>
             <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(오늘 소비에 대한 짧은 평)</span>
           </div>
-          <div class="canvas-tools">
-            <div class="dual-mode-pill" data-target="budget-feedback">
-              <button type="button" class="dual-pill-btn active" data-mode="pen">✍️ 펜</button>
-              <button type="button" class="dual-pill-btn" data-mode="type">⌨️ 타자</button>
-            </div>
-            <button type="button" class="btn-sm undo-canvas" data-canvas="canvas-budget-feedback" title="되돌리기">↶ 되돌리기</button>
-            <button type="button" class="btn-sm clear-canvas" data-canvas="canvas-budget-feedback" title="전체 지우기">지우기</button>
+          <!-- [방식 1] 팝업 없이 즉시 작동하는 미니 아이콘 3개 -->
+          <div class="direct-action-tools">
+            <button type="button" class="btn-mini-action btn-mode-toggle" data-target="budget-feedback" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
+            <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-budget-feedback" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
+            <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-budget-feedback" title="전체 지우기">🗑️</button>
           </div>
         </div>
         <div class="editor-wrapper-box" id="editor-box-budget-feedback">
@@ -1855,13 +1829,10 @@
           </div>
           <textarea id="text-budget-feedback" class="diary-lined-textarea" style="height:105px; display:none;" placeholder="오늘의 소비 습관과 감정을 자유롭게 타이핑해보세요..."></textarea>
         </div>
-        <div class="canvas-expand-bar">
-          <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
-          <div class="expand-btn-group">
-            <button type="button" class="btn-expand" data-canvas="canvas-budget-feedback" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
-            <button type="button" class="btn-expand" data-canvas="canvas-budget-feedback" data-action="shrink" title="칸 1줄 줄이기">▲ 줄이기</button>
-            <button type="button" class="btn-expand" data-canvas="canvas-budget-feedback" data-action="expand" title="칸 1줄 늘리기">▼ + 칸 늘리기</button>
-          </div>
+        <div class="compact-resize-bar">
+          <button type="button" class="btn-mini-resize" data-canvas="canvas-budget-feedback" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
+          <button type="button" class="btn-mini-resize" data-canvas="canvas-budget-feedback" data-action="shrink" title="1줄 줄이기">▲ 줄이기</button>
+          <button type="button" class="btn-mini-resize" data-canvas="canvas-budget-feedback" data-action="expand" title="1줄 늘리기">▼ 늘리기</button>
         </div>
       </div>
     </div>
@@ -1884,7 +1855,7 @@
           <div class="auto-block-section">
             <div class="block-sub-title">
               <span>🔄 고정 루틴 (Daily Habits)</span>
-              <button type="button" class="btn-sm" id="btn-quick-manage-routines" style="padding:2px 6px; font-size:10.5px;">루틴 관리</button>
+              <button type="button" class="btn-sm" id="btn-quick-manage-routines" style="padding:2px 6px; font-size:10.5px; border-radius:6px; border:1px solid var(--line); background:#fff; cursor:pointer;">루틴 관리</button>
             </div>
             <div class="check-item-list" id="daily-routine-items"></div>
           </div>
@@ -1903,15 +1874,12 @@
           <div class="section-header">
             <div class="section-title">
               <span class="washi-tape-title tape-sage">실천 회고 &amp; 내일의 개선점</span>
-              <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(오늘 실행에 대한 배움과 성찰)</span>
+              <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(성찰과 배움)</span>
             </div>
-            <div class="canvas-tools">
-              <div class="dual-mode-pill" data-target="todo-feedback">
-                <button type="button" class="dual-pill-btn active" data-mode="pen">✍️ 펜</button>
-                <button type="button" class="dual-pill-btn" data-mode="type">⌨️ 타자</button>
-              </div>
-              <button type="button" class="btn-sm undo-canvas" data-canvas="canvas-todo-feedback">↶ 되돌리기</button>
-              <button type="button" class="btn-sm clear-canvas" data-canvas="canvas-todo-feedback">지우기</button>
+            <div class="direct-action-tools">
+              <button type="button" class="btn-mini-action btn-mode-toggle" data-target="todo-feedback" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
+              <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-todo-feedback" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
+              <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-todo-feedback" title="전체 지우기">🗑️</button>
             </div>
           </div>
           <div class="editor-wrapper-box" id="editor-box-todo-feedback">
@@ -1920,13 +1888,10 @@
             </div>
             <textarea id="text-todo-feedback" class="diary-lined-textarea" style="height:210px; display:none;" placeholder="오늘 루틴과 일정을 실행하며 잘된 점과 아쉬웠던 점은 무엇인가요? 내일 더 몰입하기 위해 개선할 점을 적어보세요."></textarea>
           </div>
-          <div class="canvas-expand-bar">
-            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
-            <div class="expand-btn-group">
-              <button type="button" class="btn-expand" data-canvas="canvas-todo-feedback" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
-              <button type="button" class="btn-expand" data-canvas="canvas-todo-feedback" data-action="shrink">▲ 줄이기</button>
-              <button type="button" class="btn-expand" data-canvas="canvas-todo-feedback" data-action="expand">▼ + 칸 늘리기</button>
-            </div>
+          <div class="compact-resize-bar">
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-todo-feedback" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-todo-feedback" data-action="shrink" title="1줄 줄이기">▲ 줄이기</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-todo-feedback" data-action="expand" title="1줄 늘리기">▼ 늘리기</button>
           </div>
         </div>
       </div>
@@ -1936,13 +1901,10 @@
         <div class="paper-card">
           <div class="section-header">
             <span class="washi-tape-title tape-lavender">감사일기</span>
-            <div class="canvas-tools">
-              <div class="dual-mode-pill" data-target="gratitude">
-                <button type="button" class="dual-pill-btn active" data-mode="pen">✍️ 펜</button>
-                <button type="button" class="dual-pill-btn" data-mode="type">⌨️ 타자</button>
-              </div>
-              <button type="button" class="btn-sm undo-canvas" data-canvas="canvas-gratitude">↶ 되돌리기</button>
-              <button type="button" class="btn-sm clear-canvas" data-canvas="canvas-gratitude">지우기</button>
+            <div class="direct-action-tools">
+              <button type="button" class="btn-mini-action btn-mode-toggle" data-target="gratitude" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
+              <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-gratitude" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
+              <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-gratitude" title="전체 지우기">🗑️</button>
             </div>
           </div>
           <div class="editor-wrapper-box" id="editor-box-gratitude">
@@ -1951,26 +1913,20 @@
             </div>
             <textarea id="text-gratitude" class="diary-lined-textarea" style="height:175px; display:none;" placeholder="오늘 하루 나를 미소 짓게 했던 소소하고 고마운 세 가지..."></textarea>
           </div>
-          <div class="canvas-expand-bar">
-            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
-            <div class="expand-btn-group">
-              <button type="button" class="btn-expand" data-canvas="canvas-gratitude" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
-              <button type="button" class="btn-expand" data-canvas="canvas-gratitude" data-action="shrink">▲ 줄이기</button>
-              <button type="button" class="btn-expand" data-canvas="canvas-gratitude" data-action="expand">▼ + 칸 늘리기</button>
-            </div>
+          <div class="compact-resize-bar">
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-gratitude" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-gratitude" data-action="shrink" title="1줄 줄이기">▲ 줄이기</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-gratitude" data-action="expand" title="1줄 늘리기">▼ 늘리기</button>
           </div>
         </div>
 
         <div class="paper-card">
           <div class="section-header">
             <span class="washi-tape-title tape-peach">TO ME</span>
-            <div class="canvas-tools">
-              <div class="dual-mode-pill" data-target="tome">
-                <button type="button" class="dual-pill-btn active" data-mode="pen">✍️ 펜</button>
-                <button type="button" class="dual-pill-btn" data-mode="type">⌨️ 타자</button>
-              </div>
-              <button type="button" class="btn-sm undo-canvas" data-canvas="canvas-tome">↶ 되돌리기</button>
-              <button type="button" class="btn-sm clear-canvas" data-canvas="canvas-tome">지우기</button>
+            <div class="direct-action-tools">
+              <button type="button" class="btn-mini-action btn-mode-toggle" data-target="tome" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
+              <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-tome" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
+              <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-tome" title="전체 지우기">🗑️</button>
             </div>
           </div>
           <div class="tome-question-row">
@@ -1983,13 +1939,10 @@
             </div>
             <textarea id="text-tome" class="diary-lined-textarea" style="height:175px; display:none;" placeholder="수고한 나에게 전하는 진심 어린 다정의 한마디..."></textarea>
           </div>
-          <div class="canvas-expand-bar">
-            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
-            <div class="expand-btn-group">
-              <button type="button" class="btn-expand" data-canvas="canvas-tome" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
-              <button type="button" class="btn-expand" data-canvas="canvas-tome" data-action="shrink">▲ 줄이기</button>
-              <button type="button" class="btn-expand" data-canvas="canvas-tome" data-action="expand">▼ + 칸 늘리기</button>
-            </div>
+          <div class="compact-resize-bar">
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-tome" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-tome" data-action="shrink" title="1줄 줄이기">▲ 줄이기</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-tome" data-action="expand" title="1줄 늘리기">▼ 늘리기</button>
           </div>
         </div>
       </div>
@@ -2028,13 +1981,10 @@
     <div class="paper-card">
       <div class="section-header">
         <span class="washi-tape-title tape-sand">주간 총평 &amp; 다음 주 다짐</span>
-        <div class="canvas-tools">
-          <div class="dual-mode-pill" data-target="week-review">
-            <button type="button" class="dual-pill-btn active" data-mode="pen">✍️ 펜</button>
-            <button type="button" class="dual-pill-btn" data-mode="type">⌨️ 타자</button>
-          </div>
-          <button type="button" class="btn-sm undo-canvas" data-canvas="canvas-week-review" title="되돌리기">↶ 되돌리기</button>
-          <button type="button" class="btn-sm clear-canvas" data-canvas="canvas-week-review" title="전체 지우기">지우기</button>
+        <div class="direct-action-tools">
+          <button type="button" class="btn-mini-action btn-mode-toggle" data-target="week-review" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
+          <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-week-review" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
+          <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-week-review" title="전체 지우기">🗑️</button>
         </div>
       </div>
       <div class="editor-wrapper-box" id="editor-box-week-review">
@@ -2043,13 +1993,10 @@
         </div>
         <textarea id="text-week-review" class="diary-lined-textarea" style="height:210px; display:none;" placeholder="이번 주를 돌아보며 느낀 배움과, 다음 주 나를 위한 새로운 다짐..."></textarea>
       </div>
-      <div class="canvas-expand-bar">
-        <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
-        <div class="expand-btn-group">
-          <button type="button" class="btn-expand" data-canvas="canvas-week-review" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
-          <button type="button" class="btn-expand" data-canvas="canvas-week-review" data-action="shrink">▲ 줄이기</button>
-          <button type="button" class="btn-expand" data-canvas="canvas-week-review" data-action="expand">▼ + 칸 늘리기</button>
-        </div>
+      <div class="compact-resize-bar">
+        <button type="button" class="btn-mini-resize" data-canvas="canvas-week-review" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
+        <button type="button" class="btn-mini-resize" data-canvas="canvas-week-review" data-action="shrink" title="1줄 줄이기">▲ 줄이기</button>
+        <button type="button" class="btn-mini-resize" data-canvas="canvas-week-review" data-action="expand" title="1줄 늘리기">▼ 늘리기</button>
       </div>
     </div>
   </section>
@@ -2062,12 +2009,12 @@
       <div class="spread-page-col">
         <div class="paper-card">
           <div class="month-header-bar">
-            <button type="button" class="btn-sm" id="btn-month-prev">‹ 이전 달</button>
+            <button type="button" class="btn-sm" id="btn-month-prev" style="border:1.5px solid var(--line); background:#fff; padding:3px 9px; border-radius:6px; font-size:11px; cursor:pointer;">‹ 이전 달</button>
             <div class="month-title-wrap">
               <div class="month-title-en" id="month-title-en">Month 2026</div>
               <div class="month-title-ko" id="month-title-text">2026년 월의 기록</div>
             </div>
-            <button type="button" class="btn-sm" id="btn-month-next">다음 달 ›</button>
+            <button type="button" class="btn-sm" id="btn-month-next" style="border:1.5px solid var(--line); background:#fff; padding:3px 9px; border-radius:6px; font-size:11px; cursor:pointer;">다음 달 ›</button>
           </div>
 
           <div class="stat-grid-3">
@@ -2099,7 +2046,7 @@
             <div class="diary-grid-table" id="month-calendar-grid"></div>
           </div>
 
-          <!-- 마스킹 테이프 일정 등록 (시작 & 종료 시간) -->
+          <!-- 마스킹 테이프 일정 등록 -->
           <div style="margin-top:12px; border-top:1.5px solid var(--line); padding-top:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span class="washi-tape-title tape-sand" style="font-size:12px;">마스킹 테이프 일정 등록</span>
@@ -2112,7 +2059,7 @@
                 <input type="time" id="new-schedule-end-time" style="padding:5px 8px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;" title="종료 시간">
               </div>
               <input type="text" id="new-schedule-text" placeholder="예: 치과 진료, 독서 모임, 생일 파티" style="flex:1; min-width:160px; padding:5px 9px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;">
-              <button type="button" id="btn-add-schedule" class="btn-sm" style="background:var(--accent); color:#FFFFFF; border:none; padding:5px 12px; font-weight:700;">테이프 붙이기</button>
+              <button type="button" id="btn-add-schedule" style="background:var(--accent); color:#FFFFFF; border:none; border-radius:6px; padding:5px 12px; font-weight:700; font-size:12px; cursor:pointer;">테이프 붙이기</button>
             </div>
           </div>
         </div>
@@ -2147,7 +2094,7 @@
             <span>📥</span>
             <span>공부 &amp; 생각거리 백로그 서랍</span>
           </div>
-          <button type="button" class="btn-sm" id="btn-month-open-backlog" style="background:var(--accent); color:#FFFFFF; border:none; font-weight:700;">
+          <button type="button" id="btn-month-open-backlog" style="background:var(--accent); color:#FFFFFF; border:none; border-radius:6px; padding:5px 10px; font-size:11px; font-weight:700; cursor:pointer;">
             서랍 열어 일정 꽂기 ›
           </button>
         </div>
@@ -2163,13 +2110,10 @@
         <div class="paper-card">
           <div class="section-header">
             <span class="washi-tape-title tape-sand">이번 달의 성장과 배움</span>
-            <div class="canvas-tools">
-              <div class="dual-mode-pill" data-target="month-review">
-                <button type="button" class="dual-pill-btn active" data-mode="pen">✍️ 펜</button>
-                <button type="button" class="dual-pill-btn" data-mode="type">⌨️ 타자</button>
-              </div>
-              <button type="button" class="btn-sm undo-canvas" data-canvas="canvas-month-review">↶ 되돌리기</button>
-              <button type="button" class="btn-sm clear-canvas" data-canvas="canvas-month-review">지우기</button>
+            <div class="direct-action-tools">
+              <button type="button" class="btn-mini-action btn-mode-toggle" data-target="month-review" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
+              <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-month-review" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
+              <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-month-review" title="전체 지우기">🗑️</button>
             </div>
           </div>
           <div class="editor-wrapper-box" id="editor-box-month-review">
@@ -2178,13 +2122,10 @@
             </div>
             <textarea id="text-month-review" class="diary-lined-textarea" style="height:210px; display:none;" placeholder="한 달을 마감하며 남기는 나의 솔직한 성장 기록..."></textarea>
           </div>
-          <div class="canvas-expand-bar">
-            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
-            <div class="expand-btn-group">
-              <button type="button" class="btn-expand" data-canvas="canvas-month-review" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
-              <button type="button" class="btn-expand" data-canvas="canvas-month-review" data-action="shrink">▲ 줄이기</button>
-              <button type="button" class="btn-expand" data-canvas="canvas-month-review" data-action="expand">▼ + 칸 늘리기</button>
-            </div>
+          <div class="compact-resize-bar">
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-month-review" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-month-review" data-action="shrink" title="1줄 줄이기">▲ 줄이기</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-month-review" data-action="expand" title="1줄 늘리기">▼ 늘리기</button>
           </div>
         </div>
       </div>
@@ -2194,9 +2135,7 @@
 
 </div>
 
-<!-- ------------------------------------------------------------- -->
-<!-- 대안 2: 슬라이드 아웃 서랍 시트 (Slide-Out Backlog Drawer)      -->
-<!-- ------------------------------------------------------------- -->
+<!-- 슬라이드 아웃 서랍 시트 -->
 <div id="backlog-drawer-backdrop" class="backlog-drawer-backdrop"></div>
 <aside id="backlog-drawer-panel" class="backlog-drawer-panel" aria-label="백로그 서랍">
   <div class="drawer-header">
@@ -2212,7 +2151,6 @@
   </div>
 
   <div class="drawer-body">
-    <!-- 새 항목 등록 박스 -->
     <div class="drawer-add-box">
       <div class="tag-select-row" id="drawer-tag-selector">
         <span style="font-size:11px; font-weight:700; color:var(--ink-soft); margin-right:2px;">태그:</span>
@@ -2225,7 +2163,6 @@
       <button type="button" id="btn-add-backlog" class="btn-submit-backlog">+ 서랍에 쏙 보관</button>
     </div>
 
-    <!-- 백로그 카드 목록 -->
     <div class="drawer-item-list" id="drawer-item-list"></div>
   </div>
 </aside>
@@ -2243,7 +2180,7 @@
 
     <div style="display:flex; gap:6px; margin-bottom:10px;">
       <input type="text" id="new-routine-text" placeholder="예: 비타민 챙겨먹기, 스트레칭 10분" style="flex:1; padding:7px 10px; border:1.5px solid var(--line); border-radius:6px; font-size:12.5px; outline:none;">
-      <button type="button" id="btn-add-routine" class="btn-sm" style="background:var(--accent); color:#FFFFFF; border:none; padding:0 12px; font-weight:700;">추가</button>
+      <button type="button" id="btn-add-routine" class="btn-sm" style="background:var(--accent); color:#FFFFFF; border:none; padding:0 12px; font-weight:700; border-radius:6px; cursor:pointer;">추가</button>
     </div>
 
     <div class="routine-manager-list" id="routine-manager-list"></div>
@@ -2291,7 +2228,7 @@
   </div>
 </div>
 
-<!-- 사용자 확인/경고용 모달 -->
+<!-- 사용자 확인/경고용 공용 모달 -->
 <div id="confirm-modal" class="modal-overlay">
   <div class="modal-card" style="max-width:340px;">
     <h3 id="confirm-modal-title" style="font-family:var(--font-serif); font-size:15px; font-weight:700; margin-bottom:8px;">확인</h3>
@@ -2457,11 +2394,10 @@
       if (!this.canvas) return;
       const rect = this.canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      
       const parentWidth = this.canvas.parentElement ? this.canvas.parentElement.clientWidth : 0;
       const displayWidth = rect.width > 0 ? rect.width : (parentWidth > 0 ? parentWidth : 320);
 
-      let curH = parseInt(this.canvas.style.height, 10) || parseInt(this.canvas.getAttribute('height'), 10) || this.defaultHeight;
+      let curH = parseInt(this.canvas.style.height) || parseInt(this.canvas.getAttribute('height')) || this.defaultHeight;
       if (curH > MAX_SAFE_HEIGHT || curH < MIN_SAFE_HEIGHT) {
         curH = this.defaultHeight;
       }
@@ -2505,11 +2441,11 @@
 
     onDown(e) {
       if (currentTool === 'scroll') return;
+      if (this.isDrawing) return;
+
       this.activePointerId = e.pointerId;
       this.isDrawing = true;
-      if (this.canvas.setPointerCapture) {
-        try { this.canvas.setPointerCapture(e.pointerId); } catch (_) {}
-      }
+      try { this.canvas.setPointerCapture(e.pointerId); } catch (_) {}
 
       const pos = this.getPointerPos(e);
       let strokeColor = currentColor;
@@ -2553,11 +2489,18 @@
       if (!this.isDrawing || e.pointerId !== this.activePointerId) return;
       this.isDrawing = false;
       this.activePointerId = null;
+      try { this.canvas.releasePointerCapture(e.pointerId); } catch (_) {}
 
       if (this.currentStroke && this.currentStroke.points.length > 0) {
         this.strokes.push(this.currentStroke);
         this.currentStroke = null;
-        triggerAutoSave(this.id);
+        if (this.id === 'canvas-week-review') {
+          saveWeekReviewMeta();
+        } else if (this.id === 'canvas-month-review') {
+          saveMonthSideMeta();
+        } else {
+          saveCurrentDayData();
+        }
       }
     }
 
@@ -2569,7 +2512,13 @@
       });
       if (origLen !== this.strokes.length) {
         this.redraw();
-        triggerAutoSave(this.id);
+        if (this.id === 'canvas-week-review') {
+          saveWeekReviewMeta();
+        } else if (this.id === 'canvas-month-review') {
+          saveMonthSideMeta();
+        } else {
+          saveCurrentDayData();
+        }
       }
     }
 
@@ -2577,7 +2526,16 @@
       if (this.strokes.length > 0) {
         this.strokes.pop();
         this.redraw();
-        triggerAutoSave(this.id);
+        if (this.id === 'canvas-week-review') {
+          saveWeekReviewMeta();
+        } else if (this.id === 'canvas-month-review') {
+          saveMonthSideMeta();
+        } else {
+          saveCurrentDayData();
+        }
+        showToast('마지막 획을 취소했습니다.');
+      } else {
+        showToast('취소할 필기 내용이 없습니다.');
       }
     }
 
@@ -2585,7 +2543,13 @@
       if (this.strokes.length === 0) return;
       this.strokes = [];
       this.redraw();
-      triggerAutoSave(this.id);
+      if (this.id === 'canvas-week-review') {
+        saveWeekReviewMeta();
+      } else if (this.id === 'canvas-month-review') {
+        saveMonthSideMeta();
+      } else {
+        saveCurrentDayData();
+      }
     }
 
     drawSinglePoint(p, stroke) {
@@ -2649,21 +2613,13 @@
           const midY = (s.points[i].y + s.points[i + 1].y) / 2;
           this.ctx.quadraticCurveTo(s.points[i].x, s.points[i].y, midX, midY);
         }
-        const last = s.points[s.points.length - 1];
-        this.ctx.lineTo(last.x, last.y);
+        if (s.points.length > 1) {
+          const last = s.points[s.points.length - 1];
+          this.ctx.lineTo(last.x, last.y);
+        }
         this.ctx.stroke();
         this.ctx.restore();
       }
-    }
-  }
-
-  function triggerAutoSave(canvasId) {
-    if (canvasId === 'canvas-week-review') {
-      saveWeekReviewData();
-    } else if (canvasId === 'canvas-month-review') {
-      saveMonthReviewData();
-    } else {
-      saveCurrentDayData();
     }
   }
 
@@ -2671,8 +2627,9 @@
     loadLocalSettings();
     initPenToolbar();
     initCanvases();
-    initDualModes();
+    initDirectTools();
     initEventListeners();
+    initBacklogDrawerEvents();
     initMonthSpread();
     loadRoutines();
     loadSchedules();
@@ -2816,45 +2773,50 @@
     if (info) info.textContent = `${currentPenSize.toFixed(1)}px`;
   }
 
-  function initDualModes() {
-    document.querySelectorAll('.dual-mode-pill').forEach(pill => {
-      const target = pill.dataset.target;
-      pill.querySelectorAll('.dual-pill-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          pill.querySelectorAll('.dual-pill-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          const mode = btn.dataset.mode;
-          switchEditorMode(target, mode);
-          if (target === 'week-review') {
-            saveWeekReviewData();
-          } else if (target === 'month-review') {
-            saveMonthReviewData();
-          } else {
-            saveCurrentDayData();
-          }
-        });
+  /* ------------------------------------------------------------- */
+  /* [방식 1] 즉시 실행 3개 미니 아이콘 이벤트 바인딩               */
+  /* ------------------------------------------------------------- */
+  function initDirectTools() {
+    // 1. 모드 토글 (✎ 펜 <-> ⌨️ 타자 원터치 스위칭)
+    document.querySelectorAll('.btn-mode-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        const isType = btn.classList.contains('type-active');
+        const nextMode = isType ? 'pen' : 'type';
+        switchEditorMode(target, nextMode);
+
+        if (target === 'week-review') {
+          saveWeekReviewMeta();
+        } else if (target === 'month-review') {
+          saveMonthSideMeta();
+        } else {
+          saveCurrentDayData();
+        }
       });
     });
 
+    // 2. 되돌리기 (원터치 Undo)
     document.querySelectorAll('.undo-canvas').forEach(btn => {
       btn.addEventListener('click', () => {
-        const id = btn.dataset.canvas;
-        canvasControllers[id]?.undo();
+        const cid = btn.dataset.canvas;
+        canvasControllers[cid]?.undo();
       });
     });
 
+    // 3. 지우기 (원터치 모달 확인 후 즉시 초기화)
     document.querySelectorAll('.clear-canvas').forEach(btn => {
       btn.addEventListener('click', async () => {
-        const id = btn.dataset.canvas;
-        const ok = await showConfirmDialog('손글씨 지우기', '이 칸의 손글씨를 모두 지우시겠습니까?', true);
+        const cid = btn.dataset.canvas;
+        const ok = await showConfirmDialog('손글씨 초기화', '이 칸의 손글씨를 모두 지우시겠습니까?', true);
         if (ok) {
-          canvasControllers[id]?.clear();
+          canvasControllers[cid]?.clear();
           showToast('손글씨가 초기화되었습니다.');
         }
       });
     });
 
-    document.querySelectorAll('.btn-expand').forEach(btn => {
+    // 4. 하단 미니 높이 조절
+    document.querySelectorAll('.btn-mini-resize').forEach(btn => {
       btn.addEventListener('click', () => {
         const cid = btn.dataset.canvas;
         const action = btn.dataset.action;
@@ -2877,11 +2839,11 @@
         ctrl.setHeight(nextH);
         const txt = document.getElementById(cid.replace('canvas-', 'text-'));
         if (txt) txt.style.height = `${nextH}px`;
-        
+
         if (cid === 'canvas-week-review') {
-          saveWeekReviewData();
+          saveWeekReviewMeta();
         } else if (cid === 'canvas-month-review') {
-          saveMonthReviewData();
+          saveMonthSideMeta();
         } else {
           saveCurrentDayData(true);
         }
@@ -2892,15 +2854,26 @@
   function switchEditorMode(target, mode) {
     const wrapCanvas = document.getElementById(`wrap-canvas-${target}`);
     const textarea = document.getElementById(`text-${target}`);
+    const btnMode = document.querySelector(`.btn-mode-toggle[data-target="${target}"]`);
     if (!wrapCanvas || !textarea) return;
 
     if (mode === 'type') {
       wrapCanvas.style.display = 'none';
       textarea.style.display = 'block';
+      if (btnMode) {
+        btnMode.textContent = '⌨️';
+        btnMode.classList.add('type-active');
+        btnMode.title = '타자 입력 모드 (터치 시 펜 모드로 전환)';
+      }
       textarea.focus();
     } else {
       textarea.style.display = 'none';
       wrapCanvas.style.display = 'block';
+      if (btnMode) {
+        btnMode.textContent = '✎';
+        btnMode.classList.remove('type-active');
+        btnMode.title = '손글씨 펜 모드 (터치 시 타자 모드로 전환)';
+      }
       setTimeout(() => {
         canvasControllers[`canvas-${target}`]?.resizeCanvas();
       }, 30);
@@ -2924,14 +2897,8 @@
           activeContent.style.display = 'block';
         }
 
-        if (activeTab === 'tab-week') {
-          renderWeekArchive();
-          loadWeekReviewData();
-        }
-        if (activeTab === 'tab-month') {
-          renderMonthCalendar();
-          loadMonthReviewData();
-        }
+        if (activeTab === 'tab-week') renderWeekArchive();
+        if (activeTab === 'tab-month') renderMonthCalendar();
         
         setTimeout(() => {
           Object.values(canvasControllers).forEach(c => c.resizeCanvas());
@@ -2956,8 +2923,8 @@
       }, 500));
     });
 
-    document.getElementById('text-week-review')?.addEventListener('input', debounce(saveWeekReviewData, 500));
-    document.getElementById('text-month-review')?.addEventListener('input', debounce(saveMonthReviewData, 500));
+    document.getElementById('text-week-review')?.addEventListener('input', debounce(saveWeekReviewMeta, 500));
+    document.getElementById('text-month-review')?.addEventListener('input', debounce(saveMonthSideMeta, 500));
 
     document.getElementById('btn-tome-shuffle')?.addEventListener('click', () => {
       const q = TOME_PROMPTS[Math.floor(Math.random() * TOME_PROMPTS.length)];
@@ -2985,7 +2952,6 @@
         currentMonthView.year--;
       }
       renderMonthCalendar();
-      loadMonthReviewData();
     });
     document.getElementById('btn-month-next')?.addEventListener('click', () => {
       currentMonthView.month++;
@@ -2994,7 +2960,6 @@
         currentMonthView.year++;
       }
       renderMonthCalendar();
-      loadMonthReviewData();
     });
 
     document.getElementById('btn-add-schedule')?.addEventListener('click', addScheduleItem);
@@ -3002,20 +2967,36 @@
     ['month-focus-1', 'month-focus-2', 'month-focus-3', 'month-wishlist-memo'].forEach(id => {
       document.getElementById(id)?.addEventListener('input', debounce(saveMonthSideMeta, 500));
     });
+  }
 
-    // -------------------------------------------------------------
-    // 대안 2: 슬라이드 아웃 서랍 인터랙션 이벤트
-    // -------------------------------------------------------------
-    document.getElementById('btn-open-backlog-drawer')?.addEventListener('click', openBacklogDrawer);
-    document.getElementById('btn-month-open-backlog')?.addEventListener('click', openBacklogDrawer);
-    document.getElementById('btn-close-backlog-drawer')?.addEventListener('click', closeBacklogDrawer);
-    document.getElementById('backlog-drawer-backdrop')?.addEventListener('click', closeBacklogDrawer);
+  function initBacklogDrawerEvents() {
+    const backdrop = document.getElementById('backlog-drawer-backdrop');
+    const panel = document.getElementById('backlog-drawer-panel');
+    const openBtn = document.getElementById('btn-open-backlog-drawer');
+    const monthCalloutBtn = document.getElementById('btn-month-open-backlog');
+    const closeBtn = document.getElementById('btn-close-backlog-drawer');
+
+    const openDrawer = () => {
+      backdrop.classList.add('open');
+      panel.classList.add('open');
+      openBtn.classList.add('active-drawer-btn');
+      renderDrawerList();
+    };
+
+    const closeDrawer = () => {
+      backdrop.classList.remove('open');
+      panel.classList.remove('open');
+      openBtn.classList.remove('active-drawer-btn');
+    };
+
+    openBtn?.addEventListener('click', openDrawer);
+    monthCalloutBtn?.addEventListener('click', openDrawer);
+    closeBtn?.addEventListener('click', closeDrawer);
+    backdrop?.addEventListener('click', closeDrawer);
 
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeBacklogDrawer();
-        closeRoutineModal();
-        closeSyncModal();
+      if (e.key === 'Escape' && panel.classList.contains('open')) {
+        closeDrawer();
       }
     });
 
@@ -3030,51 +3011,17 @@
     document.getElementById('btn-add-backlog')?.addEventListener('click', addBacklogItem);
   }
 
-  // -------------------------------------------------------------
-  // 대안 2: 백로그 서랍 로직 및 렌더링
-  // -------------------------------------------------------------
-  function openBacklogDrawer() {
-    const backdrop = document.getElementById('backlog-drawer-backdrop');
-    const panel = document.getElementById('backlog-drawer-panel');
-    const btn = document.getElementById('btn-open-backlog-drawer');
-    if (!backdrop || !panel) return;
-
-    backdrop.style.display = 'block';
-    // 강제 리플로우
-    void backdrop.offsetWidth;
-    backdrop.classList.add('open');
-    panel.classList.add('open');
-    btn?.classList.add('active-drawer-btn');
-    renderBacklogDrawerList();
-  }
-
-  function closeBacklogDrawer() {
-    const backdrop = document.getElementById('backlog-drawer-backdrop');
-    const panel = document.getElementById('backlog-drawer-panel');
-    const btn = document.getElementById('btn-open-backlog-drawer');
-    if (!backdrop || !panel) return;
-
-    backdrop.classList.remove('open');
-    panel.classList.remove('open');
-    btn?.classList.remove('active-drawer-btn');
-    setTimeout(() => {
-      if (!panel.classList.contains('open')) {
-        backdrop.style.display = 'none';
-      }
-    }, 240);
-  }
-
   function loadBacklogs() {
     const saved = localStorage.getItem('haru_backlogs');
     if (saved) {
       try { backlogsMaster = JSON.parse(saved); } catch (e) {}
     }
-    updateBacklogBadges();
+    updateBacklogCounters();
   }
 
   function saveBacklogs() {
     localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster));
-    updateBacklogBadges();
+    updateBacklogCounters();
     if (isFirestoreOnline && firestoreDb) {
       const roomKey = getRoomKey();
       if (roomKey) {
@@ -3085,39 +3032,39 @@
         }, { merge: true });
       }
     }
-    renderBacklogDrawerList();
+    renderDrawerList();
   }
 
-  function updateBacklogBadges() {
+  function updateBacklogCounters() {
     const count = backlogsMaster.length;
-    const headerBadge = document.getElementById('header-backlog-count');
-    const drawerBadge = document.getElementById('drawer-backlog-count');
-    if (headerBadge) headerBadge.textContent = count;
-    if (drawerBadge) drawerBadge.textContent = count;
+    const headerEl = document.getElementById('header-backlog-count');
+    const drawerEl = document.getElementById('drawer-backlog-count');
+    if (headerEl) headerEl.textContent = count;
+    if (drawerEl) drawerEl.textContent = count;
   }
 
   function addBacklogItem() {
     const input = document.getElementById('input-drawer-text');
-    const text = input ? input.value.trim() : '';
+    const text = input.value.trim();
     if (!text) {
-      showToast('보관할 공부 내용이나 아이디어를 입력해 주세요.');
+      showToast('보관할 내용을 적어주세요.');
       return;
     }
 
-    const newItem = {
-      id: 'bl_' + Date.now(),
+    const item = {
+      id: 'b_' + Date.now(),
       text,
       tag: selectedBacklogTag || '공부',
-      createdAt: getTodayStr()
+      createdAt: Date.now()
     };
 
-    backlogsMaster.unshift(newItem);
-    if (input) input.value = '';
+    backlogsMaster.unshift(item);
+    input.value = '';
     saveBacklogs();
-    showToast('서랍에 소중히 보관되었습니다.');
+    showToast('서랍에 쏙 보관되었습니다!');
   }
 
-  function renderBacklogDrawerList() {
+  function renderDrawerList() {
     const container = document.getElementById('drawer-item-list');
     if (!container) return;
     container.innerHTML = '';
@@ -3125,8 +3072,7 @@
     if (backlogsMaster.length === 0) {
       container.innerHTML = `
         <div style="text-align:center; padding:30px 10px; color:var(--ink-faint); font-size:12.5px;">
-          <div style="font-size:28px; margin-bottom:6px;">📭</div>
-          서랍이 비어있습니다.<br>나중에 여유 생길 때 꺼내볼 공부/아이디어를 담아보세요.
+          서랍이 비어있습니다.<br>나중에 공부할 내용이나 생각거리를 채워보세요.
         </div>
       `;
       return;
@@ -3135,105 +3081,90 @@
     backlogsMaster.forEach(item => {
       const card = document.createElement('div');
       card.className = 'backlog-card-item';
-      card.id = `card-${item.id}`;
+      card.id = `backlog-card-${item.id}`;
 
-      // 텍스트 내 URL 자동 링크 변환 감지
-      const escaped = escapeHtml(item.text);
-      const linked = escaped.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color:var(--accent); text-decoration:underline;">$1</a>');
+      const dateStr = new Date(item.createdAt || Date.now()).toLocaleDateString();
 
       card.innerHTML = `
         <div class="card-top-info">
-          <span class="card-tag-pill tag-${item.tag || '공부'}">#${escapeHtml(item.tag || '공부')}</span>
-          <button type="button" class="card-del-btn" title="항목 삭제">✕</button>
+          <span class="card-tag-pill tag-${item.tag || '공부'}">#${item.tag || '공부'}</span>
+          <button type="button" class="card-del-btn" title="삭제">×</button>
         </div>
-        <div class="card-content-text">${linked}</div>
+        <div class="card-content-text">${escapeHtml(item.text)}</div>
         <div class="card-action-bar">
-          <span class="card-date-badge">등록: ${item.createdAt || ''}</span>
-          <button type="button" class="btn-schedule-picker-toggle">📅 날짜에 꽂기</button>
+          <span class="card-date-badge">${dateStr}</span>
+          <button type="button" class="btn-schedule-picker-toggle" data-bid="${item.id}">
+            <span>📅 날짜에 꽂기</span>
+          </button>
         </div>
-        <div class="inline-schedule-dock" style="display:none;" id="dock-${item.id}">
+        <div class="inline-schedule-dock" id="dock-${item.id}" style="display:none;">
           <div class="dock-header-label">
-            <span>달력 일정으로 바로 배치</span>
-            <span style="font-size:10px; opacity:0.8;">원하는 날짜 선택</span>
-          </div>
-          <div class="dock-quick-dates">
-            <button type="button" class="dock-quick-btn" data-type="today">오늘</button>
-            <button type="button" class="dock-quick-btn" data-type="tomorrow">내일</button>
-            <button type="button" class="dock-quick-btn" data-type="weekend">이번 주말</button>
+            <span>캘린더 배치 날짜 &amp; 시간</span>
+            <button type="button" class="card-del-btn btn-close-dock" data-bid="${item.id}">×</button>
           </div>
           <div class="dock-input-row">
-            <input type="date" class="dock-input dock-date-input" value="${currentDate}">
-            <input type="time" class="dock-input dock-time-input" title="시작 시간 (선택)">
-            <button type="button" class="btn-confirm-dock">달력에 배치</button>
+            <input type="date" class="dock-input dock-date" value="${currentDate}">
+            <input type="time" class="dock-input dock-time" title="시작 시간">
+            <input type="time" class="dock-input dock-end-time" title="종료 시간">
+            <button type="button" class="btn-confirm-dock" data-bid="${item.id}">배치</button>
+          </div>
+          <div class="dock-quick-dates">
+            <button type="button" class="dock-quick-btn" data-bid="${item.id}" data-offset="0">오늘</button>
+            <button type="button" class="dock-quick-btn" data-bid="${item.id}" data-offset="1">내일</button>
+            <button type="button" class="dock-quick-btn" data-bid="${item.id}" data-offset="7">1주일 뒤</button>
           </div>
         </div>
       `;
 
-      // 삭제
-      card.querySelector('.card-del-btn').addEventListener('click', async () => {
-        const ok = await showConfirmDialog('항목 삭제', '이 보관 카드를 서랍에서 삭제하시겠습니까?', true);
-        if (ok) {
-          backlogsMaster = backlogsMaster.filter(b => b.id !== item.id);
-          saveBacklogs();
-          showToast('삭제되었습니다.');
-        }
+      card.querySelector('.card-del-btn').addEventListener('click', () => {
+        backlogsMaster = backlogsMaster.filter(b => b.id !== item.id);
+        saveBacklogs();
       });
 
-      // 날짜 지정 토글
-      const dock = card.querySelector(`#dock-${item.id}`);
-      const toggleBtn = card.querySelector('.btn-schedule-picker-toggle');
-      toggleBtn.addEventListener('click', () => {
-        const isOpen = dock.style.display !== 'none';
-        dock.style.display = isOpen ? 'none' : 'flex';
-        toggleBtn.textContent = isOpen ? '📅 날짜에 꽂기' : '▲ 접기';
+      card.querySelector('.btn-schedule-picker-toggle').addEventListener('click', () => {
+        const dock = card.querySelector(`#dock-${item.id}`);
+        const isShown = dock.style.display !== 'none';
+        dock.style.display = isShown ? 'none' : 'flex';
       });
 
-      // 빠른 날짜 선택
-      const dateInp = dock.querySelector('.dock-date-input');
-      dock.querySelectorAll('.dock-quick-btn').forEach(qb => {
-        qb.addEventListener('click', () => {
-          const type = qb.dataset.type;
+      card.querySelector('.btn-close-dock').addEventListener('click', () => {
+        card.querySelector(`#dock-${item.id}`).style.display = 'none';
+      });
+
+      card.querySelectorAll('.dock-quick-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const offset = parseInt(btn.dataset.offset, 10);
           const d = new Date();
-          if (type === 'tomorrow') {
-            d.setDate(d.getDate() + 1);
-          } else if (type === 'weekend') {
-            const day = d.getDay();
-            const diff = 6 - day; // 이번 주 토요일
-            d.setDate(d.getDate() + (diff >= 0 ? diff : diff + 7));
-          }
-          const y = d.getFullYear();
-          const m = String(d.getMonth() + 1).padStart(2, '0');
-          const dayStr = String(d.getDate()).padStart(2, '0');
-          dateInp.value = `${y}-${m}-${dayStr}`;
+          d.setDate(d.getDate() + offset);
+          const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+          card.querySelector('.dock-date').value = ds;
         });
       });
 
-      // 달력에 배치 확정
-      dock.querySelector('.btn-confirm-dock').addEventListener('click', () => {
-        const targetDate = dateInp.value;
-        const timeInp = dock.querySelector('.dock-time-input').value;
+      card.querySelector('.btn-confirm-dock').addEventListener('click', () => {
+        const dateVal = card.querySelector('.dock-date').value;
+        const timeVal = card.querySelector('.dock-time').value;
+        const endTimeVal = card.querySelector('.dock-end-time').value;
 
-        if (!targetDate) {
-          showToast('배치할 날짜를 선택해 주세요.');
+        if (!dateVal) {
+          showToast('배치할 날짜를 선택해주세요.');
           return;
         }
 
-        // 캘린더 일정(schedulesMaster)으로 변환 등록
         schedulesMaster.push({
           id: 's_' + Date.now(),
-          date: targetDate,
-          time: timeInp || '',
-          endTime: '',
-          text: `[${item.tag || '공부'}] ${item.text.slice(0, 35)}`,
+          date: dateVal,
+          time: timeVal,
+          endTime: endTimeVal,
+          text: `[${item.tag}] ${item.text.slice(0, 30)}`,
           color: Math.floor(Math.random() * 5)
         });
         saveSchedules();
 
-        // 서랍에서 제거
         backlogsMaster = backlogsMaster.filter(b => b.id !== item.id);
         saveBacklogs();
 
-        showToast(`${targetDate} 달력에 마스킹 테이프로 꽂혔습니다! 🎉`);
+        showToast(`${dateVal} 달력에 일정이 등록되었습니다!`);
       });
 
       container.appendChild(card);
@@ -3324,12 +3255,6 @@
     const sections = ['budget-feedback', 'todo-feedback', 'gratitude', 'tome'];
     sections.forEach(sec => {
       const mode = (day.inputModes && day.inputModes[sec]) || 'pen';
-      const pill = document.querySelector(`.dual-mode-pill[data-target="${sec}"]`);
-      if (pill) {
-        pill.querySelectorAll('.dual-pill-btn').forEach(b => {
-          b.classList.toggle('active', b.dataset.mode === mode);
-        });
-      }
       switchEditorMode(sec, mode);
 
       const txtArea = document.getElementById(`text-${sec}`);
@@ -3339,12 +3264,10 @@
       const ctrl = canvasControllers[cid];
       if (ctrl) {
         ctrl.strokes = (day.strokes && day.strokes[cid]) || [];
-        
         let loadedH = (day.canvasHeights && day.canvasHeights[cid]) || DEFAULT_CANVAS_HEIGHTS[cid] || 175;
         if (loadedH > MAX_SAFE_HEIGHT || loadedH < MIN_SAFE_HEIGHT) {
           loadedH = DEFAULT_CANVAS_HEIGHTS[cid] || 175;
         }
-
         ctrl.setHeight(loadedH);
         if (txtArea) txtArea.style.height = `${loadedH}px`;
       }
@@ -3372,8 +3295,8 @@
       const txt = document.getElementById(`text-${sec}`);
       if (txt) texts[sec] = txt.value;
 
-      const activePill = document.querySelector(`.dual-mode-pill[data-target="${sec}"] .dual-pill-btn.active`);
-      inputModes[sec] = activePill ? activePill.dataset.mode : 'pen';
+      const btnMode = document.querySelector(`.btn-mode-toggle[data-target="${sec}"]`);
+      inputModes[sec] = btnMode && btnMode.classList.contains('type-active') ? 'type' : 'pen';
     });
 
     const routineChecks = {};
@@ -3386,12 +3309,8 @@
       calendarChecks[chk.dataset.sid] = chk.checked;
     });
 
-    const priorities = {};
-    document.querySelectorAll('.priority-star-btn').forEach(btn => {
-      if (btn.classList.contains('active')) {
-        priorities[btn.dataset.itemid] = true;
-      }
-    });
+    const currentDay = daysCache[currentDate] || {};
+    const priorities = currentDay.priorities || {};
 
     const dayData = {
       budget: parseInt(document.getElementById('input-budget').value, 10) || 0,
@@ -3412,120 +3331,10 @@
     localStorage.setItem(getDayStorageKey(currentDate), JSON.stringify(dayData));
 
     updateDailySummaryBadge(dayData);
-    updatePriorityPills(dayData);
+    renderPriorityFocusPills(dayData);
 
     if (isFirestoreOnline && firestoreDb) {
       syncDayToFirestore(currentDate, dayData);
-    }
-  }
-
-  function loadWeekReviewData() {
-    const weekKey = getWeekKey(currentDate);
-    const saved = localStorage.getItem(`haru_week_review_${weekKey}`);
-    let data = null;
-    if (saved) {
-      try { data = JSON.parse(saved); } catch (e) {}
-    }
-
-    const mode = data?.mode || 'pen';
-    const pill = document.querySelector(`.dual-mode-pill[data-target="week-review"]`);
-    if (pill) {
-      pill.querySelectorAll('.dual-pill-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.mode === mode);
-      });
-    }
-    switchEditorMode('week-review', mode);
-
-    const txtArea = document.getElementById('text-week-review');
-    if (txtArea) txtArea.value = data?.text || '';
-
-    const ctrl = canvasControllers['canvas-week-review'];
-    if (ctrl) {
-      ctrl.strokes = data?.strokes || [];
-      const loadedH = data?.height || DEFAULT_CANVAS_HEIGHTS['canvas-week-review'];
-      ctrl.setHeight(loadedH);
-      if (txtArea) txtArea.style.height = `${loadedH}px`;
-    }
-  }
-
-  function saveWeekReviewData() {
-    const weekKey = getWeekKey(currentDate);
-    const ctrl = canvasControllers['canvas-week-review'];
-    const activePill = document.querySelector('.dual-mode-pill[data-target="week-review"] .dual-pill-btn.active');
-    const mode = activePill ? activePill.dataset.mode : 'pen';
-    const text = document.getElementById('text-week-review')?.value || '';
-
-    const data = {
-      text,
-      mode,
-      strokes: ctrl ? ctrl.strokes : [],
-      height: ctrl ? ctrl.canvas.clientHeight : DEFAULT_CANVAS_HEIGHTS['canvas-week-review'],
-      updatedAt: Date.now(),
-      senderId: CLIENT_ID
-    };
-
-    localStorage.setItem(`haru_week_review_${weekKey}`, JSON.stringify(data));
-    if (isFirestoreOnline && firestoreDb) {
-      const roomKey = getRoomKey();
-      if (roomKey) {
-        firestoreDb.collection('haru_diaries').doc(roomKey).collection('weeks').doc(weekKey).set(sanitizeForFirestore(data), { merge: true });
-      }
-    }
-  }
-
-  function loadMonthReviewData() {
-    const { year, month } = currentMonthView;
-    const monthKey = `${year}-${String(month).padStart(2, '0')}`;
-    const saved = localStorage.getItem(`haru_month_review_${monthKey}`);
-    let data = null;
-    if (saved) {
-      try { data = JSON.parse(saved); } catch (e) {}
-    }
-
-    const mode = data?.mode || 'pen';
-    const pill = document.querySelector(`.dual-mode-pill[data-target="month-review"]`);
-    if (pill) {
-      pill.querySelectorAll('.dual-pill-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.mode === mode);
-      });
-    }
-    switchEditorMode('month-review', mode);
-
-    const txtArea = document.getElementById('text-month-review');
-    if (txtArea) txtArea.value = data?.text || '';
-
-    const ctrl = canvasControllers['canvas-month-review'];
-    if (ctrl) {
-      ctrl.strokes = data?.strokes || [];
-      const loadedH = data?.height || DEFAULT_CANVAS_HEIGHTS['canvas-month-review'];
-      ctrl.setHeight(loadedH);
-      if (txtArea) txtArea.style.height = `${loadedH}px`;
-    }
-  }
-
-  function saveMonthReviewData() {
-    const { year, month } = currentMonthView;
-    const monthKey = `${year}-${String(month).padStart(2, '0')}`;
-    const ctrl = canvasControllers['canvas-month-review'];
-    const activePill = document.querySelector('.dual-mode-pill[data-target="month-review"] .dual-pill-btn.active');
-    const mode = activePill ? activePill.dataset.mode : 'pen';
-    const text = document.getElementById('text-month-review')?.value || '';
-
-    const data = {
-      text,
-      mode,
-      strokes: ctrl ? ctrl.strokes : [],
-      height: ctrl ? ctrl.canvas.clientHeight : DEFAULT_CANVAS_HEIGHTS['canvas-month-review'],
-      updatedAt: Date.now(),
-      senderId: CLIENT_ID
-    };
-
-    localStorage.setItem(`haru_month_review_${monthKey}`, JSON.stringify(data));
-    if (isFirestoreOnline && firestoreDb) {
-      const roomKey = getRoomKey();
-      if (roomKey) {
-        firestoreDb.collection('haru_diaries').doc(roomKey).collection('months').doc(monthKey).set(sanitizeForFirestore(data), { merge: true });
-      }
     }
   }
 
@@ -3549,31 +3358,33 @@
   }
 
   function renderDailyIntegratedSection(day) {
+    day.priorities = day.priorities || {};
+
     const rContainer = document.getElementById('daily-routine-items');
     rContainer.innerHTML = '';
-    const priorities = day.priorities || {};
-
     routinesMaster.forEach(r => {
       const isDone = !!(day.routineChecks && day.routineChecks[r.id]);
-      const isPriority = !!priorities[r.id];
+      const isPri = !!(day.priorities[r.id]);
       const row = document.createElement('div');
-      row.className = `check-item-row ${isDone ? 'done' : ''} ${isPriority ? 'is-priority' : ''}`;
+      row.className = `check-item-row ${isDone ? 'done' : ''} ${isPri ? 'is-priority' : ''}`;
       row.innerHTML = `
-        <button type="button" class="priority-star-btn ${isPriority ? 'active' : ''}" data-itemid="${r.id}" title="당일 최우선 집중 항목 설정">${isPriority ? '⭐' : '☆'}</button>
+        <button type="button" class="priority-star-btn ${isPri ? 'active' : ''}" data-itemid="${r.id}" title="오늘의 최우선 과제로 지정">★</button>
         <input type="checkbox" class="custom-checkbox" data-rid="${r.id}" ${isDone ? 'checked' : ''}>
-        <span class="check-text" style="flex:1;">${escapeHtml(r.text)}</span>
+        <span class="check-text">${escapeHtml(r.text)}</span>
       `;
+
       row.querySelector('input').addEventListener('change', (e) => {
         row.classList.toggle('done', e.target.checked);
         saveCurrentDayData();
       });
+
       row.querySelector('.priority-star-btn').addEventListener('click', (e) => {
-        const btn = e.currentTarget;
-        const active = btn.classList.toggle('active');
-        btn.textContent = active ? '⭐' : '☆';
-        row.classList.toggle('is-priority', active);
+        e.stopPropagation();
+        day.priorities[r.id] = !day.priorities[r.id];
+        renderDailyIntegratedSection(day);
         saveCurrentDayData();
       });
+
       rContainer.appendChild(row);
     });
 
@@ -3587,78 +3398,80 @@
     } else {
       daySchedules.forEach(s => {
         const isDone = !!(day.calendarChecks && day.calendarChecks[s.id]);
-        const isPriority = !!priorities[s.id];
-        const timeDisplay = formatScheduleTime(s);
+        const isPri = !!(day.priorities[s.id]);
         const row = document.createElement('div');
-        row.className = `check-item-row ${isDone ? 'done' : ''} ${isPriority ? 'is-priority' : ''}`;
+        row.className = `check-item-row ${isDone ? 'done' : ''} ${isPri ? 'is-priority' : ''}`;
         row.innerHTML = `
-          <button type="button" class="priority-star-btn ${isPriority ? 'active' : ''}" data-itemid="${s.id}" title="당일 최우선 집중 항목 설정">${isPriority ? '⭐' : '☆'}</button>
+          <button type="button" class="priority-star-btn ${isPri ? 'active' : ''}" data-itemid="${s.id}" title="오늘의 중요 일정으로 지정">★</button>
           <input type="checkbox" class="custom-checkbox" data-sid="${s.id}" ${isDone ? 'checked' : ''}>
-          <span class="time-chip">${timeDisplay}</span>
+          <span class="time-chip">${formatScheduleTime(s)}</span>
           <span class="check-text" style="flex:1;">${escapeHtml(s.text)}</span>
-          <button type="button" class="routine-del-btn" title="일정 삭제" style="font-size:12px; padding:0 4px; opacity:0.6;">×</button>
+          <button type="button" class="routine-del-btn btn-del-sched" data-sid="${s.id}" title="이 일정 삭제" style="font-size:12px; opacity:0.6;">✕</button>
         `;
+
         row.querySelector('input').addEventListener('change', (e) => {
           row.classList.toggle('done', e.target.checked);
           saveCurrentDayData();
         });
+
         row.querySelector('.priority-star-btn').addEventListener('click', (e) => {
-          const btn = e.currentTarget;
-          const active = btn.classList.toggle('active');
-          btn.textContent = active ? '⭐' : '☆';
-          row.classList.toggle('is-priority', active);
+          e.stopPropagation();
+          day.priorities[s.id] = !day.priorities[s.id];
+          renderDailyIntegratedSection(day);
           saveCurrentDayData();
         });
-        row.querySelector('.routine-del-btn').addEventListener('click', async () => {
+
+        row.querySelector('.btn-del-sched').addEventListener('click', async (e) => {
+          e.stopPropagation();
           const ok = await showConfirmDialog('일정 삭제', `'${s.text}' 일정을 삭제하시겠습니까?`, true);
           if (ok) {
             schedulesMaster = schedulesMaster.filter(item => item.id !== s.id);
             saveSchedules();
-            renderDailyIntegratedSection(daysCache[currentDate] || {});
-            showToast('일정이 삭제되었습니다.');
           }
         });
+
         cContainer.appendChild(row);
       });
     }
 
     updateDailySummaryBadge(day);
-    updatePriorityPills(day);
+    renderPriorityFocusPills(day);
   }
 
-  function updatePriorityPills(day) {
+  function renderPriorityFocusPills(day) {
     const container = document.getElementById('priority-focus-container');
     if (!container) return;
-    const priorities = day.priorities || {};
+    container.innerHTML = '';
 
-    const priorityItems = [];
-    routinesMaster.forEach(r => {
-      if (priorities[r.id]) {
-        priorityItems.push({ type: '루틴', text: r.text, done: !!(day.routineChecks && day.routineChecks[r.id]) });
-      }
-    });
-
-    const daySchedules = schedulesMaster.filter(s => s.date === currentDate);
-    daySchedules.forEach(s => {
-      if (priorities[s.id]) {
-        priorityItems.push({ type: '일정', text: s.text, done: !!(day.calendarChecks && day.calendarChecks[s.id]) });
-      }
-    });
-
-    if (priorityItems.length === 0) {
+    const priIds = Object.keys(day.priorities || {}).filter(k => day.priorities[k]);
+    if (priIds.length === 0) {
       container.style.display = 'none';
-      container.innerHTML = '';
       return;
     }
 
     container.style.display = 'flex';
-    container.innerHTML = `<span style="font-size:11px; font-weight:700; color:#B45309; display:inline-flex; align-items:center; gap:2px; margin-right:4px;">⭐ 오늘의 핵심 집중:</span>` +
-      priorityItems.map(item => `
-        <span class="focus-pill-item" style="${item.done ? 'opacity:0.6; text-decoration:line-through;' : ''}">
-          <span style="font-size:9.5px; opacity:0.8;">[${item.type}]</span>
-          <span>${escapeHtml(item.text)}</span>
-        </span>
-      `).join('');
+    const label = document.createElement('span');
+    label.style.fontSize = '11px';
+    label.style.fontWeight = '700';
+    label.style.color = '#92400E';
+    label.style.marginRight = '4px';
+    label.textContent = '⭐ 오늘의 우선순위 집중:';
+    container.appendChild(label);
+
+    priIds.forEach(id => {
+      let text = '';
+      const r = routinesMaster.find(item => item.id === id);
+      if (r) text = r.text;
+      const s = schedulesMaster.find(item => item.id === id);
+      if (s) text = s.text;
+
+      if (text) {
+        const pill = document.createElement('span');
+        pill.className = 'focus-pill-item';
+        pill.textContent = text;
+        container.appendChild(pill);
+      }
+    });
   }
 
   function updateDailySummaryBadge(day) {
@@ -3790,20 +3603,16 @@
 
   function initMonthSpread() {
     const dInp = document.getElementById('new-schedule-date');
-    if (dInp) {
-      dInp.value = currentDate;
-    }
+    if (dInp) dInp.value = currentDate;
   }
 
   function renderMonthCalendar() {
     const { year, month } = currentMonthView;
     const monthNamesEn = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const titleEn = document.getElementById('month-title-en');
-    const titleKo = document.getElementById('month-title-text');
-    if (titleEn) titleEn.textContent = `${monthNamesEn[month - 1]} ${year}`;
-    if (titleKo) titleKo.textContent = `${year}년 ${month}월의 기록`;
+    document.getElementById('month-title-en').textContent = `${monthNamesEn[month - 1]} ${year}`;
+    document.getElementById('month-title-text').textContent = `${year}년 ${month}월의 기록`;
 
-    loadMonthSideMeta(`${year}-${String(month).padStart(2, '0')}`);
+    loadMonthSideMeta();
 
     const grid = document.getElementById('month-calendar-grid');
     if (!grid) return;
@@ -3879,7 +3688,7 @@
     badgesWrap.className = 'day-badges-wrap';
 
     if (!isOtherMonth && dayData) {
-      if (dayData.spent === 0 && dayData.budget > 0) {
+      if (dayData.spent === 0 && (dayData.budget > 0)) {
         const noSpend = document.createElement('span');
         noSpend.className = 'no-spend-badge';
         noSpend.textContent = '☕ 無지출';
@@ -3906,9 +3715,8 @@
       schedules.slice(0, 3).forEach(s => {
         const item = document.createElement('div');
         item.className = `washi-tape-item tape-color-${s.color || 0}`;
-        const timeStr = formatScheduleTime(s);
         item.textContent = s.text;
-        item.title = `${timeStr} ${s.text}`;
+        item.title = `${formatScheduleTime(s)} ${s.text}`;
         tapeList.appendChild(item);
       });
 
@@ -3929,7 +3737,13 @@
     return cell;
   }
 
-  function loadMonthSideMeta(monthKey) {
+  function getMonthKey() {
+    const { year, month } = currentMonthView;
+    return `${year}-${String(month).padStart(2, '0')}`;
+  }
+
+  function loadMonthSideMeta() {
+    const monthKey = getMonthKey();
     const saved = localStorage.getItem(`haru_meta_${monthKey}`);
     let data = null;
     if (saved) {
@@ -3939,18 +3753,41 @@
     document.getElementById('month-focus-2').value = data?.focus2 || '';
     document.getElementById('month-focus-3').value = data?.focus3 || '';
     document.getElementById('month-wishlist-memo').value = data?.wishlist || '';
+
+    const reviewMode = data?.reviewMode || 'pen';
+    switchEditorMode('month-review', reviewMode);
+
+    const txtArea = document.getElementById('text-month-review');
+    if (txtArea) txtArea.value = data?.reviewText || '';
+
+    const ctrl = canvasControllers['canvas-month-review'];
+    if (ctrl) {
+      ctrl.strokes = data?.reviewStrokes || [];
+      const loadedH = data?.reviewHeight || DEFAULT_CANVAS_HEIGHTS['canvas-month-review'] || 210;
+      ctrl.setHeight(loadedH);
+      if (txtArea) txtArea.style.height = `${loadedH}px`;
+    }
   }
 
   function saveMonthSideMeta() {
-    const { year, month } = currentMonthView;
-    const monthKey = `${year}-${String(month).padStart(2, '0')}`;
+    const monthKey = getMonthKey();
+    const ctrl = canvasControllers['canvas-month-review'];
+    const btnMode = document.querySelector('.btn-mode-toggle[data-target="month-review"]');
+    const reviewMode = btnMode && btnMode.classList.contains('type-active') ? 'type' : 'pen';
+
     const data = {
       focus1: document.getElementById('month-focus-1').value,
       focus2: document.getElementById('month-focus-2').value,
       focus3: document.getElementById('month-focus-3').value,
       wishlist: document.getElementById('month-wishlist-memo').value,
-      updatedAt: Date.now()
+      reviewMode,
+      reviewText: document.getElementById('text-month-review')?.value || '',
+      reviewStrokes: ctrl ? ctrl.strokes : [],
+      reviewHeight: ctrl ? ctrl.canvas.clientHeight : 210,
+      updatedAt: Date.now(),
+      senderId: CLIENT_ID
     };
+
     localStorage.setItem(`haru_meta_${monthKey}`, JSON.stringify(data));
 
     if (isFirestoreOnline && firestoreDb) {
@@ -3974,6 +3811,8 @@
 
     document.getElementById('week-date-range-text').textContent =
       `${start.getFullYear()}.${start.getMonth() + 1}.${start.getDate()} ~ ${end.getFullYear()}.${end.getMonth() + 1}.${end.getDate()}`;
+
+    loadWeekReviewMeta(getWeekKey(currentDate));
 
     const container = document.getElementById('week-archive-list');
     container.innerHTML = '';
@@ -4022,7 +3861,7 @@
         </div>
         <div style="font-size:11px; color:var(--ink-soft); font-family:var(--font-mono);">완료: ${todoCnt}</div>
         <div style="font-size:11px; color:var(--ink-soft); white-space:pre-wrap; max-height:80px; overflow-y:auto; border-top:1px dashed var(--line); padding-top:4px;">
-          ${escapeHtml(dayData?.texts?.['todo-feedback'] || '(회고 없음)')}
+          ${escapeHtml(dayData?.texts?.['todo-feedback'] || '(피드백 없음)')}
         </div>
       `;
 
@@ -4037,6 +3876,53 @@
     document.getElementById('week-todo-rate').textContent = `${overallRate}%`;
     document.getElementById('week-todo-count').textContent = `${doneTodos} / ${totalTodos}`;
     document.getElementById('week-feedback-days').textContent = `${feedbackDays} / 7일`;
+  }
+
+  function loadWeekReviewMeta(weekKey) {
+    const saved = localStorage.getItem(`haru_week_${weekKey}`);
+    let data = null;
+    if (saved) {
+      try { data = JSON.parse(saved); } catch (e) {}
+    }
+
+    const reviewMode = data?.mode || 'pen';
+    switchEditorMode('week-review', reviewMode);
+
+    const txtArea = document.getElementById('text-week-review');
+    if (txtArea) txtArea.value = data?.text || '';
+
+    const ctrl = canvasControllers['canvas-week-review'];
+    if (ctrl) {
+      ctrl.strokes = data?.strokes || [];
+      const loadedH = data?.height || DEFAULT_CANVAS_HEIGHTS['canvas-week-review'] || 210;
+      ctrl.setHeight(loadedH);
+      if (txtArea) txtArea.style.height = `${loadedH}px`;
+    }
+  }
+
+  function saveWeekReviewMeta() {
+    const weekKey = getWeekKey(currentDate);
+    const ctrl = canvasControllers['canvas-week-review'];
+    const btnMode = document.querySelector('.btn-mode-toggle[data-target="week-review"]');
+    const mode = btnMode && btnMode.classList.contains('type-active') ? 'type' : 'pen';
+
+    const data = {
+      mode,
+      text: document.getElementById('text-week-review')?.value || '',
+      strokes: ctrl ? ctrl.strokes : [],
+      height: ctrl ? ctrl.canvas.clientHeight : 210,
+      updatedAt: Date.now(),
+      senderId: CLIENT_ID
+    };
+
+    localStorage.setItem(`haru_week_${weekKey}`, JSON.stringify(data));
+
+    if (isFirestoreOnline && firestoreDb) {
+      const roomKey = getRoomKey();
+      if (roomKey) {
+        firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc(`week_${weekKey}`).set(data, { merge: true });
+      }
+    }
   }
 
   function getRoomKey() {
@@ -4065,10 +3951,12 @@
     const txt = document.getElementById('sync-text');
     const modalBadge = document.getElementById('modal-sync-status-badge');
 
-    dot.className = `sync-dot ${status}`;
-    txt.textContent = text;
-    modalBadge.textContent = text;
-    modalBadge.style.color = status === 'online' ? '#10B981' : status === 'syncing' ? '#F59E0B' : status === 'error' ? '#EF4444' : 'var(--ink-soft)';
+    if (dot) dot.className = `sync-dot ${status}`;
+    if (txt) txt.textContent = text;
+    if (modalBadge) {
+      modalBadge.textContent = text;
+      modalBadge.style.color = status === 'online' ? '#10B981' : status === 'syncing' ? '#F59E0B' : status === 'error' ? '#EF4444' : 'var(--ink-soft)';
+    }
   }
 
   function saveSyncSettings() {
@@ -4101,51 +3989,6 @@
     updateSyncStatusUI('', '로컬 보관');
     closeSyncModal();
     showToast('클라우드 연결이 해제되었습니다.');
-  }
-
-  function syncDayToFirestore(dateStr, data) {
-    const roomKey = getRoomKey();
-    if (!roomKey || !firestoreDb) return;
-
-    updateSyncStatusUI('syncing', '클라우드 저장 중');
-    const cleanData = sanitizeForFirestore(data);
-
-    firestoreDb.collection('haru_diaries')
-      .doc(roomKey)
-      .collection('days')
-      .doc(dateStr)
-      .set(cleanData, { merge: true })
-      .then(() => {
-        updateSyncStatusUI('online', '실시간 연동 중');
-      })
-      .catch(err => {
-        console.error(err);
-        updateSyncStatusUI('error', '저장 오류');
-      });
-  }
-
-  async function forcePullFromCloud() {
-    const roomKey = getRoomKey();
-    if (!roomKey || !firestoreDb) {
-      showToast('Firebase 연결 설정을 먼저 완료해 주세요.');
-      return;
-    }
-    try {
-      updateSyncStatusUI('syncing', '데이터 가져오는 중');
-      const snap = await firestoreDb.collection('haru_diaries').doc(roomKey).collection('days').get();
-      snap.forEach(doc => {
-        const d = doc.data();
-        daysCache[doc.id] = d;
-        localStorage.setItem(getDayStorageKey(doc.id), JSON.stringify(d));
-      });
-      loadDayData(currentDate);
-      updateSyncStatusUI('online', '실시간 연동 중');
-      showToast('클라우드에서 최신 데이터를 모두 불러왔습니다!');
-    } catch (e) {
-      console.error(e);
-      showToast('데이터 가져오기 실패: ' + e.message);
-      updateSyncStatusUI('error', '오류 발생');
-    }
   }
 
   function initFirebaseIfAvailable() {
@@ -4221,11 +4064,56 @@
         } else if (docId === 'backlogs' && data.list) {
           backlogsMaster = data.list;
           localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster));
-          updateBacklogBadges();
-          renderBacklogDrawerList();
+          updateBacklogCounters();
+          renderDrawerList();
         }
       });
     });
+  }
+
+  function syncDayToFirestore(dateStr, data) {
+    const roomKey = getRoomKey();
+    if (!roomKey || !firestoreDb) return;
+
+    updateSyncStatusUI('syncing', '클라우드 저장 중');
+    const cleanData = sanitizeForFirestore(data);
+
+    firestoreDb.collection('haru_diaries')
+      .doc(roomKey)
+      .collection('days')
+      .doc(dateStr)
+      .set(cleanData, { merge: true })
+      .then(() => {
+        updateSyncStatusUI('online', '실시간 연동 중');
+      })
+      .catch(err => {
+        console.error(err);
+        updateSyncStatusUI('error', '저장 오류');
+      });
+  }
+
+  async function forcePullFromCloud() {
+    const roomKey = getRoomKey();
+    if (!roomKey || !firestoreDb) {
+      showToast('Firebase 연결 설정을 먼저 완료해 주세요.');
+      return;
+    }
+    try {
+      updateSyncStatusUI('syncing', '데이터 가져오는 중');
+      const snap = await firestoreDb.collection('haru_diaries').doc(roomKey).collection('days').get();
+      snap.forEach(doc => {
+        const d = doc.data();
+        daysCache[doc.id] = d;
+        localStorage.setItem(getDayStorageKey(doc.id), JSON.stringify(d));
+      });
+      loadDayData(currentDate);
+      updateSyncStatusUI('online', '실시간 연동 중');
+      showToast('클라우드에서 최신 데이터를 모두 불러왔습니다!');
+    } catch (e) {
+      console.error(e);
+      showToast('데이터 가져오기 실패: ' + e.message);
+      updateSyncStatusUI('error', '오류 발생');
+    }
   }
 
   function exportFullBackup() {
