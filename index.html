@@ -122,7 +122,52 @@
     border-top: 1px solid rgba(255, 255, 255, 0.7);
   }
 
-  /* 최상단 바: 모바일 글자 쪼개짐 방지 */
+  /* 중요도(우선순위) 별표 및 하이라이트 스타일 */
+  .priority-star-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 2px 4px;
+    color: #D1D5DB;
+    transition: transform 0.15s ease, color 0.15s ease;
+  }
+  .priority-star-btn:hover {
+    transform: scale(1.2);
+    color: #F59E0B;
+  }
+  .priority-star-btn.active {
+    color: #F59E0B;
+    text-shadow: 0 0 6px rgba(245, 158, 11, 0.45);
+  }
+  .check-item-row.is-priority {
+    background: #FFFBEB !important;
+    border-left: 3px solid #F59E0B;
+  }
+  .priority-focus-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+    padding: 6px 8px;
+    background: #FFFDF7;
+    border: 1px dashed #FDE68A;
+    border-radius: 8px;
+  }
+  .focus-pill-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #FEF3C7;
+    color: #92400E;
+    font-weight: 600;
+  }
+
+  /* 최상단 바 */
   .top-bar-row {
     display: flex;
     justify-content: space-between;
@@ -169,6 +214,23 @@
     border-color: var(--accent);
     color: var(--accent);
   }
+  .header-icon-btn.active-drawer-btn {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .backlog-count-pill {
+    background: var(--accent);
+    color: #FFFFFF;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 999px;
+    line-height: 1.2;
+  }
+
   .sync-dot {
     width: 7px;
     height: 7px;
@@ -621,7 +683,7 @@
     transition: background 0.1s ease;
   }
   .check-item-row:hover { background: #F9FAFB; }
-  .check-item-row.done span {
+  .check-item-row.done span.check-text {
     text-decoration: line-through;
     color: var(--ink-faint);
   }
@@ -808,32 +870,6 @@
     border-color: var(--accent);
     color: var(--accent);
     background: #FFF7ED;
-  }
-
-  .todo-counter-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    background: var(--accent-soft);
-    border: 1px solid rgba(194,65,12,0.25);
-    border-radius: 6px;
-    padding: 2px 6px;
-    font-size: 11px;
-    font-family: var(--font-mono);
-    color: var(--accent);
-    font-weight: 700;
-    white-space: nowrap;
-  }
-  .todo-counter-input {
-    width: 24px;
-    text-align: center;
-    border: none;
-    border-bottom: 1.5px solid var(--accent);
-    background: transparent;
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 11.5px;
-    outline: none;
   }
 
   .tome-question-row {
@@ -1192,6 +1228,334 @@
   }
   .wishlist-memo-area:focus { border-color: var(--accent); }
 
+  /* 월간 백로그 서랍 안내 카드 */
+  .month-backlog-callout-card {
+    background: #FFFDF9;
+    border: 1.5px dashed #FDE68A;
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .month-backlog-callout-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #92400E;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ------------------------------------------------------------- */
+  /* 대안 2: 슬라이드 아웃 서랍 (Slide-Out Backlog Drawer Sheet)   */
+  /* ------------------------------------------------------------- */
+  .backlog-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 120;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+  }
+  .backlog-drawer-backdrop.open {
+    display: block;
+    opacity: 1;
+  }
+
+  .backlog-drawer-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 410px;
+    background: #FFFFFF;
+    border-left: 2px solid #E5E7EB;
+    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.14);
+    z-index: 130;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .backlog-drawer-panel.open {
+    transform: translateX(0);
+  }
+
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1.5px solid var(--line);
+    background: #FFFDF9;
+  }
+  .drawer-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .drawer-main-title {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .drawer-sub-hint {
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .drawer-close-btn {
+    border: none;
+    background: transparent;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .drawer-close-btn:hover {
+    background: #F3F4F6;
+    color: var(--accent);
+  }
+
+  .drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background-color: #FAFAFA;
+  }
+
+  /* 서랍 신규 등록 폼 */
+  .drawer-add-box {
+    background: #FFFFFF;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tag-select-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .tag-chip-btn {
+    border: 1px solid var(--line);
+    background: #FFFFFF;
+    color: var(--ink-soft);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.12s ease;
+  }
+  .tag-chip-btn.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+  .drawer-text-input {
+    width: 100%;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 12.5px;
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    outline: none;
+    resize: none;
+    background: #FFFFFF;
+  }
+  .drawer-text-input:focus {
+    border-color: var(--accent);
+  }
+  .btn-submit-backlog {
+    background: var(--accent);
+    color: #FFFFFF;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    align-self: flex-end;
+    transition: background 0.15s ease;
+  }
+  .btn-submit-backlog:hover {
+    background: var(--accent-hover);
+  }
+
+  /* 서랍 리스트 카드 */
+  .drawer-item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .backlog-card-item {
+    background: #FFFFFF;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .backlog-card-item:hover {
+    border-color: rgba(194, 65, 12, 0.4);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  }
+  .card-top-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-tag-pill {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: #F3F4F6;
+    color: var(--ink-soft);
+  }
+  .card-tag-pill.tag-공부 { background: #FEF3C7; color: #92400E; }
+  .card-tag-pill.tag-아이디어 { background: #FCE7F3; color: #9D174D; }
+  .card-tag-pill.tag-자료 { background: #E0E7FF; color: #3730A3; }
+  .card-tag-pill.tag-과제 { background: #DCFCE7; color: #166534; }
+
+  .card-del-btn {
+    border: none;
+    background: transparent;
+    color: #9CA3AF;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0 4px;
+    transition: color 0.15s ease;
+  }
+  .card-del-btn:hover { color: #DC2626; }
+
+  .card-content-text {
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-family: var(--font-sans);
+  }
+
+  .card-action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px dashed var(--line);
+    padding-top: 7px;
+    margin-top: 2px;
+  }
+  .card-date-badge {
+    font-size: 10px;
+    color: var(--ink-faint);
+    font-family: var(--font-mono);
+  }
+  .btn-schedule-picker-toggle {
+    background: #FFF7ED;
+    border: 1px solid #FFEDD5;
+    color: var(--accent);
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    transition: all 0.15s ease;
+  }
+  .btn-schedule-picker-toggle:hover {
+    background: var(--accent);
+    color: #FFFFFF;
+    border-color: var(--accent);
+  }
+
+  /* 인라인 날짜 배정기 */
+  .inline-schedule-dock {
+    background: #FFFDF9;
+    border: 1.5px solid #FDE68A;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+    animation: fadeIn 0.15s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .dock-header-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #92400E;
+    display: flex;
+    justify-content: space-between;
+  }
+  .dock-input-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+  .dock-input {
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 4px 6px;
+    font-size: 11.5px;
+    background: #FFFFFF;
+  }
+  .dock-quick-dates {
+    display: flex;
+    gap: 3px;
+  }
+  .dock-quick-btn {
+    border: 1px solid var(--line);
+    background: #FFFFFF;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+  .dock-quick-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-confirm-dock {
+    background: var(--accent);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
   /* 토스트 및 모달 */
   .toast-notice {
     position: fixed;
@@ -1337,6 +1701,11 @@
       <span>하루의 페이지</span>
     </div>
     <div class="top-bar-actions">
+      <!-- 대안 2: 상단 슬라이드 아웃 서랍 버튼 -->
+      <button type="button" class="header-icon-btn" id="btn-open-backlog-drawer" title="공부 & 아이디어 백로그 서랍 열기">
+        <span>📥 백로그 서랍</span>
+        <span class="backlog-count-pill" id="header-backlog-count">0</span>
+      </button>
       <button type="button" class="header-icon-btn" id="btn-open-routines" title="매일 반복되는 고정 루틴 관리">
         <span>🔄 고정 루틴</span>
       </button>
@@ -1435,7 +1804,7 @@
       <div class="day-header-row">
         <div class="date-nav-group">
           <button type="button" class="date-nav-btn" id="btn-prev-day" title="어제 기록 보기">‹ 어제</button>
-          <div class="date-display" id="today-date-text">26 / 09 / 26 (토)</div>
+          <div class="date-display" id="today-date-text"></div>
           <span class="date-status-badge badge-today" id="date-status-badge">오늘</span>
           <button type="button" class="date-nav-btn" id="btn-next-day" title="내일 계획 작성하기">내일 계획하기 ›</button>
           <button type="button" class="date-nav-btn today-btn" id="btn-goto-today" style="display:none;">오늘로 이동</button>
@@ -1498,7 +1867,7 @@
     </div>
 
     <div class="daily-grid">
-      <!-- 좌측 열 -->
+      <!-- 좌측 열: 루틴 & 일정 + 실천 회고 -->
       <div class="daily-col">
         <!-- 자동 연동 카드 -->
         <div class="integrated-auto-card">
@@ -1508,6 +1877,9 @@
             </div>
             <div class="auto-summary-badge" id="auto-summary-badge">달성 0 / 0</div>
           </div>
+
+          <!-- 중요도(우선순위) 집중 배너 -->
+          <div id="priority-focus-container" class="priority-focus-pills" style="display:none;"></div>
 
           <div class="auto-block-section">
             <div class="block-sub-title">
@@ -1526,48 +1898,12 @@
           </div>
         </div>
 
-        <!-- 당일 집중 할 일 & 메모 (기본 6줄 210px) -->
+        <!-- 실천 회고 & 내일의 개선점 (기본 6줄 210px) -->
         <div class="paper-card">
           <div class="section-header">
             <div class="section-title">
-              <span class="washi-tape-title tape-rose">당일 집중 할 일 &amp; 메모</span>
-              <div class="todo-counter-badge" title="손글씨 추가 할 일 개수 집계">
-                달성: <input type="number" id="input-todo-done" class="todo-counter-input" min="0" placeholder="0">
-                / <input type="number" id="input-todo-total" class="todo-counter-input" min="0" placeholder="0"> 개
-              </div>
-            </div>
-            <div class="canvas-tools">
-              <div class="dual-mode-pill" data-target="left">
-                <button type="button" class="dual-pill-btn active" data-mode="pen">✍️ 펜</button>
-                <button type="button" class="dual-pill-btn" data-mode="type">⌨️ 타자</button>
-              </div>
-              <button type="button" class="btn-sm undo-canvas" data-canvas="canvas-left" title="마지막 획 취소">↶ 되돌리기</button>
-              <button type="button" class="btn-sm clear-canvas" data-canvas="canvas-left">지우기</button>
-            </div>
-          </div>
-
-          <div class="editor-wrapper-box" id="editor-box-left">
-            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-left" style="height:210px;">
-              <canvas id="canvas-left" class="ink-canvas drawing-active" height="210"></canvas>
-            </div>
-            <textarea id="text-left" class="diary-lined-textarea" style="height:210px; display:none;" placeholder="• 오늘 가장 먼저 끝내야 할 중요한 일 3가지..."></textarea>
-          </div>
-          <div class="canvas-expand-bar">
-            <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
-            <div class="expand-btn-group">
-              <button type="button" class="btn-expand" data-canvas="canvas-left" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
-              <button type="button" class="btn-expand" data-canvas="canvas-left" data-action="shrink" title="칸 1줄 줄이기">▲ 줄이기</button>
-              <button type="button" class="btn-expand" data-canvas="canvas-left" data-action="expand" title="칸 1줄 늘리기">▼ + 칸 늘리기</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 당일 투두 피드백 (기본 4줄 140px) -->
-        <div class="paper-card">
-          <div class="section-header">
-            <div class="section-title">
-              <span class="washi-tape-title tape-sage">투두 피드백</span>
-              <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(오늘 실행에 대한 배움)</span>
+              <span class="washi-tape-title tape-sage">실천 회고 &amp; 내일의 개선점</span>
+              <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(오늘 실행에 대한 배움과 성찰)</span>
             </div>
             <div class="canvas-tools">
               <div class="dual-mode-pill" data-target="todo-feedback">
@@ -1579,10 +1915,10 @@
             </div>
           </div>
           <div class="editor-wrapper-box" id="editor-box-todo-feedback">
-            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-todo-feedback" style="height:140px;">
-              <canvas id="canvas-todo-feedback" class="ink-canvas drawing-active" height="140"></canvas>
+            <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-todo-feedback" style="height:210px;">
+              <canvas id="canvas-todo-feedback" class="ink-canvas drawing-active" height="210"></canvas>
             </div>
-            <textarea id="text-todo-feedback" class="diary-lined-textarea" style="height:140px; display:none;" placeholder="계획한 일을 얼마나 지켰나요? 내일 더 잘하기 위한 아이디어는?"></textarea>
+            <textarea id="text-todo-feedback" class="diary-lined-textarea" style="height:210px; display:none;" placeholder="오늘 루틴과 일정을 실행하며 잘된 점과 아쉬웠던 점은 무엇인가요? 내일 더 몰입하기 위해 개선할 점을 적어보세요."></textarea>
           </div>
           <div class="canvas-expand-bar">
             <span class="expand-indicator">수동 조절: 원할 때 버튼으로 줄 수 조절</span>
@@ -1728,8 +2064,8 @@
           <div class="month-header-bar">
             <button type="button" class="btn-sm" id="btn-month-prev">‹ 이전 달</button>
             <div class="month-title-wrap">
-              <div class="month-title-en" id="month-title-en">September 2026</div>
-              <div class="month-title-ko" id="month-title-text">2026년 9월의 기록</div>
+              <div class="month-title-en" id="month-title-en">Month 2026</div>
+              <div class="month-title-ko" id="month-title-text">2026년 월의 기록</div>
             </div>
             <button type="button" class="btn-sm" id="btn-month-next">다음 달 ›</button>
           </div>
@@ -1749,6 +2085,7 @@
             </div>
           </div>
 
+          <!-- 7x5 월간 달력 시트 -->
           <div class="paper-diary-sheet">
             <div class="diary-dow-row">
               <div class="diary-dow-cell sun">SUN</div>
@@ -1762,13 +2099,18 @@
             <div class="diary-grid-table" id="month-calendar-grid"></div>
           </div>
 
+          <!-- 마스킹 테이프 일정 등록 (시작 & 종료 시간) -->
           <div style="margin-top:12px; border-top:1.5px solid var(--line); padding-top:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span class="washi-tape-title tape-sand" style="font-size:12px;">마스킹 테이프 일정 등록</span>
             </div>
             <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
               <input type="date" id="new-schedule-date" style="padding:5px 8px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;">
-              <input type="time" id="new-schedule-time" style="padding:5px 8px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;">
+              <div style="display:inline-flex; align-items:center; gap:3px;">
+                <input type="time" id="new-schedule-time" style="padding:5px 8px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;" title="시작 시간">
+                <span style="font-size:11px; color:var(--ink-soft);">~</span>
+                <input type="time" id="new-schedule-end-time" style="padding:5px 8px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;" title="종료 시간">
+              </div>
               <input type="text" id="new-schedule-text" placeholder="예: 치과 진료, 독서 모임, 생일 파티" style="flex:1; min-width:160px; padding:5px 9px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;">
               <button type="button" id="btn-add-schedule" class="btn-sm" style="background:var(--accent); color:#FFFFFF; border:none; padding:5px 12px; font-weight:700;">테이프 붙이기</button>
             </div>
@@ -1776,7 +2118,7 @@
         </div>
       </div>
 
-      <!-- 우측 페이지: 목표, 위시리스트 & 월간 회고 -->
+      <!-- 우측 페이지: 목표, 서랍 바로가기, 위시리스트 & 월간 회고 -->
       <div class="spread-page-col">
         <div class="monthly-side-card">
           <div class="monthly-side-title">
@@ -1797,6 +2139,17 @@
               <input type="text" id="month-focus-3" class="focus-text-input" placeholder="목표 3 (예: 주말 외식 1회 제한)">
             </div>
           </div>
+        </div>
+
+        <!-- 달력 옆 백로그 서랍 안내 카드 -->
+        <div class="month-backlog-callout-card">
+          <div class="month-backlog-callout-title">
+            <span>📥</span>
+            <span>공부 &amp; 생각거리 백로그 서랍</span>
+          </div>
+          <button type="button" class="btn-sm" id="btn-month-open-backlog" style="background:var(--accent); color:#FFFFFF; border:none; font-weight:700;">
+            서랍 열어 일정 꽂기 ›
+          </button>
         </div>
 
         <div class="monthly-side-card">
@@ -1840,6 +2193,42 @@
   </section>
 
 </div>
+
+<!-- ------------------------------------------------------------- -->
+<!-- 대안 2: 슬라이드 아웃 서랍 시트 (Slide-Out Backlog Drawer)      -->
+<!-- ------------------------------------------------------------- -->
+<div id="backlog-drawer-backdrop" class="backlog-drawer-backdrop"></div>
+<aside id="backlog-drawer-panel" class="backlog-drawer-panel" aria-label="백로그 서랍">
+  <div class="drawer-header">
+    <div class="drawer-title-group">
+      <div class="drawer-main-title">
+        <span>📂</span>
+        <span>공부 &amp; 아이디어 서랍</span>
+        <span class="backlog-count-pill" id="drawer-backlog-count">0</span>
+      </div>
+      <div class="drawer-sub-hint">날짜 부담 없이 모아두고, 달력에 빈 날이 생길 때 꽂아보세요.</div>
+    </div>
+    <button type="button" class="drawer-close-btn" id="btn-close-backlog-drawer" title="서랍 닫기">×</button>
+  </div>
+
+  <div class="drawer-body">
+    <!-- 새 항목 등록 박스 -->
+    <div class="drawer-add-box">
+      <div class="tag-select-row" id="drawer-tag-selector">
+        <span style="font-size:11px; font-weight:700; color:var(--ink-soft); margin-right:2px;">태그:</span>
+        <button type="button" class="tag-chip-btn active" data-tag="공부">#공부</button>
+        <button type="button" class="tag-chip-btn" data-tag="아이디어">#아이디어</button>
+        <button type="button" class="tag-chip-btn" data-tag="자료">#자료</button>
+        <button type="button" class="tag-chip-btn" data-tag="과제">#과제</button>
+      </div>
+      <textarea id="input-drawer-text" class="drawer-text-input" rows="3" placeholder="• 공부할 도서, 강의명, URL 링크&#10;• 나중에 여유 생길 때 고민해볼 생각거리..."></textarea>
+      <button type="button" id="btn-add-backlog" class="btn-submit-backlog">+ 서랍에 쏙 보관</button>
+    </div>
+
+    <!-- 백로그 카드 목록 -->
+    <div class="drawer-item-list" id="drawer-item-list"></div>
+  </div>
+</aside>
 
 <!-- 고정 루틴 관리 모달 -->
 <div id="routine-modal" class="modal-overlay">
@@ -1902,7 +2291,7 @@
   </div>
 </div>
 
-<!-- 사용자 확인/경고용 공용 모달 -->
+<!-- 사용자 확인/경고용 모달 -->
 <div id="confirm-modal" class="modal-overlay">
   <div class="modal-card" style="max-width:340px;">
     <h3 id="confirm-modal-title" style="font-family:var(--font-serif); font-size:15px; font-weight:700; margin-bottom:8px;">확인</h3>
@@ -1921,19 +2310,17 @@
 (() => {
   const CLIENT_ID = 'client_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
 
-  // 각 영역별 이상적인 기본 높이 (줄 간격 35px 기준)
   const DEFAULT_CANVAS_HEIGHTS = {
     'canvas-budget-feedback': 105,  // 3줄
-    'canvas-left': 210,             // 6줄
-    'canvas-todo-feedback': 140,    // 4줄
+    'canvas-todo-feedback': 210,    // 6줄
     'canvas-gratitude': 175,        // 5줄
     'canvas-tome': 175,             // 5줄
     'canvas-week-review': 210,      // 6줄
-    'canvas-month-review': 210       // 6줄
+    'canvas-month-review': 210      // 6줄
   };
 
-  const MAX_SAFE_HEIGHT = 560; // 16줄 이상 비정상 확장 방지용 상한선
-  const MIN_SAFE_HEIGHT = 70;  // 2줄 최소치
+  const MAX_SAFE_HEIGHT = 560;
+  const MIN_SAFE_HEIGHT = 70;
 
   const PALETTE = [
     { name: '딥 잉크', color: '#1F2937' },
@@ -1961,7 +2348,9 @@
   let currentAlpha = 100;
   let activeTab = 'tab-today';
   let currentDate = getTodayStr();
-  let currentMonthView = { year: 2026, month: 9 };
+
+  const initDate = new Date();
+  let currentMonthView = { year: initDate.getFullYear(), month: initDate.getMonth() + 1 };
 
   let isRemoteApplying = false;
   let unsubscribeFirestore = null;
@@ -1976,6 +2365,8 @@
     { id: 'r3', text: '독서 20분 또는 명상 바른자세' }
   ];
   let schedulesMaster = [];
+  let backlogsMaster = [];
+  let selectedBacklogTag = '공부';
 
   function getTodayStr() {
     const d = new Date();
@@ -1987,9 +2378,25 @@
 
   function formatDisplayDate(dateStr) {
     const [y, m, d] = dateStr.split('-');
-    const dateObj = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+    const dateObj = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
     const dows = ['일', '월', '화', '수', '목', '금', '토'];
     return `${y.slice(2)} / ${m} / ${d} (${dows[dateObj.getDay()]})`;
+  }
+
+  function formatScheduleTime(item) {
+    if (!item.time && !item.endTime) return '종일';
+    if (item.time && item.endTime) return `${item.time} ~ ${item.endTime}`;
+    if (item.time) return `${item.time} ~`;
+    return `~ ${item.endTime}`;
+  }
+
+  function getWeekKey(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const cur = new Date(y, m - 1, d);
+    const dayDow = cur.getDay();
+    const start = new Date(cur);
+    start.setDate(cur.getDate() - dayDow);
+    return `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`;
   }
 
   function showToast(msg) {
@@ -2051,12 +2458,10 @@
       const rect = this.canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
       
-      // 모바일에서 렌더링 시 너비 0 오류 방지
       const parentWidth = this.canvas.parentElement ? this.canvas.parentElement.clientWidth : 0;
       const displayWidth = rect.width > 0 ? rect.width : (parentWidth > 0 ? parentWidth : 320);
 
-      // 높이 검증 (안전 상한선 이내로 보정)
-      let curH = parseInt(this.canvas.style.height) || parseInt(this.canvas.getAttribute('height')) || this.defaultHeight;
+      let curH = parseInt(this.canvas.style.height, 10) || parseInt(this.canvas.getAttribute('height'), 10) || this.defaultHeight;
       if (curH > MAX_SAFE_HEIGHT || curH < MIN_SAFE_HEIGHT) {
         curH = this.defaultHeight;
       }
@@ -2074,7 +2479,6 @@
     }
 
     setHeight(newHeight) {
-      // 35px(줄 간격) 단위로 클램프
       const clamped = Math.max(MIN_SAFE_HEIGHT, Math.min(MAX_SAFE_HEIGHT, Math.round(newHeight / 35) * 35));
       this.canvas.setAttribute('height', clamped);
       this.canvas.style.height = `${clamped}px`;
@@ -2101,8 +2505,6 @@
 
     onDown(e) {
       if (currentTool === 'scroll') return;
-      if (e.pointerType === 'touch' && e.buttons === 0 && e.pressure === 0) return;
-
       this.activePointerId = e.pointerId;
       this.isDrawing = true;
       if (this.canvas.setPointerCapture) {
@@ -2155,7 +2557,7 @@
       if (this.currentStroke && this.currentStroke.points.length > 0) {
         this.strokes.push(this.currentStroke);
         this.currentStroke = null;
-        saveCurrentDayData();
+        triggerAutoSave(this.id);
       }
     }
 
@@ -2167,7 +2569,7 @@
       });
       if (origLen !== this.strokes.length) {
         this.redraw();
-        saveCurrentDayData();
+        triggerAutoSave(this.id);
       }
     }
 
@@ -2175,7 +2577,7 @@
       if (this.strokes.length > 0) {
         this.strokes.pop();
         this.redraw();
-        saveCurrentDayData();
+        triggerAutoSave(this.id);
       }
     }
 
@@ -2183,7 +2585,7 @@
       if (this.strokes.length === 0) return;
       this.strokes = [];
       this.redraw();
-      saveCurrentDayData();
+      triggerAutoSave(this.id);
     }
 
     drawSinglePoint(p, stroke) {
@@ -2242,12 +2644,26 @@
         }
 
         this.ctx.moveTo(s.points[0].x, s.points[0].y);
-        for (let i = 1; i < s.points.length; i++) {
-          this.ctx.lineTo(s.points[i].x, s.points[i].y);
+        for (let i = 1; i < s.points.length - 1; i++) {
+          const midX = (s.points[i].x + s.points[i + 1].x) / 2;
+          const midY = (s.points[i].y + s.points[i + 1].y) / 2;
+          this.ctx.quadraticCurveTo(s.points[i].x, s.points[i].y, midX, midY);
         }
+        const last = s.points[s.points.length - 1];
+        this.ctx.lineTo(last.x, last.y);
         this.ctx.stroke();
         this.ctx.restore();
       }
+    }
+  }
+
+  function triggerAutoSave(canvasId) {
+    if (canvasId === 'canvas-week-review') {
+      saveWeekReviewData();
+    } else if (canvasId === 'canvas-month-review') {
+      saveMonthReviewData();
+    } else {
+      saveCurrentDayData();
     }
   }
 
@@ -2260,10 +2676,10 @@
     initMonthSpread();
     loadRoutines();
     loadSchedules();
+    loadBacklogs();
     initFirebaseIfAvailable();
     switchDate(currentDate);
 
-    // 모바일 뷰포트 변경 및 폰트 렌더 완료 후 재정렬 보장
     setTimeout(() => {
       Object.values(canvasControllers).forEach(c => c.resizeCanvas());
     }, 200);
@@ -2272,7 +2688,6 @@
   function initCanvases() {
     const list = [
       'canvas-budget-feedback',
-      'canvas-left',
       'canvas-todo-feedback',
       'canvas-gratitude',
       'canvas-tome',
@@ -2410,7 +2825,13 @@
           btn.classList.add('active');
           const mode = btn.dataset.mode;
           switchEditorMode(target, mode);
-          saveCurrentDayData();
+          if (target === 'week-review') {
+            saveWeekReviewData();
+          } else if (target === 'month-review') {
+            saveMonthReviewData();
+          } else {
+            saveCurrentDayData();
+          }
         });
       });
     });
@@ -2433,7 +2854,6 @@
       });
     });
 
-    // 칸 늘리기/줄이기/기본복구 버튼
     document.querySelectorAll('.btn-expand').forEach(btn => {
       btn.addEventListener('click', () => {
         const cid = btn.dataset.canvas;
@@ -2442,7 +2862,7 @@
         if (!ctrl) return;
 
         const curH = ctrl.canvas.clientHeight;
-        const step = 35; // 정확히 노트 줄눈 1칸(35px) 단위로 가감
+        const step = 35;
         let nextH = curH;
 
         if (action === 'reset') {
@@ -2457,7 +2877,14 @@
         ctrl.setHeight(nextH);
         const txt = document.getElementById(cid.replace('canvas-', 'text-'));
         if (txt) txt.style.height = `${nextH}px`;
-        saveCurrentDayData(true);
+        
+        if (cid === 'canvas-week-review') {
+          saveWeekReviewData();
+        } else if (cid === 'canvas-month-review') {
+          saveMonthReviewData();
+        } else {
+          saveCurrentDayData(true);
+        }
       });
     });
   }
@@ -2497,10 +2924,15 @@
           activeContent.style.display = 'block';
         }
 
-        if (activeTab === 'tab-week') renderWeekArchive();
-        if (activeTab === 'tab-month') renderMonthCalendar();
+        if (activeTab === 'tab-week') {
+          renderWeekArchive();
+          loadWeekReviewData();
+        }
+        if (activeTab === 'tab-month') {
+          renderMonthCalendar();
+          loadMonthReviewData();
+        }
         
-        // 탭 전환 시 모바일 캔버스 너비 0 방지 및 렌더 재동기화
         setTimeout(() => {
           Object.values(canvasControllers).forEach(c => c.resizeCanvas());
         }, 60);
@@ -2511,18 +2943,21 @@
     document.getElementById('btn-next-day')?.addEventListener('click', () => moveDay(1));
     document.getElementById('btn-goto-today')?.addEventListener('click', () => switchDate(getTodayStr()));
 
-    ['input-budget', 'input-spent', 'input-todo-done', 'input-todo-total'].forEach(id => {
+    ['input-budget', 'input-spent'].forEach(id => {
       document.getElementById(id)?.addEventListener('input', () => {
         calcBudgetDiff();
         saveCurrentDayData();
       });
     });
 
-    ['text-budget-feedback', 'text-left', 'text-todo-feedback', 'text-gratitude', 'text-tome', 'text-week-review', 'text-month-review'].forEach(id => {
+    ['text-budget-feedback', 'text-todo-feedback', 'text-gratitude', 'text-tome'].forEach(id => {
       document.getElementById(id)?.addEventListener('input', debounce(() => {
         saveCurrentDayData();
       }, 500));
     });
+
+    document.getElementById('text-week-review')?.addEventListener('input', debounce(saveWeekReviewData, 500));
+    document.getElementById('text-month-review')?.addEventListener('input', debounce(saveMonthReviewData, 500));
 
     document.getElementById('btn-tome-shuffle')?.addEventListener('click', () => {
       const q = TOME_PROMPTS[Math.floor(Math.random() * TOME_PROMPTS.length)];
@@ -2550,6 +2985,7 @@
         currentMonthView.year--;
       }
       renderMonthCalendar();
+      loadMonthReviewData();
     });
     document.getElementById('btn-month-next')?.addEventListener('click', () => {
       currentMonthView.month++;
@@ -2558,12 +2994,249 @@
         currentMonthView.year++;
       }
       renderMonthCalendar();
+      loadMonthReviewData();
     });
 
     document.getElementById('btn-add-schedule')?.addEventListener('click', addScheduleItem);
 
     ['month-focus-1', 'month-focus-2', 'month-focus-3', 'month-wishlist-memo'].forEach(id => {
       document.getElementById(id)?.addEventListener('input', debounce(saveMonthSideMeta, 500));
+    });
+
+    // -------------------------------------------------------------
+    // 대안 2: 슬라이드 아웃 서랍 인터랙션 이벤트
+    // -------------------------------------------------------------
+    document.getElementById('btn-open-backlog-drawer')?.addEventListener('click', openBacklogDrawer);
+    document.getElementById('btn-month-open-backlog')?.addEventListener('click', openBacklogDrawer);
+    document.getElementById('btn-close-backlog-drawer')?.addEventListener('click', closeBacklogDrawer);
+    document.getElementById('backlog-drawer-backdrop')?.addEventListener('click', closeBacklogDrawer);
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeBacklogDrawer();
+        closeRoutineModal();
+        closeSyncModal();
+      }
+    });
+
+    document.querySelectorAll('#drawer-tag-selector .tag-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#drawer-tag-selector .tag-chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedBacklogTag = btn.dataset.tag;
+      });
+    });
+
+    document.getElementById('btn-add-backlog')?.addEventListener('click', addBacklogItem);
+  }
+
+  // -------------------------------------------------------------
+  // 대안 2: 백로그 서랍 로직 및 렌더링
+  // -------------------------------------------------------------
+  function openBacklogDrawer() {
+    const backdrop = document.getElementById('backlog-drawer-backdrop');
+    const panel = document.getElementById('backlog-drawer-panel');
+    const btn = document.getElementById('btn-open-backlog-drawer');
+    if (!backdrop || !panel) return;
+
+    backdrop.style.display = 'block';
+    // 강제 리플로우
+    void backdrop.offsetWidth;
+    backdrop.classList.add('open');
+    panel.classList.add('open');
+    btn?.classList.add('active-drawer-btn');
+    renderBacklogDrawerList();
+  }
+
+  function closeBacklogDrawer() {
+    const backdrop = document.getElementById('backlog-drawer-backdrop');
+    const panel = document.getElementById('backlog-drawer-panel');
+    const btn = document.getElementById('btn-open-backlog-drawer');
+    if (!backdrop || !panel) return;
+
+    backdrop.classList.remove('open');
+    panel.classList.remove('open');
+    btn?.classList.remove('active-drawer-btn');
+    setTimeout(() => {
+      if (!panel.classList.contains('open')) {
+        backdrop.style.display = 'none';
+      }
+    }, 240);
+  }
+
+  function loadBacklogs() {
+    const saved = localStorage.getItem('haru_backlogs');
+    if (saved) {
+      try { backlogsMaster = JSON.parse(saved); } catch (e) {}
+    }
+    updateBacklogBadges();
+  }
+
+  function saveBacklogs() {
+    localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster));
+    updateBacklogBadges();
+    if (isFirestoreOnline && firestoreDb) {
+      const roomKey = getRoomKey();
+      if (roomKey) {
+        firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc('backlogs').set({
+          list: backlogsMaster,
+          updatedAt: Date.now(),
+          senderId: CLIENT_ID
+        }, { merge: true });
+      }
+    }
+    renderBacklogDrawerList();
+  }
+
+  function updateBacklogBadges() {
+    const count = backlogsMaster.length;
+    const headerBadge = document.getElementById('header-backlog-count');
+    const drawerBadge = document.getElementById('drawer-backlog-count');
+    if (headerBadge) headerBadge.textContent = count;
+    if (drawerBadge) drawerBadge.textContent = count;
+  }
+
+  function addBacklogItem() {
+    const input = document.getElementById('input-drawer-text');
+    const text = input ? input.value.trim() : '';
+    if (!text) {
+      showToast('보관할 공부 내용이나 아이디어를 입력해 주세요.');
+      return;
+    }
+
+    const newItem = {
+      id: 'bl_' + Date.now(),
+      text,
+      tag: selectedBacklogTag || '공부',
+      createdAt: getTodayStr()
+    };
+
+    backlogsMaster.unshift(newItem);
+    if (input) input.value = '';
+    saveBacklogs();
+    showToast('서랍에 소중히 보관되었습니다.');
+  }
+
+  function renderBacklogDrawerList() {
+    const container = document.getElementById('drawer-item-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (backlogsMaster.length === 0) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:30px 10px; color:var(--ink-faint); font-size:12.5px;">
+          <div style="font-size:28px; margin-bottom:6px;">📭</div>
+          서랍이 비어있습니다.<br>나중에 여유 생길 때 꺼내볼 공부/아이디어를 담아보세요.
+        </div>
+      `;
+      return;
+    }
+
+    backlogsMaster.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'backlog-card-item';
+      card.id = `card-${item.id}`;
+
+      // 텍스트 내 URL 자동 링크 변환 감지
+      const escaped = escapeHtml(item.text);
+      const linked = escaped.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color:var(--accent); text-decoration:underline;">$1</a>');
+
+      card.innerHTML = `
+        <div class="card-top-info">
+          <span class="card-tag-pill tag-${item.tag || '공부'}">#${escapeHtml(item.tag || '공부')}</span>
+          <button type="button" class="card-del-btn" title="항목 삭제">✕</button>
+        </div>
+        <div class="card-content-text">${linked}</div>
+        <div class="card-action-bar">
+          <span class="card-date-badge">등록: ${item.createdAt || ''}</span>
+          <button type="button" class="btn-schedule-picker-toggle">📅 날짜에 꽂기</button>
+        </div>
+        <div class="inline-schedule-dock" style="display:none;" id="dock-${item.id}">
+          <div class="dock-header-label">
+            <span>달력 일정으로 바로 배치</span>
+            <span style="font-size:10px; opacity:0.8;">원하는 날짜 선택</span>
+          </div>
+          <div class="dock-quick-dates">
+            <button type="button" class="dock-quick-btn" data-type="today">오늘</button>
+            <button type="button" class="dock-quick-btn" data-type="tomorrow">내일</button>
+            <button type="button" class="dock-quick-btn" data-type="weekend">이번 주말</button>
+          </div>
+          <div class="dock-input-row">
+            <input type="date" class="dock-input dock-date-input" value="${currentDate}">
+            <input type="time" class="dock-input dock-time-input" title="시작 시간 (선택)">
+            <button type="button" class="btn-confirm-dock">달력에 배치</button>
+          </div>
+        </div>
+      `;
+
+      // 삭제
+      card.querySelector('.card-del-btn').addEventListener('click', async () => {
+        const ok = await showConfirmDialog('항목 삭제', '이 보관 카드를 서랍에서 삭제하시겠습니까?', true);
+        if (ok) {
+          backlogsMaster = backlogsMaster.filter(b => b.id !== item.id);
+          saveBacklogs();
+          showToast('삭제되었습니다.');
+        }
+      });
+
+      // 날짜 지정 토글
+      const dock = card.querySelector(`#dock-${item.id}`);
+      const toggleBtn = card.querySelector('.btn-schedule-picker-toggle');
+      toggleBtn.addEventListener('click', () => {
+        const isOpen = dock.style.display !== 'none';
+        dock.style.display = isOpen ? 'none' : 'flex';
+        toggleBtn.textContent = isOpen ? '📅 날짜에 꽂기' : '▲ 접기';
+      });
+
+      // 빠른 날짜 선택
+      const dateInp = dock.querySelector('.dock-date-input');
+      dock.querySelectorAll('.dock-quick-btn').forEach(qb => {
+        qb.addEventListener('click', () => {
+          const type = qb.dataset.type;
+          const d = new Date();
+          if (type === 'tomorrow') {
+            d.setDate(d.getDate() + 1);
+          } else if (type === 'weekend') {
+            const day = d.getDay();
+            const diff = 6 - day; // 이번 주 토요일
+            d.setDate(d.getDate() + (diff >= 0 ? diff : diff + 7));
+          }
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, '0');
+          const dayStr = String(d.getDate()).padStart(2, '0');
+          dateInp.value = `${y}-${m}-${dayStr}`;
+        });
+      });
+
+      // 달력에 배치 확정
+      dock.querySelector('.btn-confirm-dock').addEventListener('click', () => {
+        const targetDate = dateInp.value;
+        const timeInp = dock.querySelector('.dock-time-input').value;
+
+        if (!targetDate) {
+          showToast('배치할 날짜를 선택해 주세요.');
+          return;
+        }
+
+        // 캘린더 일정(schedulesMaster)으로 변환 등록
+        schedulesMaster.push({
+          id: 's_' + Date.now(),
+          date: targetDate,
+          time: timeInp || '',
+          endTime: '',
+          text: `[${item.tag || '공부'}] ${item.text.slice(0, 35)}`,
+          color: Math.floor(Math.random() * 5)
+        });
+        saveSchedules();
+
+        // 서랍에서 제거
+        backlogsMaster = backlogsMaster.filter(b => b.id !== item.id);
+        saveBacklogs();
+
+        showToast(`${targetDate} 달력에 마스킹 테이프로 꽂혔습니다! 🎉`);
+      });
+
+      container.appendChild(card);
     });
   }
 
@@ -2624,13 +3297,11 @@
       day = {
         budget: 0,
         spent: 0,
-        todoDone: 0,
-        todoTotal: 0,
         routineChecks: {},
         calendarChecks: {},
+        priorities: {},
         inputModes: {
           'budget-feedback': 'pen',
-          'left': 'pen',
           'todo-feedback': 'pen',
           'gratitude': 'pen',
           'tome': 'pen'
@@ -2644,15 +3315,13 @@
 
     document.getElementById('input-budget').value = day.budget || '';
     document.getElementById('input-spent').value = day.spent || '';
-    document.getElementById('input-todo-done').value = day.todoDone || '';
-    document.getElementById('input-todo-total').value = day.todoTotal || '';
     calcBudgetDiff();
 
     if (day.tomePrompt) {
       document.getElementById('tome-q-text').textContent = day.tomePrompt;
     }
 
-    const sections = ['budget-feedback', 'left', 'todo-feedback', 'gratitude', 'tome'];
+    const sections = ['budget-feedback', 'todo-feedback', 'gratitude', 'tome'];
     sections.forEach(sec => {
       const mode = (day.inputModes && day.inputModes[sec]) || 'pen';
       const pill = document.querySelector(`.dual-mode-pill[data-target="${sec}"]`);
@@ -2671,7 +3340,6 @@
       if (ctrl) {
         ctrl.strokes = (day.strokes && day.strokes[cid]) || [];
         
-        // 과거 비정상적으로 저장된 수천 픽셀의 높이 완전 방어
         let loadedH = (day.canvasHeights && day.canvasHeights[cid]) || DEFAULT_CANVAS_HEIGHTS[cid] || 175;
         if (loadedH > MAX_SAFE_HEIGHT || loadedH < MIN_SAFE_HEIGHT) {
           loadedH = DEFAULT_CANVAS_HEIGHTS[cid] || 175;
@@ -2688,7 +3356,7 @@
   function saveCurrentDayData(heightOnly = false) {
     if (isRemoteApplying) return;
 
-    const sections = ['budget-feedback', 'left', 'todo-feedback', 'gratitude', 'tome'];
+    const sections = ['budget-feedback', 'todo-feedback', 'gratitude', 'tome'];
     const strokes = {};
     const texts = {};
     const inputModes = {};
@@ -2699,7 +3367,6 @@
       const ctrl = canvasControllers[cid];
       if (ctrl) {
         strokes[cid] = ctrl.strokes;
-        // 저장 시에도 최대 안전 상한선 적용
         canvasHeights[cid] = Math.min(MAX_SAFE_HEIGHT, ctrl.canvas.clientHeight);
       }
       const txt = document.getElementById(`text-${sec}`);
@@ -2719,13 +3386,19 @@
       calendarChecks[chk.dataset.sid] = chk.checked;
     });
 
+    const priorities = {};
+    document.querySelectorAll('.priority-star-btn').forEach(btn => {
+      if (btn.classList.contains('active')) {
+        priorities[btn.dataset.itemid] = true;
+      }
+    });
+
     const dayData = {
       budget: parseInt(document.getElementById('input-budget').value, 10) || 0,
       spent: parseInt(document.getElementById('input-spent').value, 10) || 0,
-      todoDone: parseInt(document.getElementById('input-todo-done').value, 10) || 0,
-      todoTotal: parseInt(document.getElementById('input-todo-total').value, 10) || 0,
       routineChecks,
       calendarChecks,
+      priorities,
       inputModes,
       texts,
       strokes,
@@ -2739,9 +3412,120 @@
     localStorage.setItem(getDayStorageKey(currentDate), JSON.stringify(dayData));
 
     updateDailySummaryBadge(dayData);
+    updatePriorityPills(dayData);
 
     if (isFirestoreOnline && firestoreDb) {
       syncDayToFirestore(currentDate, dayData);
+    }
+  }
+
+  function loadWeekReviewData() {
+    const weekKey = getWeekKey(currentDate);
+    const saved = localStorage.getItem(`haru_week_review_${weekKey}`);
+    let data = null;
+    if (saved) {
+      try { data = JSON.parse(saved); } catch (e) {}
+    }
+
+    const mode = data?.mode || 'pen';
+    const pill = document.querySelector(`.dual-mode-pill[data-target="week-review"]`);
+    if (pill) {
+      pill.querySelectorAll('.dual-pill-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === mode);
+      });
+    }
+    switchEditorMode('week-review', mode);
+
+    const txtArea = document.getElementById('text-week-review');
+    if (txtArea) txtArea.value = data?.text || '';
+
+    const ctrl = canvasControllers['canvas-week-review'];
+    if (ctrl) {
+      ctrl.strokes = data?.strokes || [];
+      const loadedH = data?.height || DEFAULT_CANVAS_HEIGHTS['canvas-week-review'];
+      ctrl.setHeight(loadedH);
+      if (txtArea) txtArea.style.height = `${loadedH}px`;
+    }
+  }
+
+  function saveWeekReviewData() {
+    const weekKey = getWeekKey(currentDate);
+    const ctrl = canvasControllers['canvas-week-review'];
+    const activePill = document.querySelector('.dual-mode-pill[data-target="week-review"] .dual-pill-btn.active');
+    const mode = activePill ? activePill.dataset.mode : 'pen';
+    const text = document.getElementById('text-week-review')?.value || '';
+
+    const data = {
+      text,
+      mode,
+      strokes: ctrl ? ctrl.strokes : [],
+      height: ctrl ? ctrl.canvas.clientHeight : DEFAULT_CANVAS_HEIGHTS['canvas-week-review'],
+      updatedAt: Date.now(),
+      senderId: CLIENT_ID
+    };
+
+    localStorage.setItem(`haru_week_review_${weekKey}`, JSON.stringify(data));
+    if (isFirestoreOnline && firestoreDb) {
+      const roomKey = getRoomKey();
+      if (roomKey) {
+        firestoreDb.collection('haru_diaries').doc(roomKey).collection('weeks').doc(weekKey).set(sanitizeForFirestore(data), { merge: true });
+      }
+    }
+  }
+
+  function loadMonthReviewData() {
+    const { year, month } = currentMonthView;
+    const monthKey = `${year}-${String(month).padStart(2, '0')}`;
+    const saved = localStorage.getItem(`haru_month_review_${monthKey}`);
+    let data = null;
+    if (saved) {
+      try { data = JSON.parse(saved); } catch (e) {}
+    }
+
+    const mode = data?.mode || 'pen';
+    const pill = document.querySelector(`.dual-mode-pill[data-target="month-review"]`);
+    if (pill) {
+      pill.querySelectorAll('.dual-pill-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === mode);
+      });
+    }
+    switchEditorMode('month-review', mode);
+
+    const txtArea = document.getElementById('text-month-review');
+    if (txtArea) txtArea.value = data?.text || '';
+
+    const ctrl = canvasControllers['canvas-month-review'];
+    if (ctrl) {
+      ctrl.strokes = data?.strokes || [];
+      const loadedH = data?.height || DEFAULT_CANVAS_HEIGHTS['canvas-month-review'];
+      ctrl.setHeight(loadedH);
+      if (txtArea) txtArea.style.height = `${loadedH}px`;
+    }
+  }
+
+  function saveMonthReviewData() {
+    const { year, month } = currentMonthView;
+    const monthKey = `${year}-${String(month).padStart(2, '0')}`;
+    const ctrl = canvasControllers['canvas-month-review'];
+    const activePill = document.querySelector('.dual-mode-pill[data-target="month-review"] .dual-pill-btn.active');
+    const mode = activePill ? activePill.dataset.mode : 'pen';
+    const text = document.getElementById('text-month-review')?.value || '';
+
+    const data = {
+      text,
+      mode,
+      strokes: ctrl ? ctrl.strokes : [],
+      height: ctrl ? ctrl.canvas.clientHeight : DEFAULT_CANVAS_HEIGHTS['canvas-month-review'],
+      updatedAt: Date.now(),
+      senderId: CLIENT_ID
+    };
+
+    localStorage.setItem(`haru_month_review_${monthKey}`, JSON.stringify(data));
+    if (isFirestoreOnline && firestoreDb) {
+      const roomKey = getRoomKey();
+      if (roomKey) {
+        firestoreDb.collection('haru_diaries').doc(roomKey).collection('months').doc(monthKey).set(sanitizeForFirestore(data), { merge: true });
+      }
     }
   }
 
@@ -2767,16 +3551,27 @@
   function renderDailyIntegratedSection(day) {
     const rContainer = document.getElementById('daily-routine-items');
     rContainer.innerHTML = '';
+    const priorities = day.priorities || {};
+
     routinesMaster.forEach(r => {
       const isDone = !!(day.routineChecks && day.routineChecks[r.id]);
+      const isPriority = !!priorities[r.id];
       const row = document.createElement('div');
-      row.className = `check-item-row ${isDone ? 'done' : ''}`;
+      row.className = `check-item-row ${isDone ? 'done' : ''} ${isPriority ? 'is-priority' : ''}`;
       row.innerHTML = `
+        <button type="button" class="priority-star-btn ${isPriority ? 'active' : ''}" data-itemid="${r.id}" title="당일 최우선 집중 항목 설정">${isPriority ? '⭐' : '☆'}</button>
         <input type="checkbox" class="custom-checkbox" data-rid="${r.id}" ${isDone ? 'checked' : ''}>
-        <span>${escapeHtml(r.text)}</span>
+        <span class="check-text" style="flex:1;">${escapeHtml(r.text)}</span>
       `;
       row.querySelector('input').addEventListener('change', (e) => {
         row.classList.toggle('done', e.target.checked);
+        saveCurrentDayData();
+      });
+      row.querySelector('.priority-star-btn').addEventListener('click', (e) => {
+        const btn = e.currentTarget;
+        const active = btn.classList.toggle('active');
+        btn.textContent = active ? '⭐' : '☆';
+        row.classList.toggle('is-priority', active);
         saveCurrentDayData();
       });
       rContainer.appendChild(row);
@@ -2792,22 +3587,78 @@
     } else {
       daySchedules.forEach(s => {
         const isDone = !!(day.calendarChecks && day.calendarChecks[s.id]);
+        const isPriority = !!priorities[s.id];
+        const timeDisplay = formatScheduleTime(s);
         const row = document.createElement('div');
-        row.className = `check-item-row ${isDone ? 'done' : ''}`;
+        row.className = `check-item-row ${isDone ? 'done' : ''} ${isPriority ? 'is-priority' : ''}`;
         row.innerHTML = `
+          <button type="button" class="priority-star-btn ${isPriority ? 'active' : ''}" data-itemid="${s.id}" title="당일 최우선 집중 항목 설정">${isPriority ? '⭐' : '☆'}</button>
           <input type="checkbox" class="custom-checkbox" data-sid="${s.id}" ${isDone ? 'checked' : ''}>
-          <span class="time-chip">${s.time || '종일'}</span>
-          <span>${escapeHtml(s.text)}</span>
+          <span class="time-chip">${timeDisplay}</span>
+          <span class="check-text" style="flex:1;">${escapeHtml(s.text)}</span>
+          <button type="button" class="routine-del-btn" title="일정 삭제" style="font-size:12px; padding:0 4px; opacity:0.6;">×</button>
         `;
         row.querySelector('input').addEventListener('change', (e) => {
           row.classList.toggle('done', e.target.checked);
           saveCurrentDayData();
+        });
+        row.querySelector('.priority-star-btn').addEventListener('click', (e) => {
+          const btn = e.currentTarget;
+          const active = btn.classList.toggle('active');
+          btn.textContent = active ? '⭐' : '☆';
+          row.classList.toggle('is-priority', active);
+          saveCurrentDayData();
+        });
+        row.querySelector('.routine-del-btn').addEventListener('click', async () => {
+          const ok = await showConfirmDialog('일정 삭제', `'${s.text}' 일정을 삭제하시겠습니까?`, true);
+          if (ok) {
+            schedulesMaster = schedulesMaster.filter(item => item.id !== s.id);
+            saveSchedules();
+            renderDailyIntegratedSection(daysCache[currentDate] || {});
+            showToast('일정이 삭제되었습니다.');
+          }
         });
         cContainer.appendChild(row);
       });
     }
 
     updateDailySummaryBadge(day);
+    updatePriorityPills(day);
+  }
+
+  function updatePriorityPills(day) {
+    const container = document.getElementById('priority-focus-container');
+    if (!container) return;
+    const priorities = day.priorities || {};
+
+    const priorityItems = [];
+    routinesMaster.forEach(r => {
+      if (priorities[r.id]) {
+        priorityItems.push({ type: '루틴', text: r.text, done: !!(day.routineChecks && day.routineChecks[r.id]) });
+      }
+    });
+
+    const daySchedules = schedulesMaster.filter(s => s.date === currentDate);
+    daySchedules.forEach(s => {
+      if (priorities[s.id]) {
+        priorityItems.push({ type: '일정', text: s.text, done: !!(day.calendarChecks && day.calendarChecks[s.id]) });
+      }
+    });
+
+    if (priorityItems.length === 0) {
+      container.style.display = 'none';
+      container.innerHTML = '';
+      return;
+    }
+
+    container.style.display = 'flex';
+    container.innerHTML = `<span style="font-size:11px; font-weight:700; color:#B45309; display:inline-flex; align-items:center; gap:2px; margin-right:4px;">⭐ 오늘의 핵심 집중:</span>` +
+      priorityItems.map(item => `
+        <span class="focus-pill-item" style="${item.done ? 'opacity:0.6; text-decoration:line-through;' : ''}">
+          <span style="font-size:9.5px; opacity:0.8;">[${item.type}]</span>
+          <span>${escapeHtml(item.text)}</span>
+        </span>
+      `).join('');
   }
 
   function updateDailySummaryBadge(day) {
@@ -2911,10 +3762,11 @@
   function addScheduleItem() {
     const dInp = document.getElementById('new-schedule-date');
     const tInp = document.getElementById('new-schedule-time');
+    const endTInp = document.getElementById('new-schedule-end-time');
     const txtInp = document.getElementById('new-schedule-text');
 
-    const d = dInp.value;
-    const txt = txtInp.value.trim();
+    const d = dInp ? dInp.value : '';
+    const txt = txtInp ? txtInp.value.trim() : '';
     if (!d || !txt) {
       showToast('날짜와 일정 내용을 입력해 주세요.');
       return;
@@ -2923,30 +3775,38 @@
     schedulesMaster.push({
       id: 's_' + Date.now(),
       date: d,
-      time: tInp.value,
+      time: tInp ? tInp.value : '',
+      endTime: endTInp ? endTInp.value : '',
       text: txt,
       color: Math.floor(Math.random() * 5)
     });
 
-    txtInp.value = '';
-    tInp.value = '';
+    if (txtInp) txtInp.value = '';
+    if (tInp) tInp.value = '';
+    if (endTInp) endTInp.value = '';
     saveSchedules();
     showToast('마스킹 테이프 일정이 달력에 부착되었습니다!');
   }
 
   function initMonthSpread() {
-    document.getElementById('new-schedule-date').value = currentDate;
+    const dInp = document.getElementById('new-schedule-date');
+    if (dInp) {
+      dInp.value = currentDate;
+    }
   }
 
   function renderMonthCalendar() {
     const { year, month } = currentMonthView;
     const monthNamesEn = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    document.getElementById('month-title-en').textContent = `${monthNamesEn[month - 1]} ${year}`;
-    document.getElementById('month-title-text').textContent = `${year}년 ${month}월의 기록`;
+    const titleEn = document.getElementById('month-title-en');
+    const titleKo = document.getElementById('month-title-text');
+    if (titleEn) titleEn.textContent = `${monthNamesEn[month - 1]} ${year}`;
+    if (titleKo) titleKo.textContent = `${year}년 ${month}월의 기록`;
 
     loadMonthSideMeta(`${year}-${String(month).padStart(2, '0')}`);
 
     const grid = document.getElementById('month-calendar-grid');
+    if (!grid) return;
     grid.innerHTML = '';
 
     const firstDay = new Date(year, month - 1, 1).getDay();
@@ -3019,7 +3879,7 @@
     badgesWrap.className = 'day-badges-wrap';
 
     if (!isOtherMonth && dayData) {
-      if (dayData.spent === 0 && (dayData.budget > 0 || dayData.todoDone > 0)) {
+      if (dayData.spent === 0 && dayData.budget > 0) {
         const noSpend = document.createElement('span');
         noSpend.className = 'no-spend-badge';
         noSpend.textContent = '☕ 無지출';
@@ -3046,8 +3906,9 @@
       schedules.slice(0, 3).forEach(s => {
         const item = document.createElement('div');
         item.className = `washi-tape-item tape-color-${s.color || 0}`;
+        const timeStr = formatScheduleTime(s);
         item.textContent = s.text;
-        item.title = `${s.time || ''} ${s.text}`;
+        item.title = `${timeStr} ${s.text}`;
         tapeList.appendChild(item);
       });
 
@@ -3141,8 +4002,8 @@
         const sTotal = dayS.length;
         const sDone = Object.values(dayData.calendarChecks || {}).filter(Boolean).length;
 
-        const allTotal = rTotal + sTotal + (dayData.todoTotal || 0);
-        const allDone = rDone + sDone + (dayData.todoDone || 0);
+        const allTotal = rTotal + sTotal;
+        const allDone = rDone + sDone;
 
         totalTodos += allTotal;
         doneTodos += allDone;
@@ -3161,7 +4022,7 @@
         </div>
         <div style="font-size:11px; color:var(--ink-soft); font-family:var(--font-mono);">완료: ${todoCnt}</div>
         <div style="font-size:11px; color:var(--ink-soft); white-space:pre-wrap; max-height:80px; overflow-y:auto; border-top:1px dashed var(--line); padding-top:4px;">
-          ${escapeHtml(dayData?.texts?.['todo-feedback'] || '(피드백 없음)')}
+          ${escapeHtml(dayData?.texts?.['todo-feedback'] || '(회고 없음)')}
         </div>
       `;
 
@@ -3242,6 +4103,51 @@
     showToast('클라우드 연결이 해제되었습니다.');
   }
 
+  function syncDayToFirestore(dateStr, data) {
+    const roomKey = getRoomKey();
+    if (!roomKey || !firestoreDb) return;
+
+    updateSyncStatusUI('syncing', '클라우드 저장 중');
+    const cleanData = sanitizeForFirestore(data);
+
+    firestoreDb.collection('haru_diaries')
+      .doc(roomKey)
+      .collection('days')
+      .doc(dateStr)
+      .set(cleanData, { merge: true })
+      .then(() => {
+        updateSyncStatusUI('online', '실시간 연동 중');
+      })
+      .catch(err => {
+        console.error(err);
+        updateSyncStatusUI('error', '저장 오류');
+      });
+  }
+
+  async function forcePullFromCloud() {
+    const roomKey = getRoomKey();
+    if (!roomKey || !firestoreDb) {
+      showToast('Firebase 연결 설정을 먼저 완료해 주세요.');
+      return;
+    }
+    try {
+      updateSyncStatusUI('syncing', '데이터 가져오는 중');
+      const snap = await firestoreDb.collection('haru_diaries').doc(roomKey).collection('days').get();
+      snap.forEach(doc => {
+        const d = doc.data();
+        daysCache[doc.id] = d;
+        localStorage.setItem(getDayStorageKey(doc.id), JSON.stringify(d));
+      });
+      loadDayData(currentDate);
+      updateSyncStatusUI('online', '실시간 연동 중');
+      showToast('클라우드에서 최신 데이터를 모두 불러왔습니다!');
+    } catch (e) {
+      console.error(e);
+      showToast('데이터 가져오기 실패: ' + e.message);
+      updateSyncStatusUI('error', '오류 발생');
+    }
+  }
+
   function initFirebaseIfAvailable() {
     const roomKey = getRoomKey();
     const configStr = localStorage.getItem('haru_firebase_config');
@@ -3312,54 +4218,14 @@
           localStorage.setItem('haru_schedules', JSON.stringify(schedulesMaster));
           renderDailyIntegratedSection(daysCache[currentDate] || {});
           renderMonthCalendar();
+        } else if (docId === 'backlogs' && data.list) {
+          backlogsMaster = data.list;
+          localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster));
+          updateBacklogBadges();
+          renderBacklogDrawerList();
         }
       });
     });
-  }
-
-  function syncDayToFirestore(dateStr, data) {
-    const roomKey = getRoomKey();
-    if (!roomKey || !firestoreDb) return;
-
-    updateSyncStatusUI('syncing', '클라우드 저장 중');
-    const cleanData = sanitizeForFirestore(data);
-
-    firestoreDb.collection('haru_diaries')
-      .doc(roomKey)
-      .collection('days')
-      .doc(dateStr)
-      .set(cleanData, { merge: true })
-      .then(() => {
-        updateSyncStatusUI('online', '실시간 연동 중');
-      })
-      .catch(err => {
-        console.error(err);
-        updateSyncStatusUI('error', '저장 오류');
-      });
-  }
-
-  async function forcePullFromCloud() {
-    const roomKey = getRoomKey();
-    if (!roomKey || !firestoreDb) {
-      showToast('Firebase 연결 설정을 먼저 완료해 주세요.');
-      return;
-    }
-    try {
-      updateSyncStatusUI('syncing', '데이터 가져오는 중');
-      const snap = await firestoreDb.collection('haru_diaries').doc(roomKey).collection('days').get();
-      snap.forEach(doc => {
-        const d = doc.data();
-        daysCache[doc.id] = d;
-        localStorage.setItem(getDayStorageKey(doc.id), JSON.stringify(d));
-      });
-      loadDayData(currentDate);
-      updateSyncStatusUI('online', '실시간 연동 중');
-      showToast('클라우드에서 최신 데이터를 모두 불러왔습니다!');
-    } catch (e) {
-      console.error(e);
-      showToast('데이터 가져오기 실패: ' + e.message);
-      updateSyncStatusUI('error', '오류 발생');
-    }
   }
 
   function exportFullBackup() {
@@ -3368,6 +4234,7 @@
       roomKey: getRoomKey(),
       routines: routinesMaster,
       schedules: schedulesMaster,
+      backlogs: backlogsMaster,
       days: {}
     };
 
