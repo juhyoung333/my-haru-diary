@@ -37,7 +37,6 @@
     --font-sans: 'Gowun Dodum', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
     --font-hand: 'Nanum Pen Script', cursive;
-    --line-grid-step: 35px;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -65,7 +64,6 @@
     }
   }
 
-  /* 마스킹 테이프 타이틀 */
   .washi-tape-title {
     display: inline-flex;
     align-items: center;
@@ -115,14 +113,7 @@
     transform: rotate(0.5deg);
     border-top: 1px solid rgba(255, 255, 255, 0.7);
   }
-  .tape-rose {
-    background-color: #FCE2E6;
-    color: #6C1E2F;
-    transform: rotate(-0.4deg);
-    border-top: 1px solid rgba(255, 255, 255, 0.7);
-  }
 
-  /* 중요도(우선순위) 별표 */
   .priority-star-btn {
     border: none;
     background: transparent;
@@ -145,6 +136,7 @@
     background: #FFFBEB !important;
     border-left: 3px solid #F59E0B;
   }
+
   .priority-focus-pills {
     display: flex;
     flex-wrap: wrap;
@@ -167,7 +159,6 @@
     font-weight: 600;
   }
 
-  /* 최상단 바 */
   .top-bar-row {
     display: flex;
     justify-content: space-between;
@@ -240,7 +231,6 @@
     50% { opacity: 0.4; transform: scale(1.2); }
   }
 
-  /* 네비게이션 탭 */
   .nav-tabs {
     display: flex;
     justify-content: center;
@@ -274,7 +264,6 @@
     box-shadow: 0 2px 6px rgba(194,65,12,0.25);
   }
 
-  /* 스마트 펜 트레이 */
   .global-pen-container {
     position: sticky;
     top: 6px;
@@ -296,6 +285,7 @@
     justify-content: space-between;
     gap: 6px;
   }
+
   .pen-group-row {
     display: flex;
     align-items: center;
@@ -393,11 +383,7 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .options-row {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
+  .options-row { display: flex; flex-direction: column; gap: 5px; }
   .options-label-row {
     display: flex;
     justify-content: space-between;
@@ -406,12 +392,7 @@
     font-weight: 700;
     color: var(--ink-soft);
   }
-  .palette-chips-wrap {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    flex-wrap: wrap;
-  }
+  .palette-chips-wrap { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
   .palette-chip {
     width: 22px;
     height: 22px;
@@ -423,10 +404,7 @@
     padding: 0;
   }
   .palette-chip:hover { transform: scale(1.15); }
-  .palette-chip.active {
-    transform: scale(1.22);
-    box-shadow: 0 0 0 2.5px var(--accent);
-  }
+  .palette-chip.active { transform: scale(1.22); box-shadow: 0 0 0 2.5px var(--accent); }
   .color-picker-input {
     width: 22px;
     height: 22px;
@@ -437,32 +415,10 @@
     padding: 0;
     outline: none;
   }
-
-  .slider-control-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .custom-range {
-    flex: 1;
-    accent-color: var(--accent);
-    cursor: pointer;
-    height: 5px;
-  }
-  .slider-val-badge {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 700;
-    min-width: 44px;
-    text-align: right;
-    color: var(--ink);
-  }
-  .quick-chip-group {
-    display: flex;
-    gap: 4px;
-    margin-top: 2px;
-    flex-wrap: wrap;
-  }
+  .slider-control-row { display: flex; align-items: center; gap: 10px; }
+  .custom-range { flex: 1; accent-color: var(--accent); cursor: pointer; height: 5px; }
+  .slider-val-badge { font-family: var(--font-mono); font-size: 11px; font-weight: 700; min-width: 44px; text-align: right; color: var(--ink); }
+  .quick-chip-group { display: flex; gap: 4px; margin-top: 2px; flex-wrap: wrap; }
   .quick-chip {
     background: #FFFFFF;
     border: 1px solid var(--line);
@@ -476,7 +432,6 @@
   .quick-chip:hover { border-color: var(--accent); color: var(--accent); }
   .quick-chip.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); font-weight: 700; }
 
-  /* 종이 카드 컨테이너 */
   .paper-card {
     background: var(--paper-card);
     border: 1.5px solid var(--line);
@@ -484,13 +439,8 @@
     padding: 14px 16px;
     box-shadow: var(--shadow-md);
   }
-  .top-budget-box {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+  .top-budget-box { display: flex; flex-direction: column; gap: 12px; }
 
-  /* 날짜 헤더 */
   .day-header-row {
     display: flex;
     justify-content: space-between;
@@ -500,20 +450,8 @@
     padding-bottom: 8px;
     border-bottom: 1.5px solid var(--line);
   }
-  .date-nav-group {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-  .date-display {
-    font-family: var(--font-serif);
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    color: var(--ink);
-    white-space: nowrap;
-  }
+  .date-nav-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .date-display { font-family: var(--font-serif); font-size: 16px; font-weight: 700; letter-spacing: 0.02em; color: var(--ink); white-space: nowrap; }
   .date-nav-btn {
     background: #FFFFFF;
     border: 1.5px solid var(--line);
@@ -529,28 +467,13 @@
     white-space: nowrap;
     transition: all 0.15s ease;
   }
-  .date-nav-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-  .date-nav-btn.today-btn {
-    background: var(--accent-soft);
-    color: var(--accent);
-    border-color: rgba(194,65,12,0.3);
-  }
-  .date-status-badge {
-    font-size: 10.5px;
-    font-family: var(--font-mono);
-    padding: 2px 7px;
-    border-radius: 999px;
-    font-weight: 700;
-    white-space: nowrap;
-  }
+  .date-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .date-nav-btn.today-btn { background: var(--accent-soft); color: var(--accent); border-color: rgba(194,65,12,0.3); }
+  .date-status-badge { font-size: 10.5px; font-family: var(--font-mono); padding: 2px 7px; border-radius: 999px; font-weight: 700; white-space: nowrap; }
   .badge-today { background: var(--accent); color: #FFFFFF; }
   .badge-tomorrow { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
   .badge-past { background: #F3F4F6; color: var(--ink-soft); border: 1px solid var(--line); }
 
-  /* 예산 및 지출 */
   .budget-input-row {
     display: flex;
     flex-wrap: wrap;
@@ -561,48 +484,14 @@
     border-radius: 10px;
     border: 1.5px solid var(--line);
   }
-  .budget-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .meta-tag {
-    font-family: var(--font-serif);
-    font-size: 13.5px;
-    font-weight: 700;
-    color: var(--accent);
-  }
-  .num-input-wrap {
-    display: inline-flex;
-    align-items: center;
-    background: #FFFFFF;
-    border: 1.5px solid var(--line);
-    border-radius: 8px;
-    padding: 3px 6px;
-  }
-  .num-input {
-    border: none;
-    background: transparent;
-    font-family: var(--font-mono);
-    font-size: 13.5px;
-    font-weight: 600;
-    width: 80px;
-    text-align: right;
-    color: var(--ink);
-    outline: none;
-  }
-  .diff-badge {
-    font-size: 11.5px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-family: var(--font-mono);
-    white-space: nowrap;
-  }
+  .budget-item { display: flex; align-items: center; gap: 6px; }
+  .meta-tag { font-family: var(--font-serif); font-size: 13.5px; font-weight: 700; color: var(--accent); }
+  .num-input-wrap { display: inline-flex; align-items: center; background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 8px; padding: 3px 6px; }
+  .num-input { border: none; background: transparent; font-family: var(--font-mono); font-size: 13.5px; font-weight: 600; width: 80px; text-align: right; color: var(--ink); outline: none; }
+  .diff-badge { font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; font-family: var(--font-mono); white-space: nowrap; }
   .diff-under { background: #ECFDF5; color: #059669; }
   .diff-over { background: #FEF2F2; color: #DC2626; }
 
-  /* 2단 그리드 */
   .daily-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -611,13 +500,8 @@
   @media (max-width: 768px) {
     .daily-grid { grid-template-columns: 1fr; }
   }
-  .daily-col {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
+  .daily-col { display: flex; flex-direction: column; gap: 14px; }
 
-  /* 루틴 상단 & 시간순 타임블록 스케줄 카드 */
   .integrated-auto-card {
     background: #FFFFFF;
     border: 1.5px solid var(--line);
@@ -635,41 +519,20 @@
     border-bottom: 1.5px dashed var(--line);
     padding-bottom: 6px;
   }
-  .auto-card-title {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .auto-summary-badge {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 700;
-    background: var(--accent-badge);
-    color: var(--accent);
-    padding: 2px 8px;
-    border-radius: 999px;
-  }
+  .auto-card-title { display: flex; align-items: center; gap: 6px; }
+  .auto-summary-badge { font-family: var(--font-mono); font-size: 11px; font-weight: 700; background: var(--accent-badge); color: var(--accent); padding: 2px 8px; border-radius: 999px; }
 
-  /* 상단 고정 루틴 영역 */
-  .routine-top-section {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
+  .routine-top-section { display: flex; flex-direction: column; gap: 5px; }
   .block-sub-title {
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 700;
-    color: var(--ink-soft);
+    color: var(--ink);
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-  .check-item-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    transition: all 0.2s ease;
-  }
+
+  .check-item-list { display: flex; flex-direction: column; gap: 4px; transition: all 0.2s ease; }
   .check-item-row {
     display: flex;
     align-items: center;
@@ -680,60 +543,31 @@
     transition: background 0.1s ease, opacity 0.15s ease;
   }
   .check-item-row:hover { background: #F9FAFB; }
-  .check-item-row.done {
-    opacity: 0.65;
-    background: #FAFAFA;
-  }
-  .check-item-row.done span.check-text {
-    text-decoration: line-through;
-    color: var(--ink-faint);
-  }
-  .custom-checkbox {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--accent);
-    cursor: pointer;
-  }
+  .check-item-row.done { opacity: 0.65; background: #FAFAFA; }
+  .check-item-row.done span.check-text { text-decoration: line-through; color: var(--ink-faint); }
+  .custom-checkbox { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
 
-  /* 타임블록 뱃지 및 시간 칩 */
-  .timeblock-chip-group {
+  .timeblock-chip-group { display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0; }
+  .time-chip { font-family: var(--font-mono); font-size: 10.5px; padding: 2px 6px; border-radius: 4px; background: #FFF7ED; border: 1px solid #FDBA74; color: #9A3412; font-weight: 700; white-space: nowrap; }
+  .duration-pill { font-family: var(--font-mono); font-size: 9.5px; padding: 1px 5px; border-radius: 3px; background: #F3F4F6; color: var(--ink-soft); font-weight: 600; white-space: nowrap; }
+  .source-tag { font-size: 9.5px; padding: 1px 5px; border-radius: 3px; background: #E0E7FF; color: #3730A3; font-weight: 700; white-space: nowrap; }
+
+  .btn-toggle-dock {
+    background: #FFF7ED;
+    border: 1px solid #FFEDD5;
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 3px;
-    flex-shrink: 0;
+    transition: all 0.15s ease;
   }
-  .time-chip {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: #FFF7ED;
-    border: 1px solid #FDBA74;
-    color: #9A3412;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-  .duration-pill {
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    padding: 1px 5px;
-    border-radius: 3px;
-    background: #F3F4F6;
-    color: var(--ink-soft);
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .source-tag {
-    font-size: 9.5px;
-    padding: 1px 5px;
-    border-radius: 3px;
-    background: #E0E7FF;
-    color: #3730A3;
-    font-weight: 700;
-    white-space: nowrap;
-  }
+  .btn-toggle-dock:hover { background: var(--accent); color: #FFFFFF; border-color: var(--accent); }
 
-  /* 타임블록 즉석 등록 독 (Daily Quick Time-Block Dock) */
   .timeblock-dock {
     background: #FFFDF9;
     border: 1.5px solid #FDE68A;
@@ -743,58 +577,18 @@
     flex-direction: column;
     gap: 6px;
     margin-top: 4px;
+    animation: slideDown 0.16s ease-out;
   }
-  .dock-form-row {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    flex-wrap: wrap;
-  }
-  .dock-time-input {
-    border: 1.5px solid var(--line);
-    border-radius: 6px;
-    padding: 4px 6px;
-    font-size: 11px;
-    font-family: var(--font-mono);
-    outline: none;
-    background: #FFFFFF;
-  }
+  .dock-form-row { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+  .dock-time-input { border: 1.5px solid var(--line); border-radius: 6px; padding: 4px 6px; font-size: 11px; font-family: var(--font-mono); outline: none; background: #FFFFFF; }
   .dock-time-input:focus { border-color: var(--accent); }
-  .dock-text-input {
-    flex: 1;
-    min-width: 140px;
-    border: 1.5px solid var(--line);
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 12px;
-    font-family: var(--font-sans);
-    outline: none;
-    background: #FFFFFF;
-  }
+  .dock-text-input { flex: 1; min-width: 140px; border: 1.5px solid var(--line); border-radius: 6px; padding: 4px 8px; font-size: 12px; font-family: var(--font-sans); outline: none; background: #FFFFFF; }
   .dock-text-input:focus { border-color: var(--accent); }
-  .btn-add-block {
-    background: var(--accent);
-    color: #FFFFFF;
-    border: none;
-    border-radius: 6px;
-    padding: 5px 10px;
-    font-size: 11.5px;
-    font-weight: 700;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.15s ease;
-  }
+  .btn-add-block { background: var(--accent); color: #FFFFFF; border: none; border-radius: 6px; padding: 5px 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.15s ease; }
   .btn-add-block:hover { background: var(--accent-hover); }
 
-  .empty-hint-text {
-    font-size: 11.5px;
-    color: var(--ink-faint);
-    font-style: italic;
-    padding: 6px 4px;
-    text-align: center;
-  }
+  .empty-hint-text { font-size: 11.5px; color: var(--ink-faint); font-style: italic; padding: 6px 4px; text-align: center; }
 
-  /* 완료된 일정 접기/펼치기 토글 바 */
   .done-collapse-toggle-btn {
     display: inline-flex;
     align-items: center;
@@ -811,11 +605,8 @@
     margin-top: 2px;
     transition: color 0.15s ease;
   }
-  .done-collapse-toggle-btn:hover {
-    color: var(--accent);
-  }
+  .done-collapse-toggle-btn:hover { color: var(--accent); }
 
-  /* 초경량 원터치 미니 아이콘 3개 툴바 */
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -823,19 +614,8 @@
     margin-bottom: 6px;
     gap: 6px;
   }
-  .section-title {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    min-width: 0;
-  }
-
-  .direct-action-tools {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0;
-  }
+  .section-title { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .direct-action-tools { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
   .btn-mini-action {
     display: inline-flex;
@@ -855,26 +635,11 @@
     user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
-  .btn-mini-action:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    transform: translateY(-1px);
-  }
-  .btn-mini-action:active {
-    transform: scale(0.92);
-  }
-  .btn-mini-action.type-active {
-    background: var(--accent-soft);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-  .btn-mini-action.danger-action:hover {
-    border-color: #EF4444;
-    color: #DC2626;
-    background: #FEF2F2;
-  }
+  .btn-mini-action:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  .btn-mini-action:active { transform: scale(0.92); }
+  .btn-mini-action.type-active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .btn-mini-action.danger-action:hover { border-color: #EF4444; color: #DC2626; background: #FEF2F2; }
 
-  /* 에디터 박스 & 캔버스 */
   .editor-wrapper-box {
     position: relative;
     border: 1.5px solid var(--line-rule);
@@ -897,15 +662,10 @@
       #E5E7EB 35px
     );
   }
-  .ink-canvas {
-    width: 100%;
-    display: block;
-    cursor: crosshair;
-  }
+  .ink-canvas { width: 100%; display: block; cursor: crosshair; }
   .ink-canvas.drawing-active { touch-action: none; }
   .ink-canvas.scroll-active { touch-action: pan-y; cursor: grab; }
 
-  /* 줄눈 텍스트 에어리어 */
   .diary-lined-textarea {
     width: 100%;
     display: block;
@@ -929,13 +689,8 @@
     transition: height 0.15s ease-out;
     background-attachment: local;
   }
-  .diary-lined-textarea::placeholder {
-    color: #9CA3AF;
-    font-style: italic;
-    font-size: 12.5px;
-  }
+  .diary-lined-textarea::placeholder { color: #9CA3AF; font-style: italic; font-size: 12.5px; }
 
-  /* 카드 하단 미니 높이 조절 바 */
   .compact-resize-bar {
     display: flex;
     justify-content: flex-end;
@@ -958,11 +713,7 @@
     transition: all 0.15s ease;
     white-space: nowrap;
   }
-  .btn-mini-resize:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: #FFF7ED;
-  }
+  .btn-mini-resize:hover { border-color: var(--accent); color: var(--accent); background: #FFF7ED; }
 
   .tome-question-row {
     display: flex;
@@ -975,58 +726,16 @@
     border-left: 3.5px solid var(--accent);
     border-radius: 8px;
   }
-  .tome-q-text {
-    flex: 1;
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: 12.5px;
-    color: var(--ink-soft);
-  }
-  .tome-shuffle {
-    background: #FFFFFF;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 2px 6px;
-    font-size: 11px;
-    cursor: pointer;
-    color: var(--ink-soft);
-  }
+  .tome-q-text { flex: 1; font-family: var(--font-serif); font-style: italic; font-size: 12.5px; color: var(--ink-soft); }
+  .tome-shuffle { background: #FFFFFF; border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; font-size: 11px; cursor: pointer; color: var(--ink-soft); }
 
-  .stat-grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-  .stat-card {
-    background: #FFFFFF;
-    border: 1.5px solid var(--line);
-    border-radius: 10px;
-    padding: 8px;
-    text-align: center;
-    box-shadow: var(--shadow-sm);
-  }
-  .stat-label {
-    font-size: 11px;
-    color: var(--ink-soft);
-    margin-bottom: 2px;
-  }
-  .stat-value {
-    font-family: var(--font-mono);
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--accent);
-  }
+  .stat-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+  .stat-card { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px; text-align: center; box-shadow: var(--shadow-sm); }
+  .stat-label { font-size: 11px; color: var(--ink-soft); margin-bottom: 2px; }
+  .stat-value { font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: var(--accent); }
 
-  .week-archive-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    margin-bottom: 14px;
-  }
-  @media (max-width: 768px) {
-    .week-archive-grid { grid-template-columns: 1fr; }
-  }
+  .week-archive-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 14px; }
+  @media (max-width: 768px) { .week-archive-grid { grid-template-columns: 1fr; } }
   .day-archive-col {
     background: #FFFFFF;
     border: 1.5px solid var(--line);
@@ -1038,21 +747,9 @@
     cursor: pointer;
     transition: transform 0.1s ease, border-color 0.1s ease;
   }
-  .day-archive-col:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
-  }
-  .day-archive-col.is-today {
-    border-color: var(--accent);
-    background: #FFF7ED;
-  }
-  .day-col-title {
-    font-size: 11.5px;
-    font-weight: 700;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  .day-archive-col:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .day-archive-col.is-today { border-color: var(--accent); background: #FFF7ED; }
+  .day-col-title { font-size: 11.5px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
 
   .handwrite-feedback-pill {
     display: inline-flex;
@@ -1067,55 +764,14 @@
     font-weight: 700;
   }
 
-  /* 월간 캘린더 */
-  .month-spread-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
-    align-items: start;
-  }
-  @media (min-width: 1100px) {
-    .month-spread-container {
-      grid-template-columns: 1.25fr 0.75fr;
-      gap: 18px;
-    }
-  }
+  .month-spread-container { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: start; }
+  @media (min-width: 1100px) { .month-spread-container { grid-template-columns: 1.25fr 0.75fr; gap: 18px; } }
+  .spread-page-col { display: flex; flex-direction: column; gap: 14px; }
 
-  .spread-page-col {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .month-header-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    padding: 4px 2px 8px;
-    border-bottom: 1.5px dashed var(--line);
-  }
-  .month-title-wrap {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-  .month-title-en {
-    font-family: var(--font-serif);
-    font-size: 12px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    font-weight: 700;
-  }
-  .month-title-ko {
-    font-family: var(--font-serif);
-    font-size: 19px;
-    font-weight: 700;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-  }
+  .month-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 4px 2px 8px; border-bottom: 1.5px dashed var(--line); }
+  .month-title-wrap { text-align: center; display: flex; flex-direction: column; gap: 1px; }
+  .month-title-en { font-family: var(--font-serif); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700; }
+  .month-title-ko { font-family: var(--font-serif); font-size: 19px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
 
   .paper-diary-sheet {
     background-color: #FFFFFF;
@@ -1126,32 +782,13 @@
     overflow: hidden;
     margin-bottom: 8px;
   }
-
-  .diary-dow-row {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    border-bottom: 2px solid var(--accent);
-    background: #FFFFFF;
-  }
-  .diary-dow-cell {
-    text-align: center;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 6px 0;
-    color: var(--ink-soft);
-    font-family: var(--font-serif);
-    border-right: 1.5px solid #E5E7EB;
-  }
+  .diary-dow-row { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 2px solid var(--accent); background: #FFFFFF; }
+  .diary-dow-cell { text-align: center; font-size: 11px; font-weight: 700; padding: 6px 0; color: var(--ink-soft); font-family: var(--font-serif); border-right: 1.5px solid #E5E7EB; }
   .diary-dow-cell:last-child { border-right: none; }
   .diary-dow-cell.sun { color: var(--accent); }
   .diary-dow-cell.sat { color: #2563EB; }
 
-  .diary-grid-table {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background-color: #FFFFFF;
-  }
-
+  .diary-grid-table { display: grid; grid-template-columns: repeat(7, 1fr); background-color: #FFFFFF; }
   .diary-day-cell {
     min-height: 85px;
     padding: 5px;
@@ -1168,22 +805,8 @@
   .diary-day-cell:hover { background-color: rgba(254, 243, 199, 0.25); }
   .diary-day-cell.other-month { background-color: #FAFAFA; opacity: 0.45; }
 
-  .day-top-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2px;
-    min-height: 20px;
-  }
-  .day-num {
-    font-size: 12.5px;
-    font-family: var(--font-serif);
-    font-weight: 700;
-    color: var(--ink);
-    padding: 1px 3px;
-    border-radius: 4px;
-    line-height: 1;
-  }
+  .day-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; min-height: 20px; }
+  .day-num { font-size: 12.5px; font-family: var(--font-serif); font-weight: 700; color: var(--ink); padding: 1px 3px; border-radius: 4px; line-height: 1; }
   .diary-day-cell.sun .day-num { color: var(--accent); }
   .diary-day-cell.sat .day-num { color: #2563EB; }
   .diary-day-cell.other-month .day-num { color: #BBB4AA; }
@@ -1197,22 +820,8 @@
     box-shadow: 0 1px 4px rgba(194,65,12,0.3);
   }
 
-  .day-badges-wrap {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-  }
-  .no-spend-badge {
-    font-size: 9.5px;
-    font-weight: 700;
-    font-family: var(--font-hand);
-    background: #FEF3C7;
-    border: 1px solid #FDE68A;
-    color: #92400E;
-    padding: 0 3px;
-    border-radius: 3px;
-  }
-
+  .day-badges-wrap { display: flex; align-items: center; gap: 2px; }
+  .no-spend-badge { font-size: 9.5px; font-weight: 700; font-family: var(--font-hand); background: #FEF3C7; border: 1px solid #FDE68A; color: #92400E; padding: 0 3px; border-radius: 3px; }
   .stamp-done {
     width: 20px;
     height: 20px;
@@ -1231,13 +840,7 @@
     user-select: none;
   }
 
-  .tape-schedule-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-top: 2px;
-    overflow: hidden;
-  }
+  .tape-schedule-list { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; overflow: hidden; }
   .washi-tape-item {
     font-size: 10px;
     padding: 1px 4px;
@@ -1252,64 +855,18 @@
     transform: rotate(0.2deg);
   }
   .washi-tape-item:nth-child(even) { transform: rotate(-0.3deg); }
-
   .tape-color-0 { background: #FEF3C7; color: #78350F; border-left: 2px solid #F59E0B; }
   .tape-color-1 { background: #FFE4E6; color: #9F1239; border-left: 2px solid #F43F5E; }
   .tape-color-2 { background: #DCFCE7; color: #14532D; border-left: 2px solid #22C55E; }
   .tape-color-3 { background: #E0E7FF; color: #3730A3; border-left: 2px solid #6366F1; }
   .tape-color-4 { background: #F3E8FF; color: #581C87; border-left: 2px solid #A855F7; }
+  .tape-more-hint { font-size: 9px; color: var(--ink-faint); text-align: right; font-family: var(--font-mono); }
 
-  .tape-more-hint {
-    font-size: 9px;
-    color: var(--ink-faint);
-    text-align: right;
-    font-family: var(--font-mono);
-  }
-
-  .monthly-side-card {
-    background: #FFFFFF;
-    border: 1.5px solid var(--line);
-    border-radius: 12px;
-    padding: 12px 14px;
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .monthly-side-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .focus-row-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .focus-num-badge {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    font-weight: 700;
-    color: var(--accent);
-    background: var(--accent-soft);
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .focus-text-input {
-    flex: 1;
-    border: none;
-    border-bottom: 1.5px solid var(--line);
-    padding: 3px 5px;
-    font-size: 12.5px;
-    outline: none;
-    font-family: var(--font-sans);
-    background: transparent;
-  }
+  .monthly-side-card { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 10px; }
+  .monthly-side-title { display: flex; align-items: center; justify-content: space-between; }
+  .focus-row-item { display: flex; align-items: center; gap: 6px; }
+  .focus-num-badge { font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; color: var(--accent); background: var(--accent-soft); width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .focus-text-input { flex: 1; border: none; border-bottom: 1.5px solid var(--line); padding: 3px 5px; font-size: 12.5px; outline: none; font-family: var(--font-sans); background: transparent; }
   .focus-text-input:focus { border-bottom-color: var(--accent); }
 
   .wishlist-memo-area {
@@ -1324,35 +881,13 @@
     resize: vertical;
     outline: none;
     background: #FFFFFF;
-    background-image: repeating-linear-gradient(
-      transparent,
-      transparent 25px,
-      #E5E7EB 25px,
-      #E5E7EB 26px
-    );
+    background-image: repeating-linear-gradient(transparent, transparent 25px, #E5E7EB 25px, #E5E7EB 26px);
   }
   .wishlist-memo-area:focus { border-color: var(--accent); }
 
-  .month-backlog-callout-card {
-    background: #FFFDF9;
-    border: 1.5px dashed #FDE68A;
-    border-radius: 12px;
-    padding: 12px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  .month-backlog-callout-title {
-    font-size: 12.5px;
-    font-weight: 700;
-    color: #92400E;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+  .month-backlog-callout-card { background: #FFFDF9; border: 1.5px dashed #FDE68A; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .month-backlog-callout-title { font-size: 12.5px; font-weight: 700; color: #92400E; display: flex; align-items: center; gap: 6px; }
 
-  /* 슬라이드 아웃 백로그 서랍 */
   .backlog-drawer-backdrop {
     position: fixed;
     inset: 0;
@@ -1364,10 +899,7 @@
     opacity: 0;
     transition: opacity 0.22s ease;
   }
-  .backlog-drawer-backdrop.open {
-    display: block;
-    opacity: 1;
-  }
+  .backlog-drawer-backdrop.open { display: block; opacity: 1; }
 
   .backlog-drawer-panel {
     position: fixed;
@@ -1385,277 +917,52 @@
     transform: translateX(100%);
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .backlog-drawer-panel.open {
-    transform: translateX(0);
-  }
+  .backlog-drawer-panel.open { transform: translateX(0); }
 
-  .drawer-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 18px;
-    border-bottom: 1.5px solid var(--line);
-    background: #FFFDF9;
-  }
-  .drawer-title-group {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .drawer-main-title {
-    font-family: var(--font-serif);
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .drawer-sub-hint {
-    font-size: 11px;
-    color: var(--ink-soft);
-  }
-  .drawer-close-btn {
-    border: none;
-    background: transparent;
-    font-size: 22px;
-    line-height: 1;
-    color: var(--ink-soft);
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 6px;
-    transition: background 0.15s ease, color 0.15s ease;
-  }
-  .drawer-close-btn:hover {
-    background: #F3F4F6;
-    color: var(--accent);
-  }
+  .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1.5px solid var(--line); background: #FFFDF9; }
+  .drawer-title-group { display: flex; flex-direction: column; gap: 2px; }
+  .drawer-main-title { font-family: var(--font-serif); font-size: 16px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+  .drawer-sub-hint { font-size: 11px; color: var(--ink-soft); }
+  .drawer-close-btn { border: none; background: transparent; font-size: 22px; line-height: 1; color: var(--ink-soft); cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.15s ease, color 0.15s ease; }
+  .drawer-close-btn:hover { background: #F3F4F6; color: var(--accent); }
 
-  .drawer-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    background-color: #FAFAFA;
-  }
+  .drawer-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; background-color: #FAFAFA; }
+  .drawer-add-box { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 8px; }
+  .tag-select-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+  .tag-chip-btn { border: 1px solid var(--line); background: #FFFFFF; color: var(--ink-soft); font-size: 11px; padding: 2px 8px; border-radius: 999px; cursor: pointer; transition: all 0.12s ease; }
+  .tag-chip-btn.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); font-weight: 700; }
+  .drawer-text-input { width: 100%; border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; font-family: var(--font-sans); line-height: 1.5; outline: none; resize: none; background: #FFFFFF; }
+  .drawer-text-input:focus { border-color: var(--accent); }
+  .btn-submit-backlog { background: var(--accent); color: #FFFFFF; border: none; padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; align-self: flex-end; transition: background 0.15s ease; }
+  .btn-submit-backlog:hover { background: var(--accent-hover); }
 
-  .drawer-add-box {
-    background: #FFFFFF;
-    border: 1.5px solid var(--line);
-    border-radius: 12px;
-    padding: 12px;
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .tag-select-row {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-wrap: wrap;
-  }
-  .tag-chip-btn {
-    border: 1px solid var(--line);
-    background: #FFFFFF;
-    color: var(--ink-soft);
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: all 0.12s ease;
-  }
-  .tag-chip-btn.active {
-    background: var(--accent-soft);
-    color: var(--accent);
-    border-color: var(--accent);
-    font-weight: 700;
-  }
-  .drawer-text-input {
-    width: 100%;
-    border: 1.5px solid var(--line);
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-size: 12.5px;
-    font-family: var(--font-sans);
-    line-height: 1.5;
-    outline: none;
-    resize: none;
-    background: #FFFFFF;
-  }
-  .drawer-text-input:focus {
-    border-color: var(--accent);
-  }
-  .btn-submit-backlog {
-    background: var(--accent);
-    color: #FFFFFF;
-    border: none;
-    padding: 7px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    align-self: flex-end;
-    transition: background 0.15s ease;
-  }
-  .btn-submit-backlog:hover {
-    background: var(--accent-hover);
-  }
-
-  .drawer-item-list {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-  }
-  .backlog-card-item {
-    background: #FFFFFF;
-    border: 1.5px solid var(--line);
-    border-radius: 10px;
-    padding: 10px 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  }
-  .backlog-card-item:hover {
-    border-color: rgba(194, 65, 12, 0.4);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
-  }
-  .card-top-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .card-tag-pill {
-    font-size: 10.5px;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 4px;
-    background: #F3F4F6;
-    color: var(--ink-soft);
-  }
+  .drawer-item-list { display: flex; flex-direction: column; gap: 9px; }
+  .backlog-card-item { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 7px; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+  .backlog-card-item:hover { border-color: rgba(194, 65, 12, 0.4); box-shadow: 0 3px 10px rgba(0,0,0,0.06); }
+  .card-top-info { display: flex; justify-content: space-between; align-items: center; }
+  .card-tag-pill { font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #F3F4F6; color: var(--ink-soft); }
   .card-tag-pill.tag-공부 { background: #FEF3C7; color: #92400E; }
   .card-tag-pill.tag-아이디어 { background: #FCE7F3; color: #9D174D; }
   .card-tag-pill.tag-자료 { background: #E0E7FF; color: #3730A3; }
   .card-tag-pill.tag-과제 { background: #DCFCE7; color: #166534; }
-
-  .card-del-btn {
-    border: none;
-    background: transparent;
-    color: #9CA3AF;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 0 4px;
-    transition: color 0.15s ease;
-  }
+  .card-del-btn { border: none; background: transparent; color: #9CA3AF; font-size: 14px; cursor: pointer; padding: 0 4px; transition: color 0.15s ease; }
   .card-del-btn:hover { color: #DC2626; }
+  .card-content-text { font-size: 12.5px; color: var(--ink); line-height: 1.5; white-space: pre-wrap; word-break: break-all; font-family: var(--font-sans); }
+  .card-action-bar { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--line); padding-top: 7px; margin-top: 2px; }
+  .card-date-badge { font-size: 10px; color: var(--ink-faint); font-family: var(--font-mono); }
+  .btn-schedule-picker-toggle { background: #FFF7ED; border: 1px solid #FFEDD5; color: var(--accent); padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; transition: all 0.15s ease; }
+  .btn-schedule-picker-toggle:hover { background: var(--accent); color: #FFFFFF; border-color: var(--accent); }
 
-  .card-content-text {
-    font-size: 12.5px;
-    color: var(--ink);
-    line-height: 1.5;
-    white-space: pre-wrap;
-    word-break: break-all;
-    font-family: var(--font-sans);
-  }
-
-  .card-action-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px dashed var(--line);
-    padding-top: 7px;
-    margin-top: 2px;
-  }
-  .card-date-badge {
-    font-size: 10px;
-    color: var(--ink-faint);
-    font-family: var(--font-mono);
-  }
-  .btn-schedule-picker-toggle {
-    background: #FFF7ED;
-    border: 1px solid #FFEDD5;
-    color: var(--accent);
-    padding: 3px 9px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    transition: all 0.15s ease;
-  }
-  .btn-schedule-picker-toggle:hover {
-    background: var(--accent);
-    color: #FFFFFF;
-    border-color: var(--accent);
-  }
-
-  .inline-schedule-dock {
-    background: #FFFDF9;
-    border: 1.5px solid #FDE68A;
-    border-radius: 8px;
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 4px;
-    animation: fadeIn 0.15s ease-out;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .dock-header-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: #92400E;
-    display: flex;
-    justify-content: space-between;
-  }
-  .dock-input-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    align-items: center;
-  }
-  .dock-input {
-    border: 1px solid var(--line);
-    border-radius: 5px;
-    padding: 4px 6px;
-    font-size: 11.5px;
-    background: #FFFFFF;
-  }
-  .dock-quick-dates {
-    display: flex;
-    gap: 3px;
-  }
-  .dock-quick-btn {
-    border: 1px solid var(--line);
-    background: #FFFFFF;
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    cursor: pointer;
-    color: var(--ink-soft);
-  }
+  .inline-schedule-dock { background: #FFFDF9; border: 1.5px solid #FDE68A; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 6px; margin-top: 4px; animation: fadeIn 0.15s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .dock-header-label { font-size: 11px; font-weight: 700; color: #92400E; display: flex; justify-content: space-between; }
+  .dock-input-row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .dock-input { border: 1px solid var(--line); border-radius: 5px; padding: 4px 6px; font-size: 11.5px; background: #FFFFFF; }
+  .dock-quick-dates { display: flex; gap: 3px; }
+  .dock-quick-btn { border: 1px solid var(--line); background: #FFFFFF; font-size: 10px; padding: 2px 6px; border-radius: 4px; cursor: pointer; color: var(--ink-soft); }
   .dock-quick-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-confirm-dock {
-    background: var(--accent);
-    color: #FFFFFF;
-    border: none;
-    border-radius: 5px;
-    padding: 4px 10px;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-  }
+  .btn-confirm-dock { background: var(--accent); color: #FFFFFF; border: none; border-radius: 5px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
-  /* 토스트 및 모달 */
   .toast-notice {
     position: fixed;
     bottom: 24px;
@@ -1694,11 +1001,7 @@
     max-height: 90vh;
     overflow-y: auto;
   }
-  .modal-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 16px;
-  }
+  .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
   .modal-btn {
     flex: 1;
     padding: 8px 0;
@@ -1711,89 +1014,25 @@
     color: var(--ink);
     text-align: center;
   }
-  .modal-btn.primary {
-    background: var(--accent);
-    color: #FFFFFF;
-    border-color: var(--accent);
-  }
-  .modal-btn.danger {
-    background: #DC2626;
-    color: #FFFFFF;
-    border-color: #DC2626;
-  }
+  .modal-btn.primary { background: var(--accent); color: #FFFFFF; border-color: var(--accent); }
+  .modal-btn.danger { background: #DC2626; color: #FFFFFF; border-color: #DC2626; }
 
-  .routine-manager-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin: 10px 0;
-    max-height: 220px;
-    overflow-y: auto;
-  }
-  .routine-row-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #F9FAFB;
-    padding: 7px 10px;
-    border-radius: 8px;
-    border: 1.5px solid var(--line);
-    font-size: 13px;
-  }
-  .routine-del-btn {
-    border: none;
-    background: transparent;
-    color: #DC2626;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 2px 6px;
-  }
+  .routine-manager-list { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; max-height: 220px; overflow-y: auto; }
+  .routine-row-item { display: flex; align-items: center; justify-content: space-between; background: #F9FAFB; padding: 7px 10px; border-radius: 8px; border: 1.5px solid var(--line); font-size: 13px; }
+  .routine-del-btn { border: none; background: transparent; color: #DC2626; font-size: 14px; cursor: pointer; padding: 2px 6px; }
 
-  .sync-field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin-bottom: 12px;
-    text-align: left;
-  }
-  .sync-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--ink);
-  }
-  .sync-input {
-    border: 1.5px solid var(--line);
-    border-radius: 8px;
-    padding: 7px 10px;
-    font-size: 13px;
-    font-family: var(--font-mono);
-    outline: none;
-    background: #FFFFFF;
-  }
+  .sync-field-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; text-align: left; }
+  .sync-label { font-size: 12px; font-weight: 700; color: var(--ink); }
+  .sync-input { border: 1.5px solid var(--line); border-radius: 8px; padding: 7px 10px; font-size: 13px; font-family: var(--font-mono); outline: none; background: #FFFFFF; }
   .sync-input:focus { border-color: var(--accent); }
-  .sync-help {
-    font-size: 11px;
-    color: var(--ink-soft);
-    line-height: 1.45;
-  }
-  .sync-box-status {
-    background: #FAFAFA;
-    border: 1.5px solid var(--line);
-    border-radius: 8px;
-    padding: 8px 10px;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-  }
+  .sync-help { font-size: 11px; color: var(--ink-soft); line-height: 1.45; }
+  .sync-box-status { background: #FAFAFA; border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
 </style>
 </head>
 <body>
 
 <div class="app-container">
 
-  <!-- 최상단 브랜드 & 액션 바 -->
   <header class="top-bar-row">
     <div class="app-brand">
       <span>📖</span>
@@ -1815,14 +1054,12 @@
     </div>
   </header>
 
-  <!-- 네비게이션 탭 -->
   <nav class="nav-tabs" role="tablist">
     <button type="button" class="nav-tab active" data-tab="tab-today">오늘의 페이지</button>
     <button type="button" class="nav-tab" data-tab="tab-week">주간 돌아보기</button>
     <button type="button" class="nav-tab" data-tab="tab-month">월간 돌아보기</button>
   </nav>
 
-  <!-- 스마트 펜 트레이 -->
   <div class="global-pen-container" id="global-pen-container">
     <div class="global-pen-bar" id="global-pen-bar">
       <div class="pen-group-row">
@@ -1846,7 +1083,6 @@
       </div>
     </div>
 
-    <!-- 토글 꾸미기 패널 -->
     <div class="pen-options-panel" id="pen-options-panel" style="display:none;">
       <div class="options-row">
         <div class="options-label-row">
@@ -1894,11 +1130,9 @@
     </div>
   </div>
 
-  <!-- 1. 오늘의 페이지 -->
   <main id="tab-today" class="tab-content">
     <div class="paper-card top-budget-box" style="margin-bottom: 14px;">
       
-      <!-- 날짜 영역 -->
       <div class="day-header-row">
         <div class="date-nav-group">
           <button type="button" class="date-nav-btn" id="btn-prev-day" title="어제 기록 보기">‹ 어제</button>
@@ -1908,11 +1142,10 @@
           <button type="button" class="date-nav-btn today-btn" id="btn-goto-today" style="display:none;">오늘로 이동</button>
         </div>
         <div id="date-sub-hint" style="font-size:12px; color:var(--ink-soft); font-family:var(--font-serif);">
-          루틴을 체크하고 몰입할 타임블록 스터디를 계획해보세요.
+          루틴을 체크하고 몰입할 타임블록 스케줄을 계획해보세요.
         </div>
       </div>
 
-      <!-- 예산 & 지출 -->
       <div class="budget-input-row">
         <div class="budget-item">
           <span class="meta-tag">&lt;예산&gt;</span>
@@ -1931,14 +1164,13 @@
         <div id="budget-diff-badge" class="diff-badge diff-under" style="display:none;"></div>
       </div>
 
-      <!-- 소비 피드백 (기본 3줄 105px) -->
+      <!-- 소비 피드백 -->
       <div class="budget-feedback-card-section">
         <div class="section-header">
           <div class="section-title">
             <span class="washi-tape-title tape-peach">소비 피드백</span>
             <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(오늘 소비에 대한 짧은 평)</span>
           </div>
-          <!-- 원터치 미니 아이콘 3개 -->
           <div class="direct-action-tools">
             <button type="button" class="btn-mini-action btn-mode-toggle" data-target="budget-feedback" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
             <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-budget-feedback" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
@@ -1960,43 +1192,42 @@
     </div>
 
     <div class="daily-grid">
-      <!-- 좌측 열: [고정 루틴 상단] ➔ [시간순 타임블록 스케줄 하단] + 실천 회고 -->
       <div class="daily-col">
-        <!-- 2-Track 루틴 & 타임블록 스케줄 카드 -->
+        <!-- 1. 루틴 & 몰입 스케줄 카드 -->
         <div class="integrated-auto-card">
           <div class="auto-card-header">
             <div class="auto-card-title">
-              <span class="washi-tape-title tape-sand">루틴 &amp; 타임블록 스케줄</span>
+              <span class="washi-tape-title tape-sand">루틴 &amp; 몰입 스케줄</span>
             </div>
             <div class="auto-summary-badge" id="auto-summary-badge">달성 0 / 0</div>
           </div>
 
-          <!-- 중요도(우선순위) 집중 배너 -->
           <div id="priority-focus-container" class="priority-focus-pills" style="display:none;"></div>
 
-          <!-- 1. 하루의 시작: 고정 루틴 (Daily Habits) - 상단 고정 -->
+          <!-- 상단 고정: 고정 루틴 -->
           <div class="routine-top-section">
             <div class="block-sub-title">
-              <span style="font-weight:700; color:var(--ink);">🔄 하루의 베이스캠프: 고정 루틴</span>
+              <span>🔄 고정 루틴</span>
               <button type="button" id="btn-quick-manage-routines" style="padding:2px 7px; font-size:10.5px; border-radius:6px; border:1px solid var(--line); background:#fff; cursor:pointer; color:var(--ink-soft);">루틴 관리</button>
             </div>
             <div class="check-item-list" id="daily-routine-items"></div>
           </div>
 
-          <!-- 2. 시간순 타임블록 스케줄 (Time-Blocks) - 하단 배치 -->
+          <!-- 하단: 몰입 스케줄 -->
           <div class="auto-block-section" style="border-top: 1.5px dashed var(--line); padding-top: 8px;">
             <div class="block-sub-title">
-              <span style="display:inline-flex; align-items:center; gap:4px; font-weight:700; color:var(--ink);">
-                <span>⏱️ 시간순 몰입 스케줄 (Time-Blocks)</span>
+              <span style="display:inline-flex; align-items:center; gap:5px;">
+                <span>⏱️ 몰입 스케줄</span>
+                <span id="daily-timeblock-count" style="font-size:11px; color:var(--accent); font-weight:700; font-family:var(--font-mono);">0건</span>
               </span>
-              <span id="daily-timeblock-count" style="font-size:11px; color:var(--accent); font-weight:700; font-family:var(--font-mono);">0건</span>
+              <button type="button" class="btn-toggle-dock" id="btn-toggle-timeblock-dock" title="새로운 스터디/몰입 일정 추가">+ 블록 추가</button>
             </div>
 
-            <!-- 즉석 타임블록 등록 독 (시작 & 종료 시간 필수) -->
-            <div class="timeblock-dock">
-              <div style="font-size:10.5px; font-weight:700; color:#92400E; display:flex; justify-content:space-between;">
-                <span>+ 오늘 몰입할 스터디 / 세션 등록</span>
-                <span id="dock-duration-calc" style="font-family:var(--font-mono); font-weight:600;">(시간 지정)</span>
+            <!-- 평소에는 숨겨져 있는 슬림 토글 등록 독 -->
+            <div class="timeblock-dock" id="timeblock-dock-panel" style="display:none;">
+              <div style="font-size:10.5px; font-weight:700; color:#92400E; display:flex; justify-content:space-between; align-items:center;">
+                <span>+ 오늘 몰입할 세션 등록 <span id="dock-duration-calc" style="font-family:var(--font-mono); font-weight:600;">(시간 지정)</span></span>
+                <button type="button" id="btn-close-dock" style="border:none; background:transparent; cursor:pointer; color:#92400E; font-size:14px; line-height:1;">✕</button>
               </div>
               <div class="dock-form-row">
                 <input type="time" id="input-block-start" class="dock-time-input" required title="시작 시간">
@@ -2007,10 +1238,8 @@
               </div>
             </div>
 
-            <!-- 진행 중 타임블록 리스트 (시간순 오름차순 정렬) -->
             <div class="check-item-list" id="daily-timeblock-items" style="margin-top:6px;"></div>
 
-            <!-- 완료된 일정 접기/펼치기 영역 -->
             <button type="button" class="done-collapse-toggle-btn" id="btn-toggle-done-schedules" style="display:none;">
               <span id="done-collapse-icon">▶</span>
               <span id="done-collapse-text">완료된 일정 (0건)</span>
@@ -2019,12 +1248,12 @@
           </div>
         </div>
 
-        <!-- 실천 회고 & 내일의 개선점 (기본 6줄 210px) -->
+        <!-- 2. 투두 피드백 카드 -->
         <div class="paper-card">
           <div class="section-header">
             <div class="section-title">
-              <span class="washi-tape-title tape-sage">실천 회고 &amp; 내일의 개선점</span>
-              <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(성찰과 배움)</span>
+              <span class="washi-tape-title tape-sage">투두 피드백</span>
+              <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(오늘의 실천 회고와 내일의 개선점)</span>
             </div>
             <div class="direct-action-tools">
               <button type="button" class="btn-mini-action btn-mode-toggle" data-target="todo-feedback" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
@@ -2036,7 +1265,7 @@
             <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-todo-feedback" style="height:210px;">
               <canvas id="canvas-todo-feedback" class="ink-canvas drawing-active" height="210"></canvas>
             </div>
-            <textarea id="text-todo-feedback" class="diary-lined-textarea" style="height:210px; display:none;" placeholder="오늘 루틴과 타임블록을 실행하며 잘된 점과 아쉬웠던 점은 무엇인가요? 내일 더 몰입하기 위해 개선할 점을 적어보세요."></textarea>
+            <textarea id="text-todo-feedback" class="diary-lined-textarea" style="height:210px; display:none;" placeholder="오늘 루틴과 몰입 스케줄을 실행하며 잘된 점과 아쉬웠던 점은 무엇인가요? 내일 더 몰입하기 위해 개선할 점을 적어보세요."></textarea>
           </div>
           <div class="compact-resize-bar">
             <button type="button" class="btn-mini-resize" data-canvas="canvas-todo-feedback" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
@@ -2046,8 +1275,8 @@
         </div>
       </div>
 
-      <!-- 우측 열: 감사일기 + TO ME (기본 각 5줄 175px) -->
       <div class="daily-col">
+        <!-- 감사일기 -->
         <div class="paper-card">
           <div class="section-header">
             <span class="washi-tape-title tape-lavender">감사일기</span>
@@ -2070,6 +1299,7 @@
           </div>
         </div>
 
+        <!-- TO ME -->
         <div class="paper-card">
           <div class="section-header">
             <span class="washi-tape-title tape-peach">TO ME</span>
@@ -2099,7 +1329,6 @@
     </div>
   </main>
 
-  <!-- 2. 주간 돌아보기 -->
   <section id="tab-week" class="tab-content" hidden>
     <div class="paper-card" style="margin-bottom:14px;">
       <div class="section-header">
@@ -2151,11 +1380,9 @@
     </div>
   </section>
 
-  <!-- 3. 월간 돌아보기 -->
   <section id="tab-month" class="tab-content" hidden>
     <div class="month-spread-container">
       
-      <!-- 좌측 페이지: 7x5 월간 달력 (거시적 마일스톤 유지) -->
       <div class="spread-page-col">
         <div class="paper-card">
           <div class="month-header-bar">
@@ -2182,7 +1409,6 @@
             </div>
           </div>
 
-          <!-- 7x5 월간 달력 시트 -->
           <div class="paper-diary-sheet">
             <div class="diary-dow-row">
               <div class="diary-dow-cell sun">SUN</div>
@@ -2196,7 +1422,6 @@
             <div class="diary-grid-table" id="month-calendar-grid"></div>
           </div>
 
-          <!-- 월간 주요 마일스톤 등록 (과밀화 없이 굵직한 일정만 등록) -->
           <div style="margin-top:12px; border-top:1.5px solid var(--line); padding-top:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span class="washi-tape-title tape-sand" style="font-size:12px;">월간 주요 마일스톤 등록</span>
@@ -2216,7 +1441,6 @@
         </div>
       </div>
 
-      <!-- 우측 페이지: 목표, 서랍 바로가기, 위시리스트 & 월간 회고 -->
       <div class="spread-page-col">
         <div class="monthly-side-card">
           <div class="monthly-side-title">
@@ -2285,7 +1509,6 @@
 
 </div>
 
-<!-- 슬라이드 아웃 서랍 시트 -->
 <div id="backlog-drawer-backdrop" class="backlog-drawer-backdrop"></div>
 <aside id="backlog-drawer-panel" class="backlog-drawer-panel" aria-label="백로그 서랍">
   <div class="drawer-header">
@@ -2317,7 +1540,6 @@
   </div>
 </aside>
 
-<!-- 고정 루틴 관리 모달 -->
 <div id="routine-modal" class="modal-overlay">
   <div class="modal-card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -2341,7 +1563,6 @@
   </div>
 </div>
 
-<!-- 동기화 설정 모달 -->
 <div id="sync-modal" class="modal-overlay">
   <div class="modal-card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -2378,7 +1599,6 @@
   </div>
 </div>
 
-<!-- 사용자 확인/경고용 공용 모달 -->
 <div id="confirm-modal" class="modal-overlay">
   <div class="modal-card" style="max-width:340px;">
     <h3 id="confirm-modal-title" style="font-family:var(--font-serif); font-size:15px; font-weight:700; margin-bottom:8px;">확인</h3>
@@ -2390,7 +1610,6 @@
   </div>
 </div>
 
-<!-- 알림 토스트 -->
 <div id="toast-notice" class="toast-notice">저장되었습니다.</div>
 
 <script>
@@ -2398,12 +1617,12 @@
   const CLIENT_ID = 'client_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
 
   const DEFAULT_CANVAS_HEIGHTS = {
-    'canvas-budget-feedback': 105,  // 3줄
-    'canvas-todo-feedback': 210,    // 6줄
-    'canvas-gratitude': 175,        // 5줄
-    'canvas-tome': 175,             // 5줄
-    'canvas-week-review': 210,      // 6줄
-    'canvas-month-review': 210      // 6줄
+    'canvas-budget-feedback': 105,
+    'canvas-todo-feedback': 210,
+    'canvas-gratitude': 175,
+    'canvas-tome': 175,
+    'canvas-week-review': 210,
+    'canvas-month-review': 210
   };
 
   const MAX_SAFE_HEIGHT = 560;
@@ -2444,7 +1663,6 @@
   let firestoreDb = null;
   let isFirestoreOnline = false;
 
-  // 완료된 일정 접기 상태
   let isDoneSchedulesCollapsed = true;
 
   const canvasControllers = {};
@@ -2473,13 +1691,12 @@
     return `${y.slice(2)} / ${m} / ${d} (${dows[dateObj.getDay()]})`;
   }
 
-  // 시작~종료 시간 포맷 및 소요 시간 계산
   function calculateDuration(startTime, endTime) {
     if (!startTime || !endTime) return '';
     const [sh, sm] = startTime.split(':').map(Number);
     const [eh, em] = endTime.split(':').map(Number);
     let diffMinutes = (eh * 60 + em) - (sh * 60 + sm);
-    if (diffMinutes < 0) diffMinutes += 24 * 60; // 자정 넘김 처리
+    if (diffMinutes < 0) diffMinutes += 24 * 60;
     const hours = Math.floor(diffMinutes / 60);
     const mins = diffMinutes % 60;
     if (hours > 0 && mins > 0) return `${hours}h ${mins}m`;
@@ -2494,9 +1711,6 @@
     return `~ ${item.endTime}`;
   }
 
-  /**
-   * 시작 시간 기준 100% 자동 시간순(오름차순) 정렬
-   */
   function sortSchedulesByTime(list) {
     return [...list].sort((a, b) => {
       const timeA = a.time || '';
@@ -3125,7 +2339,22 @@
     document.getElementById('btn-disconnect-sync')?.addEventListener('click', disconnectFirebase);
     document.getElementById('btn-export-backup')?.addEventListener('click', exportFullBackup);
 
-    // 데일리 즉석 타임블록 등록 이벤트
+    // 타임블록 독 열기/닫기 토글
+    const dockPanel = document.getElementById('timeblock-dock-panel');
+    const toggleDockBtn = document.getElementById('btn-toggle-timeblock-dock');
+    const closeDockBtn = document.getElementById('btn-close-dock');
+
+    toggleDockBtn?.addEventListener('click', () => {
+      const isShown = dockPanel.style.display !== 'none';
+      dockPanel.style.display = isShown ? 'none' : 'flex';
+      toggleDockBtn.textContent = isShown ? '+ 블록 추가' : '▲ 접기';
+    });
+
+    closeDockBtn?.addEventListener('click', () => {
+      dockPanel.style.display = 'none';
+      if (toggleDockBtn) toggleDockBtn.textContent = '+ 블록 추가';
+    });
+
     const sInput = document.getElementById('input-block-start');
     const eInput = document.getElementById('input-block-end');
     const durBadge = document.getElementById('dock-duration-calc');
@@ -3140,7 +2369,6 @@
 
     document.getElementById('btn-add-daily-block')?.addEventListener('click', addDailyTimeBlock);
 
-    // 완료된 일정 접기/펼치기 토글
     document.getElementById('btn-toggle-done-schedules')?.addEventListener('click', () => {
       isDoneSchedulesCollapsed = !isDoneSchedulesCollapsed;
       const doneList = document.getElementById('daily-calendar-done-items');
@@ -3562,13 +2790,10 @@
     }
   }
 
-  /**
-   * 1. 고정 루틴 상단 고정 ➔ 2. 시간순 타임블록 하단 배치 렌더링
-   */
   function renderDailyIntegratedSection(day) {
     day.priorities = day.priorities || {};
 
-    // 1. 상단: 고정 루틴 (Daily Habits)
+    // 1. 고정 루틴 렌더링
     const rContainer = document.getElementById('daily-routine-items');
     rContainer.innerHTML = '';
     routinesMaster.forEach(r => {
@@ -3597,7 +2822,7 @@
       rContainer.appendChild(row);
     });
 
-    // 2. 하단: 시간순 타임블록 스케줄 (Time-Blocks)
+    // 2. 몰입 스케줄 (시간순 정렬) 렌더링
     const tContainer = document.getElementById('daily-timeblock-items');
     const doneContainer = document.getElementById('daily-calendar-done-items');
     const toggleBtn = document.getElementById('btn-toggle-done-schedules');
@@ -3611,11 +2836,10 @@
     document.getElementById('daily-timeblock-count').textContent = `${rawDaySchedules.length}건`;
 
     if (rawDaySchedules.length === 0) {
-      tContainer.innerHTML = '<div class="empty-hint-text">등록된 스터디 타임블록이 없습니다. 위에서 시작~종료 시간을 정해 추가해보세요.</div>';
+      tContainer.innerHTML = '<div class="empty-hint-text">등록된 몰입 스케줄이 없습니다. 위의 [+ 블록 추가]로 계획해보세요.</div>';
       toggleBtn.style.display = 'none';
       doneContainer.style.display = 'none';
     } else {
-      // 100% 시작 시간 기준 시간순 오름차순 정렬
       const sortedSchedules = sortSchedulesByTime(rawDaySchedules);
 
       const activeSchedules = [];
@@ -3678,7 +2902,7 @@
       };
 
       if (activeSchedules.length === 0 && doneSchedules.length > 0) {
-        tContainer.innerHTML = '<div class="empty-hint-text" style="color:#059669; font-weight:700;">✨ 오늘의 모든 타임블록 스터디를 완료했습니다!</div>';
+        tContainer.innerHTML = '<div class="empty-hint-text" style="color:#059669; font-weight:700;">✨ 오늘의 모든 몰입 스케줄을 완료했습니다!</div>';
       } else {
         activeSchedules.forEach(s => tContainer.appendChild(createTimeBlockRow(s, false)));
       }
@@ -3699,7 +2923,6 @@
     renderPriorityFocusPills(day);
   }
 
-  // 데일리 즉석 타임블록 등록 로직 (시작~종료 시간 필수)
   function addDailyTimeBlock() {
     const sInput = document.getElementById('input-block-start');
     const eInput = document.getElementById('input-block-end');
@@ -3725,12 +2948,19 @@
       endTime: eVal,
       text: titleVal,
       color: Math.floor(Math.random() * 5),
-      isMonthlyMilestone: false // 데일리 스터디 타임블록은 월간 캘린더를 오염시키지 않음
+      isMonthlyMilestone: false
     });
 
     titleInput.value = '';
     saveSchedules();
-    showToast(`⏱️ ${sVal}~${eVal} 타임블록이 시간순으로 등록되었습니다!`);
+
+    // 등록 후 입력 독 자동 접기
+    const dockPanel = document.getElementById('timeblock-dock-panel');
+    const toggleDockBtn = document.getElementById('btn-toggle-timeblock-dock');
+    if (dockPanel) dockPanel.style.display = 'none';
+    if (toggleDockBtn) toggleDockBtn.textContent = '+ 블록 추가';
+
+    showToast(`⏱️ ${sVal}~${eVal} 몰입 스케줄이 등록되었습니다!`);
   }
 
   function renderPriorityFocusPills(day) {
@@ -3867,7 +3097,6 @@
     renderMonthCalendar();
   }
 
-  // 월간 거시적 마일스톤 일정 등록
   function addMonthMilestone() {
     const dInp = document.getElementById('new-schedule-date');
     const tInp = document.getElementById('new-schedule-time');
@@ -3888,7 +3117,7 @@
       endTime: endTInp ? endTInp.value : '',
       text: txt,
       color: Math.floor(Math.random() * 5),
-      isMonthlyMilestone: true // 월간 캘린더에 맑게 표시됨
+      isMonthlyMilestone: true
     });
 
     if (txtInp) txtInp.value = '';
@@ -4008,7 +3237,6 @@
       const tapeList = document.createElement('div');
       tapeList.className = 'tape-schedule-list';
 
-      // 월간 캘린더는 '월간 마일스톤'으로 등록된 중요 일정만 맑게 노출 (과밀화 원천 차단)
       const monthlyMilestones = sortSchedulesByTime(
         schedulesMaster.filter(s => s.date === dateStr && (s.isMonthlyMilestone !== false))
       );
@@ -4159,7 +3387,7 @@
           feedbackHtml = escapeHtml(textFb);
         } else if (hasStrokes) {
           feedbackDays++;
-          feedbackHtml = `<span class="handwrite-feedback-pill">✍️ 손글씨 회고 작성됨</span>`;
+          feedbackHtml = `<span class="handwrite-feedback-pill">✍️ 손글씨 피드백 작성됨</span>`;
         }
       }
 
