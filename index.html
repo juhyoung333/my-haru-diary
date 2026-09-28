@@ -122,7 +122,7 @@
     border-top: 1px solid rgba(255, 255, 255, 0.7);
   }
 
-  /* 중요도(우선순위) 별표 및 하이라이트 */
+  /* 중요도(우선순위) 별표 */
   .priority-star-btn {
     border: none;
     background: transparent;
@@ -617,7 +617,7 @@
     gap: 14px;
   }
 
-  /* 고정 루틴 & 캘린더 통합 카드 */
+  /* 루틴 상단 & 시간순 타임블록 스케줄 카드 */
   .integrated-auto-card {
     background: #FFFFFF;
     border: 1.5px solid var(--line);
@@ -649,7 +649,9 @@
     padding: 2px 8px;
     border-radius: 999px;
   }
-  .auto-block-section {
+
+  /* 상단 고정 루틴 영역 */
+  .routine-top-section {
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -666,17 +668,22 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    transition: all 0.2s ease;
   }
   .check-item-row {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 6px;
+    padding: 5px 6px;
     border-radius: 6px;
     font-size: 12.5px;
-    transition: background 0.1s ease;
+    transition: background 0.1s ease, opacity 0.15s ease;
   }
   .check-item-row:hover { background: #F9FAFB; }
+  .check-item-row.done {
+    opacity: 0.65;
+    background: #FAFAFA;
+  }
   .check-item-row.done span.check-text {
     text-decoration: line-through;
     color: var(--ink-faint);
@@ -687,24 +694,128 @@
     accent-color: var(--accent);
     cursor: pointer;
   }
+
+  /* 타임블록 뱃지 및 시간 칩 */
+  .timeblock-chip-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+  }
   .time-chip {
     font-family: var(--font-mono);
-    font-size: 10px;
-    padding: 1px 5px;
+    font-size: 10.5px;
+    padding: 2px 6px;
     border-radius: 4px;
-    background: #FFFFFF;
-    border: 1px solid var(--line);
+    background: #FFF7ED;
+    border: 1px solid #FDBA74;
+    color: #9A3412;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .duration-pill {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: #F3F4F6;
     color: var(--ink-soft);
     font-weight: 600;
+    white-space: nowrap;
   }
+  .source-tag {
+    font-size: 9.5px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: #E0E7FF;
+    color: #3730A3;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* 타임블록 즉석 등록 독 (Daily Quick Time-Block Dock) */
+  .timeblock-dock {
+    background: #FFFDF9;
+    border: 1.5px solid #FDE68A;
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .dock-form-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .dock-time-input {
+    border: 1.5px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 6px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    outline: none;
+    background: #FFFFFF;
+  }
+  .dock-time-input:focus { border-color: var(--accent); }
+  .dock-text-input {
+    flex: 1;
+    min-width: 140px;
+    border: 1.5px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: var(--font-sans);
+    outline: none;
+    background: #FFFFFF;
+  }
+  .dock-text-input:focus { border-color: var(--accent); }
+  .btn-add-block {
+    background: var(--accent);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+  }
+  .btn-add-block:hover { background: var(--accent-hover); }
+
   .empty-hint-text {
     font-size: 11.5px;
     color: var(--ink-faint);
     font-style: italic;
-    padding: 2px 4px;
+    padding: 6px 4px;
+    text-align: center;
   }
 
-  /* [방식 1] 초경량 원터치 미니 아이콘 3개 툴바 */
+  /* 완료된 일정 접기/펼치기 토글 바 */
+  .done-collapse-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-family: var(--font-sans);
+    color: var(--ink-faint);
+    background: transparent;
+    border: none;
+    padding: 4px 6px;
+    cursor: pointer;
+    border-radius: 4px;
+    align-self: flex-start;
+    margin-top: 2px;
+    transition: color 0.15s ease;
+  }
+  .done-collapse-toggle-btn:hover {
+    color: var(--accent);
+  }
+
+  /* 초경량 원터치 미니 아이콘 3개 툴바 */
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -1797,7 +1908,7 @@
           <button type="button" class="date-nav-btn today-btn" id="btn-goto-today" style="display:none;">오늘로 이동</button>
         </div>
         <div id="date-sub-hint" style="font-size:12px; color:var(--ink-soft); font-family:var(--font-serif);">
-          오늘의 투두와 루틴을 완성해보세요.
+          루틴을 체크하고 몰입할 타임블록 스터디를 계획해보세요.
         </div>
       </div>
 
@@ -1827,7 +1938,7 @@
             <span class="washi-tape-title tape-peach">소비 피드백</span>
             <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(오늘 소비에 대한 짧은 평)</span>
           </div>
-          <!-- 팝업 없이 즉시 작동하는 미니 아이콘 3개 -->
+          <!-- 원터치 미니 아이콘 3개 -->
           <div class="direct-action-tools">
             <button type="button" class="btn-mini-action btn-mode-toggle" data-target="budget-feedback" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
             <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-budget-feedback" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
@@ -1849,13 +1960,13 @@
     </div>
 
     <div class="daily-grid">
-      <!-- 좌측 열: 루틴 & 일정 + 실천 회고 -->
+      <!-- 좌측 열: [고정 루틴 상단] ➔ [시간순 타임블록 스케줄 하단] + 실천 회고 -->
       <div class="daily-col">
-        <!-- 자동 연동 카드 -->
+        <!-- 2-Track 루틴 & 타임블록 스케줄 카드 -->
         <div class="integrated-auto-card">
           <div class="auto-card-header">
             <div class="auto-card-title">
-              <span class="washi-tape-title tape-sand">자동 연동 루틴 &amp; 일정</span>
+              <span class="washi-tape-title tape-sand">루틴 &amp; 타임블록 스케줄</span>
             </div>
             <div class="auto-summary-badge" id="auto-summary-badge">달성 0 / 0</div>
           </div>
@@ -1863,20 +1974,48 @@
           <!-- 중요도(우선순위) 집중 배너 -->
           <div id="priority-focus-container" class="priority-focus-pills" style="display:none;"></div>
 
-          <div class="auto-block-section">
+          <!-- 1. 하루의 시작: 고정 루틴 (Daily Habits) - 상단 고정 -->
+          <div class="routine-top-section">
             <div class="block-sub-title">
-              <span>🔄 고정 루틴 (Daily Habits)</span>
-              <button type="button" class="btn-sm" id="btn-quick-manage-routines" style="padding:2px 6px; font-size:10.5px; border-radius:6px; border:1px solid var(--line); background:#fff; cursor:pointer;">루틴 관리</button>
+              <span style="font-weight:700; color:var(--ink);">🔄 하루의 베이스캠프: 고정 루틴</span>
+              <button type="button" id="btn-quick-manage-routines" style="padding:2px 7px; font-size:10.5px; border-radius:6px; border:1px solid var(--line); background:#fff; cursor:pointer; color:var(--ink-soft);">루틴 관리</button>
             </div>
             <div class="check-item-list" id="daily-routine-items"></div>
           </div>
 
-          <div class="auto-block-section" style="border-top: 1.5px dashed var(--line); padding-top: 6px;">
+          <!-- 2. 시간순 타임블록 스케줄 (Time-Blocks) - 하단 배치 -->
+          <div class="auto-block-section" style="border-top: 1.5px dashed var(--line); padding-top: 8px;">
             <div class="block-sub-title">
-              <span>📅 월간 캘린더 연동 일정</span>
-              <span id="calendar-schedule-count" style="font-size:11px; color:var(--accent); font-weight:700;">0건</span>
+              <span style="display:inline-flex; align-items:center; gap:4px; font-weight:700; color:var(--ink);">
+                <span>⏱️ 시간순 몰입 스케줄 (Time-Blocks)</span>
+              </span>
+              <span id="daily-timeblock-count" style="font-size:11px; color:var(--accent); font-weight:700; font-family:var(--font-mono);">0건</span>
             </div>
-            <div class="check-item-list" id="daily-calendar-items"></div>
+
+            <!-- 즉석 타임블록 등록 독 (시작 & 종료 시간 필수) -->
+            <div class="timeblock-dock">
+              <div style="font-size:10.5px; font-weight:700; color:#92400E; display:flex; justify-content:space-between;">
+                <span>+ 오늘 몰입할 스터디 / 세션 등록</span>
+                <span id="dock-duration-calc" style="font-family:var(--font-mono); font-weight:600;">(시간 지정)</span>
+              </div>
+              <div class="dock-form-row">
+                <input type="time" id="input-block-start" class="dock-time-input" required title="시작 시간">
+                <span style="font-size:11px; color:var(--ink-soft);">~</span>
+                <input type="time" id="input-block-end" class="dock-time-input" required title="종료 시간">
+                <input type="text" id="input-block-title" class="dock-text-input" placeholder="스터디 과제 / 몰입 주제 입력...">
+                <button type="button" id="btn-add-daily-block" class="btn-add-block">+ 등록</button>
+              </div>
+            </div>
+
+            <!-- 진행 중 타임블록 리스트 (시간순 오름차순 정렬) -->
+            <div class="check-item-list" id="daily-timeblock-items" style="margin-top:6px;"></div>
+
+            <!-- 완료된 일정 접기/펼치기 영역 -->
+            <button type="button" class="done-collapse-toggle-btn" id="btn-toggle-done-schedules" style="display:none;">
+              <span id="done-collapse-icon">▶</span>
+              <span id="done-collapse-text">완료된 일정 (0건)</span>
+            </button>
+            <div class="check-item-list" id="daily-calendar-done-items" style="display:none;"></div>
           </div>
         </div>
 
@@ -1897,7 +2036,7 @@
             <div class="canvas-wrap lined-canvas-wrap" id="wrap-canvas-todo-feedback" style="height:210px;">
               <canvas id="canvas-todo-feedback" class="ink-canvas drawing-active" height="210"></canvas>
             </div>
-            <textarea id="text-todo-feedback" class="diary-lined-textarea" style="height:210px; display:none;" placeholder="오늘 루틴과 일정을 실행하며 잘된 점과 아쉬웠던 점은 무엇인가요? 내일 더 몰입하기 위해 개선할 점을 적어보세요."></textarea>
+            <textarea id="text-todo-feedback" class="diary-lined-textarea" style="height:210px; display:none;" placeholder="오늘 루틴과 타임블록을 실행하며 잘된 점과 아쉬웠던 점은 무엇인가요? 내일 더 몰입하기 위해 개선할 점을 적어보세요."></textarea>
           </div>
           <div class="compact-resize-bar">
             <button type="button" class="btn-mini-resize" data-canvas="canvas-todo-feedback" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
@@ -1974,7 +2113,7 @@
           <div class="stat-value" id="week-todo-rate">0%</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">완료한 루틴/일정</div>
+          <div class="stat-label">완료한 루틴/타임블록</div>
           <div class="stat-value" id="week-todo-count">0 / 0</div>
         </div>
         <div class="stat-card">
@@ -2016,7 +2155,7 @@
   <section id="tab-month" class="tab-content" hidden>
     <div class="month-spread-container">
       
-      <!-- 좌측 페이지: 7x5 월간 달력 -->
+      <!-- 좌측 페이지: 7x5 월간 달력 (거시적 마일스톤 유지) -->
       <div class="spread-page-col">
         <div class="paper-card">
           <div class="month-header-bar">
@@ -2057,10 +2196,11 @@
             <div class="diary-grid-table" id="month-calendar-grid"></div>
           </div>
 
-          <!-- 마스킹 테이프 일정 등록 -->
+          <!-- 월간 주요 마일스톤 등록 (과밀화 없이 굵직한 일정만 등록) -->
           <div style="margin-top:12px; border-top:1.5px solid var(--line); padding-top:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span class="washi-tape-title tape-sand" style="font-size:12px;">마스킹 테이프 일정 등록</span>
+              <span class="washi-tape-title tape-sand" style="font-size:12px;">월간 주요 마일스톤 등록</span>
+              <span style="font-size:11px; color:var(--ink-faint);">시험일, 발표, 주요 일정만 맑게 남기기</span>
             </div>
             <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
               <input type="date" id="new-schedule-date" style="padding:5px 8px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;">
@@ -2069,7 +2209,7 @@
                 <span style="font-size:11px; color:var(--ink-soft);">~</span>
                 <input type="time" id="new-schedule-end-time" style="padding:5px 8px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;" title="종료 시간">
               </div>
-              <input type="text" id="new-schedule-text" placeholder="예: 치과 진료, 독서 모임, 생일 파티" style="flex:1; min-width:160px; padding:5px 9px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;">
+              <input type="text" id="new-schedule-text" placeholder="예: 자격증 시험, 중간 프로젝트 마감, 세미나 참석" style="flex:1; min-width:160px; padding:5px 9px; border:1.5px solid var(--line); border-radius:6px; font-size:12px; background:#FFFFFF;">
               <button type="button" id="btn-add-schedule" style="background:var(--accent); color:#FFFFFF; border:none; border-radius:6px; padding:5px 12px; font-weight:700; font-size:12px; cursor:pointer;">테이프 붙이기</button>
             </div>
           </div>
@@ -2090,7 +2230,7 @@
             </div>
             <div class="focus-row-item">
               <span class="focus-num-badge">2</span>
-              <input type="text" id="month-focus-2" class="focus-text-input" placeholder="목표 2 (예: 주 3회 가벼운 러닝)">
+              <input type="text" id="month-focus-2" class="focus-text-input" placeholder="목표 2 (예: 알고리즘 20문제 풀기)">
             </div>
             <div class="focus-row-item">
               <span class="focus-num-badge">3</span>
@@ -2099,7 +2239,6 @@
           </div>
         </div>
 
-        <!-- 달력 옆 백로그 서랍 안내 카드 -->
         <div class="month-backlog-callout-card">
           <div class="month-backlog-callout-title">
             <span>📥</span>
@@ -2115,7 +2254,7 @@
             <span class="washi-tape-title tape-sage">WISHLIST &amp; MEMO</span>
             <span style="font-size:11px; color:var(--ink-faint);">가고 싶은 곳 / 사고 싶은 것</span>
           </div>
-          <textarea id="month-wishlist-memo" class="wishlist-memo-area" rows="3" placeholder="• 가을 트렌치코트 구경 가기&#10;• 국립현대미술관 전시 관람 예매"></textarea>
+          <textarea id="month-wishlist-memo" class="wishlist-memo-area" rows="3" placeholder="• 읽을 도서: 클린 아키텍처&#10;• 수강 예정: 딥러닝 3강 코스"></textarea>
         </div>
 
         <div class="paper-card">
@@ -2186,11 +2325,11 @@
       <button type="button" class="routine-del-btn" id="btn-close-routines" style="font-size:20px;">×</button>
     </div>
     <p style="font-size:12px; color:var(--ink-soft); margin-bottom:10px;">
-      여기에 등록한 습관은 매일 아침 '오늘의 페이지'에 체크박스로 자동 생성됩니다.
+      여기에 등록한 습관은 매일 아침 '오늘의 페이지' 맨 위에 체크박스로 자동 생성되어 하루의 워밍업을 돕습니다.
     </p>
 
     <div style="display:flex; gap:6px; margin-bottom:10px;">
-      <input type="text" id="new-routine-text" placeholder="예: 비타민 챙겨먹기, 스트레칭 10분" style="flex:1; padding:7px 10px; border:1.5px solid var(--line); border-radius:6px; font-size:12.5px; outline:none;">
+      <input type="text" id="new-routine-text" placeholder="예: 기상 직후 물 한 잔, 스트레칭 15분" style="flex:1; padding:7px 10px; border:1.5px solid var(--line); border-radius:6px; font-size:12.5px; outline:none;">
       <button type="button" id="btn-add-routine" class="btn-sm" style="background:var(--accent); color:#FFFFFF; border:none; padding:0 12px; font-weight:700; border-radius:6px; cursor:pointer;">추가</button>
     </div>
 
@@ -2305,6 +2444,9 @@
   let firestoreDb = null;
   let isFirestoreOnline = false;
 
+  // 완료된 일정 접기 상태
+  let isDoneSchedulesCollapsed = true;
+
   const canvasControllers = {};
   const daysCache = {};
   let routinesMaster = [
@@ -2331,11 +2473,45 @@
     return `${y.slice(2)} / ${m} / ${d} (${dows[dateObj.getDay()]})`;
   }
 
+  // 시작~종료 시간 포맷 및 소요 시간 계산
+  function calculateDuration(startTime, endTime) {
+    if (!startTime || !endTime) return '';
+    const [sh, sm] = startTime.split(':').map(Number);
+    const [eh, em] = endTime.split(':').map(Number);
+    let diffMinutes = (eh * 60 + em) - (sh * 60 + sm);
+    if (diffMinutes < 0) diffMinutes += 24 * 60; // 자정 넘김 처리
+    const hours = Math.floor(diffMinutes / 60);
+    const mins = diffMinutes % 60;
+    if (hours > 0 && mins > 0) return `${hours}h ${mins}m`;
+    if (hours > 0) return `${hours}h 00m`;
+    return `${mins}m`;
+  }
+
   function formatScheduleTime(item) {
     if (!item.time && !item.endTime) return '종일';
     if (item.time && item.endTime) return `${item.time} ~ ${item.endTime}`;
     if (item.time) return `${item.time} ~`;
     return `~ ${item.endTime}`;
+  }
+
+  /**
+   * 시작 시간 기준 100% 자동 시간순(오름차순) 정렬
+   */
+  function sortSchedulesByTime(list) {
+    return [...list].sort((a, b) => {
+      const timeA = a.time || '';
+      const timeB = b.time || '';
+
+      if (timeA && timeB) {
+        if (timeA !== timeB) return timeA.localeCompare(timeB);
+        const endA = a.endTime || '';
+        const endB = b.endTime || '';
+        return endA.localeCompare(endB);
+      }
+      if (timeA && !timeB) return -1;
+      if (!timeA && timeB) return 1;
+      return 0;
+    });
   }
 
   function getWeekKey(dateStr) {
@@ -2785,7 +2961,6 @@
   }
 
   function initDirectTools() {
-    // 1. 모드 토글 (✎ 펜 <-> ⌨️ 타자 원터치 스위칭)
     document.querySelectorAll('.btn-mode-toggle').forEach(btn => {
       btn.addEventListener('click', () => {
         const target = btn.dataset.target;
@@ -2803,7 +2978,6 @@
       });
     });
 
-    // 2. 되돌리기 (원터치 Undo)
     document.querySelectorAll('.undo-canvas').forEach(btn => {
       btn.addEventListener('click', () => {
         const cid = btn.dataset.canvas;
@@ -2811,7 +2985,6 @@
       });
     });
 
-    // 3. 지우기 (원터치 모달 확인 후 즉시 초기화)
     document.querySelectorAll('.clear-canvas').forEach(btn => {
       btn.addEventListener('click', async () => {
         const cid = btn.dataset.canvas;
@@ -2823,7 +2996,6 @@
       });
     });
 
-    // 4. 하단 미니 높이 조절
     document.querySelectorAll('.btn-mini-resize').forEach(btn => {
       btn.addEventListener('click', () => {
         const cid = btn.dataset.canvas;
@@ -2953,6 +3125,32 @@
     document.getElementById('btn-disconnect-sync')?.addEventListener('click', disconnectFirebase);
     document.getElementById('btn-export-backup')?.addEventListener('click', exportFullBackup);
 
+    // 데일리 즉석 타임블록 등록 이벤트
+    const sInput = document.getElementById('input-block-start');
+    const eInput = document.getElementById('input-block-end');
+    const durBadge = document.getElementById('dock-duration-calc');
+
+    const updateCalcBadge = () => {
+      const dur = calculateDuration(sInput.value, eInput.value);
+      durBadge.textContent = dur ? `(${dur} 몰입)` : '(시간 지정)';
+    };
+
+    sInput?.addEventListener('input', updateCalcBadge);
+    eInput?.addEventListener('input', updateCalcBadge);
+
+    document.getElementById('btn-add-daily-block')?.addEventListener('click', addDailyTimeBlock);
+
+    // 완료된 일정 접기/펼치기 토글
+    document.getElementById('btn-toggle-done-schedules')?.addEventListener('click', () => {
+      isDoneSchedulesCollapsed = !isDoneSchedulesCollapsed;
+      const doneList = document.getElementById('daily-calendar-done-items');
+      const icon = document.getElementById('done-collapse-icon');
+      if (doneList && icon) {
+        doneList.style.display = isDoneSchedulesCollapsed ? 'none' : 'flex';
+        icon.textContent = isDoneSchedulesCollapsed ? '▶' : '▼';
+      }
+    });
+
     document.getElementById('btn-month-prev')?.addEventListener('click', () => {
       currentMonthView.month--;
       if (currentMonthView.month < 1) {
@@ -2970,7 +3168,7 @@
       renderMonthCalendar();
     });
 
-    document.getElementById('btn-add-schedule')?.addEventListener('click', addScheduleItem);
+    document.getElementById('btn-add-schedule')?.addEventListener('click', addMonthMilestone);
 
     ['month-focus-1', 'month-focus-2', 'month-focus-3', 'month-wishlist-memo'].forEach(id => {
       document.getElementById(id)?.addEventListener('input', debounce(saveMonthSideMeta, 500));
@@ -2987,14 +3185,12 @@
     const openDrawer = () => {
       backdrop.classList.add('open');
       panel.classList.add('open');
-      openBtn.classList.add('active-drawer-btn');
       renderDrawerList();
     };
 
     const closeDrawer = () => {
       backdrop.classList.remove('open');
       panel.classList.remove('open');
-      openBtn.classList.remove('active-drawer-btn');
     };
 
     openBtn?.addEventListener('click', openDrawer);
@@ -3165,7 +3361,8 @@
           time: timeVal,
           endTime: endTimeVal,
           text: `[${item.tag}] ${item.text.slice(0, 30)}`,
-          color: Math.floor(Math.random() * 5)
+          color: Math.floor(Math.random() * 5),
+          isMonthlyMilestone: true
         });
         saveSchedules();
 
@@ -3313,7 +3510,7 @@
     });
 
     const calendarChecks = {};
-    document.querySelectorAll('#daily-calendar-items input[type="checkbox"]').forEach(chk => {
+    document.querySelectorAll('#daily-timeblock-items input[type="checkbox"], #daily-calendar-done-items input[type="checkbox"]').forEach(chk => {
       calendarChecks[chk.dataset.sid] = chk.checked;
     });
 
@@ -3365,9 +3562,13 @@
     }
   }
 
+  /**
+   * 1. 고정 루틴 상단 고정 ➔ 2. 시간순 타임블록 하단 배치 렌더링
+   */
   function renderDailyIntegratedSection(day) {
     day.priorities = day.priorities || {};
 
+    // 1. 상단: 고정 루틴 (Daily Habits)
     const rContainer = document.getElementById('daily-routine-items');
     rContainer.innerHTML = '';
     routinesMaster.forEach(r => {
@@ -3376,9 +3577,9 @@
       const row = document.createElement('div');
       row.className = `check-item-row ${isDone ? 'done' : ''} ${isPri ? 'is-priority' : ''}`;
       row.innerHTML = `
-        <button type="button" class="priority-star-btn ${isPri ? 'active' : ''}" data-itemid="${r.id}" title="오늘의 최우선 과제로 지정">★</button>
+        <button type="button" class="priority-star-btn ${isPri ? 'active' : ''}" data-itemid="${r.id}" title="오늘의 최우선 루틴으로 지정">★</button>
         <input type="checkbox" class="custom-checkbox" data-rid="${r.id}" ${isDone ? 'checked' : ''}>
-        <span class="check-text">${escapeHtml(r.text)}</span>
+        <span class="check-text" style="flex:1;">${escapeHtml(r.text)}</span>
       `;
 
       row.querySelector('input').addEventListener('change', (e) => {
@@ -3396,30 +3597,65 @@
       rContainer.appendChild(row);
     });
 
-    const cContainer = document.getElementById('daily-calendar-items');
-    cContainer.innerHTML = '';
-    const daySchedules = schedulesMaster.filter(s => s.date === currentDate);
-    document.getElementById('calendar-schedule-count').textContent = `${daySchedules.length}건`;
+    // 2. 하단: 시간순 타임블록 스케줄 (Time-Blocks)
+    const tContainer = document.getElementById('daily-timeblock-items');
+    const doneContainer = document.getElementById('daily-calendar-done-items');
+    const toggleBtn = document.getElementById('btn-toggle-done-schedules');
+    const doneText = document.getElementById('done-collapse-text');
+    const collapseIcon = document.getElementById('done-collapse-icon');
 
-    if (daySchedules.length === 0) {
-      cContainer.innerHTML = '<div class="empty-hint-text">등록된 월간 일정이 없습니다.</div>';
+    tContainer.innerHTML = '';
+    doneContainer.innerHTML = '';
+
+    const rawDaySchedules = schedulesMaster.filter(s => s.date === currentDate);
+    document.getElementById('daily-timeblock-count').textContent = `${rawDaySchedules.length}건`;
+
+    if (rawDaySchedules.length === 0) {
+      tContainer.innerHTML = '<div class="empty-hint-text">등록된 스터디 타임블록이 없습니다. 위에서 시작~종료 시간을 정해 추가해보세요.</div>';
+      toggleBtn.style.display = 'none';
+      doneContainer.style.display = 'none';
     } else {
-      daySchedules.forEach(s => {
+      // 100% 시작 시간 기준 시간순 오름차순 정렬
+      const sortedSchedules = sortSchedulesByTime(rawDaySchedules);
+
+      const activeSchedules = [];
+      const doneSchedules = [];
+
+      sortedSchedules.forEach(s => {
         const isDone = !!(day.calendarChecks && day.calendarChecks[s.id]);
+        if (isDone) {
+          doneSchedules.push(s);
+        } else {
+          activeSchedules.push(s);
+        }
+      });
+
+      const createTimeBlockRow = (s, isDone) => {
         const isPri = !!(day.priorities[s.id]);
         const row = document.createElement('div');
         row.className = `check-item-row ${isDone ? 'done' : ''} ${isPri ? 'is-priority' : ''}`;
+        
+        const timeStr = formatScheduleTime(s);
+        const durationStr = calculateDuration(s.time, s.endTime);
+        const isMonthly = !!s.isMonthlyMilestone;
+
         row.innerHTML = `
-          <button type="button" class="priority-star-btn ${isPri ? 'active' : ''}" data-itemid="${s.id}" title="오늘의 중요 일정으로 지정">★</button>
+          <button type="button" class="priority-star-btn ${isPri ? 'active' : ''}" data-itemid="${s.id}" title="오늘의 최우선 몰입 과제로 지정">★</button>
           <input type="checkbox" class="custom-checkbox" data-sid="${s.id}" ${isDone ? 'checked' : ''}>
-          <span class="time-chip">${formatScheduleTime(s)}</span>
-          <span class="check-text" style="flex:1;">${escapeHtml(s.text)}</span>
-          <button type="button" class="routine-del-btn btn-del-sched" data-sid="${s.id}" title="이 일정 삭제" style="font-size:12px; opacity:0.6;">✕</button>
+          <div class="timeblock-chip-group">
+            <span class="time-chip">${timeStr}</span>
+            ${durationStr ? `<span class="duration-pill">(${durationStr})</span>` : ''}
+            ${isMonthly ? `<span class="source-tag">월간</span>` : ''}
+          </div>
+          <span class="check-text" style="flex:1; margin-left:3px;">${escapeHtml(s.text)}</span>
+          <button type="button" class="routine-del-btn btn-del-sched" data-sid="${s.id}" title="이 타임블록 삭제" style="font-size:12px; opacity:0.6;">✕</button>
         `;
 
         row.querySelector('input').addEventListener('change', (e) => {
-          row.classList.toggle('done', e.target.checked);
+          day.calendarChecks = day.calendarChecks || {};
+          day.calendarChecks[s.id] = e.target.checked;
           saveCurrentDayData();
+          renderDailyIntegratedSection(day);
         });
 
         row.querySelector('.priority-star-btn').addEventListener('click', (e) => {
@@ -3431,19 +3667,70 @@
 
         row.querySelector('.btn-del-sched').addEventListener('click', async (e) => {
           e.stopPropagation();
-          const ok = await showConfirmDialog('일정 삭제', `'${s.text}' 일정을 삭제하시겠습니까?`, true);
+          const ok = await showConfirmDialog('타임블록 삭제', `'${s.text}' 스케줄을 삭제하시겠습니까?`, true);
           if (ok) {
             schedulesMaster = schedulesMaster.filter(item => item.id !== s.id);
             saveSchedules();
           }
         });
 
-        cContainer.appendChild(row);
-      });
+        return row;
+      };
+
+      if (activeSchedules.length === 0 && doneSchedules.length > 0) {
+        tContainer.innerHTML = '<div class="empty-hint-text" style="color:#059669; font-weight:700;">✨ 오늘의 모든 타임블록 스터디를 완료했습니다!</div>';
+      } else {
+        activeSchedules.forEach(s => tContainer.appendChild(createTimeBlockRow(s, false)));
+      }
+
+      if (doneSchedules.length > 0) {
+        toggleBtn.style.display = 'inline-flex';
+        doneText.textContent = `완료된 일정 (${doneSchedules.length}건)`;
+        doneSchedules.forEach(s => doneContainer.appendChild(createTimeBlockRow(s, true)));
+        doneContainer.style.display = isDoneSchedulesCollapsed ? 'none' : 'flex';
+        collapseIcon.textContent = isDoneSchedulesCollapsed ? '▶' : '▼';
+      } else {
+        toggleBtn.style.display = 'none';
+        doneContainer.style.display = 'none';
+      }
     }
 
     updateDailySummaryBadge(day);
     renderPriorityFocusPills(day);
+  }
+
+  // 데일리 즉석 타임블록 등록 로직 (시작~종료 시간 필수)
+  function addDailyTimeBlock() {
+    const sInput = document.getElementById('input-block-start');
+    const eInput = document.getElementById('input-block-end');
+    const titleInput = document.getElementById('input-block-title');
+
+    const sVal = sInput.value;
+    const eVal = eInput.value;
+    const titleVal = titleInput.value.trim();
+
+    if (!sVal || !eVal) {
+      showToast('시작 시간과 종료 시간을 모두 지정해 주세요.');
+      return;
+    }
+    if (!titleVal) {
+      showToast('몰입할 스터디 과제나 주제를 입력해 주세요.');
+      return;
+    }
+
+    schedulesMaster.push({
+      id: 'tb_' + Date.now(),
+      date: currentDate,
+      time: sVal,
+      endTime: eVal,
+      text: titleVal,
+      color: Math.floor(Math.random() * 5),
+      isMonthlyMilestone: false // 데일리 스터디 타임블록은 월간 캘린더를 오염시키지 않음
+    });
+
+    titleInput.value = '';
+    saveSchedules();
+    showToast(`⏱️ ${sVal}~${eVal} 타임블록이 시간순으로 등록되었습니다!`);
   }
 
   function renderPriorityFocusPills(day) {
@@ -3463,7 +3750,7 @@
     label.style.fontWeight = '700';
     label.style.color = '#92400E';
     label.style.marginRight = '4px';
-    label.textContent = '⭐ 오늘의 우선순위 집중:';
+    label.textContent = '⭐ 오늘의 최우선 집중:';
     container.appendChild(label);
 
     priIds.forEach(id => {
@@ -3580,7 +3867,8 @@
     renderMonthCalendar();
   }
 
-  function addScheduleItem() {
+  // 월간 거시적 마일스톤 일정 등록
+  function addMonthMilestone() {
     const dInp = document.getElementById('new-schedule-date');
     const tInp = document.getElementById('new-schedule-time');
     const endTInp = document.getElementById('new-schedule-end-time');
@@ -3589,7 +3877,7 @@
     const d = dInp ? dInp.value : '';
     const txt = txtInp ? txtInp.value.trim() : '';
     if (!d || !txt) {
-      showToast('날짜와 일정 내용을 입력해 주세요.');
+      showToast('날짜와 마일스톤 일정 내용을 입력해 주세요.');
       return;
     }
 
@@ -3599,14 +3887,15 @@
       time: tInp ? tInp.value : '',
       endTime: endTInp ? endTInp.value : '',
       text: txt,
-      color: Math.floor(Math.random() * 5)
+      color: Math.floor(Math.random() * 5),
+      isMonthlyMilestone: true // 월간 캘린더에 맑게 표시됨
     });
 
     if (txtInp) txtInp.value = '';
     if (tInp) tInp.value = '';
     if (endTInp) endTInp.value = '';
     saveSchedules();
-    showToast('마스킹 테이프 일정이 달력에 부착되었습니다!');
+    showToast('마스킹 테이프 마일스톤이 달력에 부착되었습니다!');
   }
 
   function initMonthSpread() {
@@ -3719,8 +4008,12 @@
       const tapeList = document.createElement('div');
       tapeList.className = 'tape-schedule-list';
 
-      const schedules = schedulesMaster.filter(s => s.date === dateStr);
-      schedules.slice(0, 3).forEach(s => {
+      // 월간 캘린더는 '월간 마일스톤'으로 등록된 중요 일정만 맑게 노출 (과밀화 원천 차단)
+      const monthlyMilestones = sortSchedulesByTime(
+        schedulesMaster.filter(s => s.date === dateStr && (s.isMonthlyMilestone !== false))
+      );
+
+      monthlyMilestones.slice(0, 3).forEach(s => {
         const item = document.createElement('div');
         item.className = `washi-tape-item tape-color-${s.color || 0}`;
         item.textContent = s.text;
@@ -3728,10 +4021,10 @@
         tapeList.appendChild(item);
       });
 
-      if (schedules.length > 3) {
+      if (monthlyMilestones.length > 3) {
         const more = document.createElement('div');
         more.className = 'tape-more-hint';
-        more.textContent = `+${schedules.length - 3}건`;
+        more.textContent = `+${monthlyMilestones.length - 3}건`;
         tapeList.appendChild(more);
       }
       cell.appendChild(tapeList);
