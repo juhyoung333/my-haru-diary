@@ -408,6 +408,49 @@
     border-radius: 10px;
     border: 1.5px solid var(--line);
   }
+  .budget-summary-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+  .budget-summary-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px 14px;
+    flex-wrap: wrap;
+  }
+  .budget-val-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+  }
+  .btn-toggle-budget-form {
+    background: #FFFFFF;
+    border: 1.5px solid var(--line);
+    color: var(--accent);
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    transition: all 0.15s ease;
+  }
+  .btn-toggle-budget-form:hover {
+    border-color: var(--accent);
+    background: #FFF7ED;
+  }
+  .btn-toggle-budget-form.active {
+    background: var(--accent);
+    color: #FFFFFF;
+    border-color: var(--accent);
+  }
+
   .budget-flow-row {
     display: flex;
     align-items: center;
@@ -470,12 +513,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
-    padding-left: 75px;
-    min-height: 20px;
+    min-height: 18px;
     align-items: center;
-  }
-  @media (max-width: 600px) {
-    .budget-chips-container { padding-left: 0; }
   }
   .budget-chip-item {
     display: inline-flex;
@@ -1145,33 +1184,45 @@
         </div>
       </div>
 
-      <!-- 💡 1. [예산 계획] - 2. [지출 합계] 정갈한 컴팩트 인라인 구조 -->
+      <!-- 💡 새로운 미니멀 예산 & 지출 결과 바 (평소에는 결과만 깔끔하게 표시) -->
       <div class="budget-flow-container">
-        <!-- 1단계: <예산> - 사용처 - 예산금액 추가 폼 -->
-        <div class="budget-flow-row">
-          <span class="flow-label">&lt;예산&gt;</span>
-          <div class="flow-inline-form">
-            <input type="text" id="input-plan-item" class="flow-input-text" placeholder="사용처 (예: 점심 식사, 서적 구입)">
-            <input type="number" id="input-plan-amount" class="flow-input-num" placeholder="예산 금액">
-            <button type="button" id="btn-add-plan" class="btn-flow-add">+ 추가</button>
+        <div class="budget-summary-bar">
+          <div class="budget-summary-group">
+            <div class="budget-val-item">
+              <span class="flow-label">&lt;예산&gt;</span>
+              <span id="budget-sum-num" style="font-family:var(--font-mono); font-weight:700; color:var(--accent); font-size:14px;">0</span>
+              <span style="font-size:11.5px; color:var(--ink-soft);">원</span>
+            </div>
+
+            <div class="budget-val-item" style="border-left:1.5px solid var(--line); padding-left:12px;">
+              <span class="flow-label">&lt;지출 합계&gt;</span>
+              <div style="display:inline-flex; align-items:center; background:#FFFFFF; border:1.5px solid var(--line); border-radius:6px; padding:2px 6px;">
+                <input type="number" id="input-spent" class="flow-input-num" style="border:none; width:85px; font-size:13px;" placeholder="0">
+                <span style="font-size:11px; margin-left:2px; color:var(--ink-soft);">원</span>
+              </div>
+            </div>
+
+            <div id="budget-diff-badge" class="diff-badge diff-under" style="display:none;"></div>
           </div>
-          <div class="total-sum-badge">
-            총 예산: <span id="budget-sum-num" style="color:var(--accent);">0</span>원
+
+          <button type="button" class="btn-toggle-budget-form" id="btn-toggle-budget-form" title="예산 계획 작성하기">
+            <span id="toggle-budget-btn-text">✎ 예산 계획 작성</span>
+          </button>
+        </div>
+
+        <!-- 💡 평소에는 닫혀 있는 슬림 작성창 -->
+        <div id="budget-form-drawer" style="display:none; border-top:1px dashed var(--line); padding-top:8px;">
+          <div class="budget-flow-row">
+            <div class="flow-inline-form">
+              <input type="text" id="input-plan-item" class="flow-input-text" placeholder="사용처 (예: 점심 식사, 서적 구입)">
+              <input type="number" id="input-plan-amount" class="flow-input-num" placeholder="예산 금액">
+              <button type="button" id="btn-add-plan" class="btn-flow-add">+ 추가</button>
+            </div>
           </div>
         </div>
 
         <!-- 예산 계획 칩 목록 (미니멀 태그) -->
         <div class="budget-chips-container" id="budget-plan-chips"></div>
-
-        <!-- 2단계: <지출 합계> - 실제 지출금액 & 차액 -->
-        <div class="budget-flow-row" style="border-top:1px dashed var(--line); padding-top:8px;">
-          <span class="flow-label">&lt;지출 합계&gt;</span>
-          <div style="display:inline-flex; align-items:center; background:#FFFFFF; border:1.5px solid var(--line); border-radius:6px; padding:3px 8px;">
-            <input type="number" id="input-spent" class="flow-input-num" style="border:none; width:95px;" placeholder="0">
-            <span style="font-size:12px; margin-left:3px; color:var(--ink-soft);">원</span>
-          </div>
-          <div id="budget-diff-badge" class="diff-badge diff-under" style="display:none;"></div>
-        </div>
       </div>
 
       <!-- 3단계: 소비 피드백 손글씨/타자 캔버스 영역 -->
@@ -2308,8 +2359,29 @@
     document.getElementById('btn-next-day')?.addEventListener('click', () => moveDay(1));
     document.getElementById('btn-goto-today')?.addEventListener('click', () => switchDate(getTodayStr()));
 
+    // 💡 예산 작성 폼 열기/닫기 토글
+    const budgetDrawer = document.getElementById('budget-form-drawer');
+    const toggleBudgetBtn = document.getElementById('btn-toggle-budget-form');
+    const toggleBudgetText = document.getElementById('toggle-budget-btn-text');
+
+    toggleBudgetBtn?.addEventListener('click', () => {
+      const isShown = budgetDrawer.style.display !== 'none';
+      budgetDrawer.style.display = isShown ? 'none' : 'block';
+      toggleBudgetBtn.classList.toggle('active', !isShown);
+      toggleBudgetText.textContent = isShown ? '✎ 예산 계획 작성' : '✕ 작성 완료 (접기)';
+      if (!isShown) {
+        document.getElementById('input-plan-item')?.focus();
+      }
+    });
+
     // 💡 예산 계획 항목 추가 버튼 이벤트
     document.getElementById('btn-add-plan')?.addEventListener('click', addBudgetPlanItem);
+    document.getElementById('input-plan-amount')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addBudgetPlanItem();
+    });
+    document.getElementById('input-plan-item')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') document.getElementById('input-plan-amount')?.focus();
+    });
 
     // 지출 합계 입력 시 차액 계산
     document.getElementById('input-spent')?.addEventListener('input', () => {
@@ -2422,6 +2494,7 @@
     // 계획 항목들의 합으로 총 예산 자동 계산
     const totalBudget = day.budgetPlans.reduce((sum, p) => sum + (p.amount || 0), 0);
     day.budget = totalBudget;
+    daysCache[currentDate] = day;
 
     itemInp.value = '';
     amountInp.value = '';
@@ -2435,7 +2508,7 @@
   // 💡 [예산 계획 칩] 렌더링
   function renderBudgetPlans(day) {
     const container = document.getElementById('budget-plan-chips');
-    const sumEl = document.getElementById('budget-sum-num');
+    const sumEl = document.getElementById('budget-sum-num') || document.getElementById('budget-val-num');
     if (!container) return;
 
     container.innerHTML = '';
@@ -2449,14 +2522,15 @@
       chip.className = 'budget-chip-item';
       chip.innerHTML = `
         <span>${escapeHtml(plan.title)}</span>
-        <span class="chip-amount">${plan.amount ? plan.amount.toLocaleString() + '원' : ''}</span>
-        <button type="button" class="chip-del-btn" title="삭제">×</button>
+        <span class="chip-amount">${plan.amount ? plan.amount.toLocaleString() + '원' : '0원'}</span>
+        <button type="button" class="chip-del-btn" title="삭제">✕</button>
       `;
 
       chip.querySelector('.chip-del-btn').addEventListener('click', () => {
         day.budgetPlans = (day.budgetPlans || []).filter(p => p.id !== plan.id);
         const newTotal = day.budgetPlans.reduce((sum, p) => sum + (p.amount || 0), 0);
         day.budget = newTotal;
+        daysCache[currentDate] = day;
         renderBudgetPlans(day);
         calcBudgetDiff();
         saveCurrentDayData();
@@ -2639,14 +2713,22 @@
 
   function calcBudgetDiff() {
     const curDay = daysCache[currentDate] || {};
-    const b = curDay.budget || 0;
-    const s = parseInt(document.getElementById('input-spent').value, 10) || 0;
+    // 항상 최신 budgetPlans의 합산값을 기준으로 계산
+    const plans = curDay.budgetPlans || [];
+    const b = plans.length > 0 ? plans.reduce((sum, p) => sum + (p.amount || 0), 0) : (curDay.budget || 0);
+    const spentInput = document.getElementById('input-spent');
+    const s = parseInt(spentInput ? spentInput.value : 0, 10) || 0;
     const badge = document.getElementById('budget-diff-badge');
 
+    if (!badge) return;
+
+    // 예산 계획도 없고 지출도 0원인 경우 배지 숨김
     if (b === 0 && s === 0) {
       badge.style.display = 'none';
+      badge.textContent = '';
       return;
     }
+
     badge.style.display = 'inline-block';
     const diff = b - s;
     if (diff >= 0) {
