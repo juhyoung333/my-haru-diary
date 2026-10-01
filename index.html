@@ -87,30 +87,10 @@
     transform: scale(1.02) rotate(0deg) !important;
   }
 
-  .tape-peach {
-    background-color: #FEE7DD;
-    color: #742A1D;
-    transform: rotate(-0.5deg);
-    border-top: 1px solid rgba(255, 255, 255, 0.7);
-  }
-  .tape-sage {
-    background-color: #E2ECE0;
-    color: #274D2E;
-    transform: rotate(0.4deg);
-    border-top: 1px solid rgba(255, 255, 255, 0.7);
-  }
-  .tape-sand {
-    background-color: #F5EEDB;
-    color: #5D431F;
-    transform: rotate(-0.3deg);
-    border-top: 1px solid rgba(255, 255, 255, 0.7);
-  }
-  .tape-lavender {
-    background-color: #EAE6F7;
-    color: #453472;
-    transform: rotate(0.5deg);
-    border-top: 1px solid rgba(255, 255, 255, 0.7);
-  }
+  .tape-peach { background-color: #FEE7DD; color: #742A1D; transform: rotate(-0.5deg); border-top: 1px solid rgba(255, 255, 255, 0.7); }
+  .tape-sage { background-color: #E2ECE0; color: #274D2E; transform: rotate(0.4deg); border-top: 1px solid rgba(255, 255, 255, 0.7); }
+  .tape-sand { background-color: #F5EEDB; color: #5D431F; transform: rotate(-0.3deg); border-top: 1px solid rgba(255, 255, 255, 0.7); }
+  .tape-lavender { background-color: #EAE6F7; color: #453472; transform: rotate(0.5deg); border-top: 1px solid rgba(255, 255, 255, 0.7); }
 
   .priority-star-btn {
     border: none;
@@ -122,18 +102,9 @@
     color: #D1D5DB;
     transition: transform 0.15s ease, color 0.15s ease;
   }
-  .priority-star-btn:hover {
-    transform: scale(1.2);
-    color: #F59E0B;
-  }
-  .priority-star-btn.active {
-    color: #F59E0B;
-    text-shadow: 0 0 6px rgba(245, 158, 11, 0.45);
-  }
-  .check-item-row.is-priority {
-    background: #FFFBEB !important;
-    border-left: 3px solid #F59E0B;
-  }
+  .priority-star-btn:hover { transform: scale(1.2); color: #F59E0B; }
+  .priority-star-btn.active { color: #F59E0B; text-shadow: 0 0 6px rgba(245, 158, 11, 0.45); }
+  .check-item-row.is-priority { background: #FFFBEB !important; border-left: 3px solid #F59E0B; }
 
   .priority-focus-pills {
     display: flex;
@@ -199,10 +170,7 @@
     white-space: nowrap;
     transition: all 0.15s ease;
   }
-  .header-icon-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
+  .header-icon-btn:hover { border-color: var(--accent); color: var(--accent); }
   .backlog-count-pill {
     background: var(--accent);
     color: #FFFFFF;
@@ -284,17 +252,8 @@
     gap: 6px;
   }
 
-  .pen-group-row {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .palette-divider {
-    width: 1px;
-    height: 16px;
-    background: var(--line);
-    margin: 0 1px;
-  }
+  .pen-group-row { display: flex; align-items: center; gap: 4px; }
+  .palette-divider { width: 1px; height: 16px; background: var(--line); margin: 0 1px; }
   .tool-mode-btn {
     border: 1px solid transparent;
     background: transparent;
@@ -311,21 +270,9 @@
     white-space: nowrap;
   }
   .tool-mode-btn:hover { background: #F3F4F6; color: var(--ink); }
-  .tool-mode-btn.active {
-    background: var(--accent);
-    color: #FFFFFF;
-    box-shadow: 0 2px 6px rgba(194,65,12,0.3);
-  }
-  .tool-mode-btn.highlighter-active {
-    background: #F59E0B;
-    color: #FFFFFF;
-    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4);
-  }
-  .tool-mode-btn.capture-mode-active {
-    background: #059669;
-    color: #FFFFFF;
-    box-shadow: 0 2px 6px rgba(5, 150, 105, 0.4);
-  }
+  .tool-mode-btn.active { background: var(--accent); color: #FFFFFF; box-shadow: 0 2px 6px rgba(194,65,12,0.3); }
+  .tool-mode-btn.highlighter-active { background: #F59E0B; color: #FFFFFF; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4); }
+  .tool-mode-btn.capture-mode-active { background: #059669; color: #FFFFFF; box-shadow: 0 2px 6px rgba(5, 150, 105, 0.4); }
 
   .current-pen-status {
     display: inline-flex;
@@ -340,13 +287,7 @@
     color: var(--ink-soft);
     white-space: nowrap;
   }
-  .current-color-dot {
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    border: 1px solid rgba(0,0,0,0.15);
-    display: inline-block;
-  }
+  .current-color-dot { width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15); display: inline-block; }
 
   .btn-toggle-options {
     background: #FFF7ED;
@@ -364,11 +305,7 @@
     transition: all 0.15s ease;
   }
   .btn-toggle-options:hover { background: #FFEDD5; }
-  .btn-toggle-options.open {
-    background: var(--accent);
-    color: #FFFFFF;
-    border-color: var(--accent);
-  }
+  .btn-toggle-options.open { background: var(--accent); color: #FFFFFF; border-color: var(--accent); }
 
   .pen-options-panel {
     background: #FFFFFF;
@@ -387,14 +324,7 @@
   }
 
   .options-row { display: flex; flex-direction: column; gap: 5px; }
-  .options-label-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--ink-soft);
-  }
+  .options-label-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; color: var(--ink-soft); }
   .palette-chips-wrap { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
   .palette-chip {
     width: 22px;
@@ -408,16 +338,7 @@
   }
   .palette-chip:hover { transform: scale(1.15); }
   .palette-chip.active { transform: scale(1.22); box-shadow: 0 0 0 2.5px var(--accent); }
-  .color-picker-input {
-    width: 22px;
-    height: 22px;
-    border: 1.5px solid var(--line);
-    border-radius: 50%;
-    cursor: pointer;
-    background: transparent;
-    padding: 0;
-    outline: none;
-  }
+  .color-picker-input { width: 22px; height: 22px; border: 1.5px solid var(--line); border-radius: 50%; cursor: pointer; background: transparent; padding: 0; outline: none; }
   .slider-control-row { display: flex; align-items: center; gap: 10px; }
   .custom-range { flex: 1; accent-color: var(--accent); cursor: pointer; height: 5px; }
   .slider-val-badge { font-family: var(--font-mono); font-size: 11px; font-weight: 700; min-width: 44px; text-align: right; color: var(--ink); }
@@ -477,112 +398,117 @@
   .badge-tomorrow { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
   .badge-past { background: #F3F4F6; color: var(--ink-soft); border: 1px solid var(--line); }
 
-  .budget-input-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px 14px;
-    background: #FAFAFA;
-    padding: 8px 12px;
-    border-radius: 10px;
-    border: 1.5px solid var(--line);
-  }
-  .budget-item { display: flex; align-items: center; gap: 6px; }
-  .meta-tag { font-family: var(--font-serif); font-size: 13.5px; font-weight: 700; color: var(--accent); }
-  .num-input-wrap { display: inline-flex; align-items: center; background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 8px; padding: 3px 6px; }
-  .num-input { border: none; background: transparent; font-family: var(--font-mono); font-size: 13.5px; font-weight: 600; width: 84px; text-align: right; color: var(--ink); outline: none; }
-  .diff-badge { font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; font-family: var(--font-mono); white-space: nowrap; }
-  .diff-under { background: #ECFDF5; color: #059669; }
-  .diff-over { background: #FEF2F2; color: #DC2626; }
-
-  /* 상세 지출 내역 태그 목록 스타일 */
-  .expense-breakdown-box {
-    background: #FFFDFB;
-    border: 1px dashed #FDBA74;
-    border-radius: 10px;
-    padding: 10px 12px;
+  /* 💡 새로운 미니멀 인라인 예산-지출 섹션 스타일 */
+  .budget-flow-container {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    background: #FAFAFA;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1.5px solid var(--line);
   }
-  .expense-add-form {
+  .budget-flow-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px 10px;
     flex-wrap: wrap;
   }
-  .expense-text-inp {
+  .flow-label {
+    font-family: var(--font-serif);
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 65px;
+    flex-shrink: 0;
+  }
+  .flow-inline-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     flex: 1;
-    min-width: 130px;
+    min-width: 250px;
+  }
+  .flow-input-text {
+    flex: 1;
+    min-width: 110px;
     border: 1.5px solid var(--line);
     border-radius: 6px;
-    padding: 5px 8px;
+    padding: 4px 8px;
     font-size: 12px;
     font-family: var(--font-sans);
     outline: none;
     background: #FFFFFF;
   }
-  .expense-text-inp:focus { border-color: var(--accent); }
-  .expense-num-inp {
-    width: 90px;
+  .flow-input-text:focus { border-color: var(--accent); }
+  .flow-input-num {
+    width: 80px;
     border: 1.5px solid var(--line);
     border-radius: 6px;
-    padding: 5px 8px;
+    padding: 4px 6px;
     font-size: 12px;
     font-family: var(--font-mono);
     text-align: right;
     outline: none;
     background: #FFFFFF;
   }
-  .expense-num-inp:focus { border-color: var(--accent); }
-  .btn-add-expense-pill {
+  .flow-input-num:focus { border-color: var(--accent); }
+  .btn-flow-add {
     background: var(--accent);
     color: #FFFFFF;
     border: none;
     border-radius: 6px;
-    padding: 5px 10px;
+    padding: 5px 9px;
     font-size: 11.5px;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
-    transition: background 0.15s ease;
   }
-  .btn-add-expense-pill:hover { background: var(--accent-hover); }
+  .btn-flow-add:hover { background: var(--accent-hover); }
 
-  .daily-expense-list {
+  .budget-chips-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    min-height: 24px;
+    gap: 5px;
+    padding-left: 75px;
+    min-height: 20px;
     align-items: center;
   }
-  .expense-tag-pill {
+  @media (max-width: 600px) {
+    .budget-chips-container { padding-left: 0; }
+  }
+  .budget-chip-item {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     background: #FFFFFF;
     border: 1px solid #FCD34D;
     color: #92400E;
-    padding: 3px 8px;
-    border-radius: 999px;
-    font-size: 11.5px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 11px;
     box-shadow: 0 1px 2px rgba(0,0,0,0.03);
   }
-  .expense-tag-amount {
+  .chip-amount { font-family: var(--font-mono); font-weight: 700; color: var(--accent); }
+  .chip-del-btn { border: none; background: transparent; color: #9CA3AF; cursor: pointer; font-size: 12px; padding: 0 1px; line-height: 1; }
+  .chip-del-btn:hover { color: #DC2626; }
+
+  .total-sum-badge {
     font-family: var(--font-mono);
-    font-weight: 700;
-    color: var(--accent);
-  }
-  .expense-del-btn {
-    border: none;
-    background: transparent;
-    color: #9CA3AF;
     font-size: 12px;
-    cursor: pointer;
-    line-height: 1;
-    padding: 0 1px;
+    font-weight: 700;
+    color: var(--ink);
+    background: #FFFFFF;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    margin-left: auto;
+    white-space: nowrap;
   }
-  .expense-del-btn:hover { color: #DC2626; }
+
+  .diff-badge { font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; font-family: var(--font-mono); white-space: nowrap; }
+  .diff-under { background: #ECFDF5; color: #059669; }
+  .diff-over { background: #FEF2F2; color: #DC2626; }
 
   .daily-grid {
     display: grid;
@@ -624,7 +550,7 @@
     justify-content: space-between;
   }
 
-  /* 단일 리스트 유지: 체크 시 자리 유지 + 취소선 */
+  /* 단일 리스트 유지: 체크 시 자리 유지 + 은은한 취소선 */
   .check-item-list { display: flex; flex-direction: column; gap: 4px; transition: all 0.2s ease; }
   .check-item-row {
     display: flex;
@@ -747,20 +673,9 @@
   }
 
   /* 캔버스 터치 제어: 캡처 및 스크롤 시 터치 간섭 방지 */
-  .ink-canvas {
-    width: 100%;
-    display: block;
-    cursor: crosshair;
-  }
-  .ink-canvas.drawing-active {
-    touch-action: none;
-    pointer-events: auto;
-  }
-  .ink-canvas.scroll-active {
-    touch-action: pan-y !important;
-    cursor: grab;
-    pointer-events: none !important;
-  }
+  .ink-canvas { width: 100%; display: block; cursor: crosshair; }
+  .ink-canvas.drawing-active { touch-action: none; pointer-events: auto; }
+  .ink-canvas.scroll-active { touch-action: pan-y !important; cursor: grab; pointer-events: none !important; }
 
   .diary-lined-textarea {
     width: 100%;
@@ -846,19 +761,6 @@
   .day-archive-col:hover { border-color: var(--accent); transform: translateY(-2px); }
   .day-archive-col.is-today { border-color: var(--accent); background: #FFF7ED; }
   .day-col-title { font-size: 11.5px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
-
-  .handwrite-feedback-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 10.5px;
-    background: #FFF7ED;
-    border: 1px solid #FDE68A;
-    color: var(--accent);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 700;
-  }
 
   .month-spread-container { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: start; }
   @media (min-width: 1100px) { .month-spread-container { grid-template-columns: 1.25fr 0.75fr; gap: 18px; } }
@@ -1156,7 +1058,7 @@
     <button type="button" class="nav-tab" data-tab="tab-month">월간 돌아보기</button>
   </nav>
 
-  <!-- 글로벌 펜 툴바 (스크롤 캡처 방지 전용 캡처 모드 포함) -->
+  <!-- 글로벌 펜 툴바 -->
   <div class="global-pen-container" id="global-pen-container">
     <div class="global-pen-bar" id="global-pen-bar">
       <div class="pen-group-row">
@@ -1243,47 +1145,36 @@
         </div>
       </div>
 
-      <!-- 예산 & 총 지출 입력 -->
-      <div class="budget-input-row">
-        <div class="budget-item">
-          <span class="meta-tag">&lt;예산&gt;</span>
-          <div class="num-input-wrap">
-            <input type="number" id="input-budget" class="num-input" placeholder="0">
-            <span style="font-size:11.5px; margin-left:2px; color:var(--ink-soft);">원</span>
+      <!-- 💡 1. [예산 계획] - 2. [지출 합계] 정갈한 컴팩트 인라인 구조 -->
+      <div class="budget-flow-container">
+        <!-- 1단계: <예산> - 사용처 - 예산금액 추가 폼 -->
+        <div class="budget-flow-row">
+          <span class="flow-label">&lt;예산&gt;</span>
+          <div class="flow-inline-form">
+            <input type="text" id="input-plan-item" class="flow-input-text" placeholder="사용처 (예: 점심 식사, 서적 구입)">
+            <input type="number" id="input-plan-amount" class="flow-input-num" placeholder="예산 금액">
+            <button type="button" id="btn-add-plan" class="btn-flow-add">+ 추가</button>
+          </div>
+          <div class="total-sum-badge">
+            총 예산: <span id="budget-sum-num" style="color:var(--accent);">0</span>원
           </div>
         </div>
-        <div class="budget-item">
-          <span class="meta-tag">&lt;지출 합계&gt;</span>
-          <div class="num-input-wrap">
-            <input type="number" id="input-spent" class="num-input" placeholder="0">
-            <span style="font-size:11.5px; margin-left:2px; color:var(--ink-soft);">원</span>
+
+        <!-- 예산 계획 칩 목록 (미니멀 태그) -->
+        <div class="budget-chips-container" id="budget-plan-chips"></div>
+
+        <!-- 2단계: <지출 합계> - 실제 지출금액 & 차액 -->
+        <div class="budget-flow-row" style="border-top:1px dashed var(--line); padding-top:8px;">
+          <span class="flow-label">&lt;지출 합계&gt;</span>
+          <div style="display:inline-flex; align-items:center; background:#FFFFFF; border:1.5px solid var(--line); border-radius:6px; padding:3px 8px;">
+            <input type="number" id="input-spent" class="flow-input-num" style="border:none; width:95px;" placeholder="0">
+            <span style="font-size:12px; margin-left:3px; color:var(--ink-soft);">원</span>
           </div>
-        </div>
-        <div id="budget-diff-badge" class="diff-badge diff-under" style="display:none;"></div>
-      </div>
-
-      <!-- 상세 지출 사용처 작성 영역 (어디에 돈을 썼는지 기록) -->
-      <div class="expense-breakdown-box">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-size:12px; font-weight:700; color:#92400E; display:inline-flex; align-items:center; gap:4px;">
-            <span>💳 오늘 어디에 돈을 썼나요?</span>
-            <span style="font-size:11px; font-weight:normal; color:var(--ink-soft);">(사용처 &amp; 금액)</span>
-          </span>
-          <span id="expense-count-text" style="font-size:11px; font-family:var(--font-mono); color:var(--ink-soft);">0건 기록됨</span>
-        </div>
-
-        <div class="expense-add-form">
-          <input type="text" id="input-expense-item" class="expense-text-inp" placeholder="사용처 (예: 점심 식사, 서적 구입, 편의점...)">
-          <input type="number" id="input-expense-amount" class="expense-num-inp" placeholder="금액 (원)">
-          <button type="button" id="btn-add-expense" class="btn-add-expense-pill">+ 내역 추가</button>
-        </div>
-
-        <div class="daily-expense-list" id="daily-expense-list">
-          <span style="font-size:11px; color:var(--ink-faint); font-style:italic;">기록된 세부 지출 내역이 없습니다.</span>
+          <div id="budget-diff-badge" class="diff-badge diff-under" style="display:none;"></div>
         </div>
       </div>
 
-      <!-- 소비 피드백 손글씨/타자 캔버스 영역 -->
+      <!-- 3단계: 소비 피드백 손글씨/타자 캔버스 영역 -->
       <div class="budget-feedback-card-section">
         <div class="section-header">
           <div class="section-title">
@@ -1420,7 +1311,7 @@
             <div class="direct-action-tools">
               <button type="button" class="btn-mini-action btn-mode-toggle" data-target="tome" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
               <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-tome" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
-              <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-tome" title="전체 지우기">🗑️️</button>
+              <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-tome" title="전체 지우기">🗑</button>
             </div>
           </div>
           <div class="tome-question-row">
@@ -1496,7 +1387,6 @@
 
   <section id="tab-month" class="tab-content" hidden>
     <div class="month-spread-container">
-      
       <div class="spread-page-col">
         <div class="paper-card">
           <div class="month-header-bar">
@@ -1617,12 +1507,12 @@
           </div>
         </div>
       </div>
-
     </div>
-  </section>
+  </main>
 
 </div>
 
+<!-- 서랍 및 모달 창 요소들 -->
 <div id="backlog-drawer-backdrop" class="backlog-drawer-backdrop"></div>
 <aside id="backlog-drawer-panel" class="backlog-drawer-panel" aria-label="백로그 서랍">
   <div class="drawer-header">
@@ -1827,12 +1717,9 @@
     return [...list].sort((a, b) => {
       const timeA = a.time || '';
       const timeB = b.time || '';
-
       if (timeA && timeB) {
         if (timeA !== timeB) return timeA.localeCompare(timeB);
-        const endA = a.endTime || '';
-        const endB = b.endTime || '';
-        return endA.localeCompare(endB);
+        return (a.endTime || '').localeCompare(b.endTime || '');
       }
       if (timeA && !timeB) return -1;
       if (!timeA && timeB) return 1;
@@ -1843,9 +1730,8 @@
   function getWeekKey(dateStr) {
     const [y, m, d] = dateStr.split('-').map(Number);
     const cur = new Date(y, m - 1, d);
-    const dayDow = cur.getDay();
     const start = new Date(cur);
-    start.setDate(cur.getDate() - dayDow);
+    start.setDate(cur.getDate() - cur.getDay());
     return `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`;
   }
 
@@ -1875,7 +1761,6 @@
         okBtn.removeEventListener('click', onOk);
         cancelBtn.removeEventListener('click', onCancel);
       };
-
       const onOk = () => { cleanup(); resolve(true); };
       const onCancel = () => { cleanup(); resolve(false); };
 
@@ -1911,9 +1796,7 @@
       const displayWidth = rect.width > 0 ? rect.width : (parentWidth > 0 ? parentWidth : 320);
 
       let curH = parseInt(this.canvas.style.height) || parseInt(this.canvas.getAttribute('height')) || this.defaultHeight;
-      if (curH > MAX_SAFE_HEIGHT || curH < MIN_SAFE_HEIGHT) {
-        curH = this.defaultHeight;
-      }
+      if (curH > MAX_SAFE_HEIGHT || curH < MIN_SAFE_HEIGHT) curH = this.defaultHeight;
 
       this.canvas.width = Math.round(displayWidth * dpr);
       this.canvas.height = Math.round(curH * dpr);
@@ -1931,8 +1814,7 @@
       const clamped = Math.max(MIN_SAFE_HEIGHT, Math.min(MAX_SAFE_HEIGHT, Math.round(newHeight / 35) * 35));
       this.canvas.setAttribute('height', clamped);
       this.canvas.style.height = `${clamped}px`;
-      const wrap = this.canvas.parentElement;
-      if (wrap) wrap.style.height = `${clamped}px`;
+      if (this.canvas.parentElement) this.canvas.parentElement.style.height = `${clamped}px`;
       this.resizeCanvas();
     }
 
@@ -1953,7 +1835,6 @@
     }
 
     onDown(e) {
-      // 캡처 및 화면 이동 도구 선택 시 pointer event 차단하여 스크롤 캡처 멈춤 방지
       if (currentTool === 'scroll') return;
       if (this.isDrawing) return;
 
@@ -2128,8 +2009,7 @@
           this.ctx.quadraticCurveTo(s.points[i].x, s.points[i].y, midX, midY);
         }
         if (s.points.length > 1) {
-          const last = s.points[s.points.length - 1];
-          this.ctx.lineTo(last.x, last.y);
+          this.ctx.lineTo(s.points[s.points.length - 1].x, s.points[s.points.length - 1].y);
         }
         this.ctx.stroke();
         this.ctx.restore();
@@ -2428,15 +2308,14 @@
     document.getElementById('btn-next-day')?.addEventListener('click', () => moveDay(1));
     document.getElementById('btn-goto-today')?.addEventListener('click', () => switchDate(getTodayStr()));
 
-    ['input-budget', 'input-spent'].forEach(id => {
-      document.getElementById(id)?.addEventListener('input', () => {
-        calcBudgetDiff();
-        saveCurrentDayData();
-      });
-    });
+    // 💡 예산 계획 항목 추가 버튼 이벤트
+    document.getElementById('btn-add-plan')?.addEventListener('click', addBudgetPlanItem);
 
-    // 세부 지출 항목 추가 버튼 이벤트
-    document.getElementById('btn-add-expense')?.addEventListener('click', addExpenseItem);
+    // 지출 합계 입력 시 차액 계산
+    document.getElementById('input-spent')?.addEventListener('input', () => {
+      calcBudgetDiff();
+      saveCurrentDayData();
+    });
 
     ['text-budget-feedback', 'text-todo-feedback', 'text-gratitude', 'text-tome'].forEach(id => {
       document.getElementById(id)?.addEventListener('input', debounce(() => {
@@ -2520,73 +2399,70 @@
     });
   }
 
-  function addExpenseItem() {
-    const itemInput = document.getElementById('input-expense-item');
-    const amountInput = document.getElementById('input-expense-amount');
-    const title = itemInput.value.trim();
-    const amount = parseInt(amountInput.value, 10) || 0;
+  // 💡 [예산 계획 항목] 추가 핸들러
+  function addBudgetPlanItem() {
+    const itemInp = document.getElementById('input-plan-item');
+    const amountInp = document.getElementById('input-plan-amount');
+    const title = itemInp.value.trim();
+    const amount = parseInt(amountInp.value, 10) || 0;
 
     if (!title) {
-      showToast('지출 사용처를 입력해 주세요.');
+      showToast('예산 사용처(목적)를 입력해 주세요.');
       return;
     }
 
     const day = daysCache[currentDate] || {};
-    day.expenses = day.expenses || [];
-    day.expenses.push({
-      id: 'exp_' + Date.now(),
+    day.budgetPlans = day.budgetPlans || [];
+    day.budgetPlans.push({
+      id: 'plan_' + Date.now(),
       title,
       amount
     });
 
-    // 지출 내역 합산 금액으로 총 지출 자동 업데이트
-    const totalSpent = day.expenses.reduce((sum, item) => sum + (item.amount || 0), 0);
-    day.spent = totalSpent;
-    document.getElementById('input-spent').value = totalSpent;
+    // 계획 항목들의 합으로 총 예산 자동 계산
+    const totalBudget = day.budgetPlans.reduce((sum, p) => sum + (p.amount || 0), 0);
+    day.budget = totalBudget;
 
-    itemInput.value = '';
-    amountInput.value = '';
+    itemInp.value = '';
+    amountInp.value = '';
 
-    renderExpenseList(day);
+    renderBudgetPlans(day);
     calcBudgetDiff();
     saveCurrentDayData();
-    showToast(`'${title}' 지출 내역이 추가되었습니다.`);
+    showToast(`'${title}' 예산 계획이 추가되었습니다.`);
   }
 
-  function renderExpenseList(day) {
-    const container = document.getElementById('daily-expense-list');
-    const countText = document.getElementById('expense-count-text');
+  // 💡 [예산 계획 칩] 렌더링
+  function renderBudgetPlans(day) {
+    const container = document.getElementById('budget-plan-chips');
+    const sumEl = document.getElementById('budget-sum-num');
     if (!container) return;
 
     container.innerHTML = '';
-    const expenses = day.expenses || [];
-    if (countText) countText.textContent = `${expenses.length}건 기록됨`;
+    const plans = day.budgetPlans || [];
+    const totalBudget = plans.reduce((sum, p) => sum + (p.amount || 0), 0);
+    day.budget = totalBudget;
+    if (sumEl) sumEl.textContent = totalBudget.toLocaleString();
 
-    if (expenses.length === 0) {
-      container.innerHTML = `<span style="font-size:11px; color:var(--ink-faint); font-style:italic;">기록된 세부 지출 내역이 없습니다.</span>`;
-      return;
-    }
-
-    expenses.forEach(exp => {
-      const pill = document.createElement('div');
-      pill.className = 'expense-tag-pill';
-      pill.innerHTML = `
-        <span>${escapeHtml(exp.title)}</span>
-        <span class="expense-tag-amount">${exp.amount ? exp.amount.toLocaleString() + '원' : ''}</span>
-        <button type="button" class="expense-del-btn" title="삭제">×</button>
+    plans.forEach(plan => {
+      const chip = document.createElement('div');
+      chip.className = 'budget-chip-item';
+      chip.innerHTML = `
+        <span>${escapeHtml(plan.title)}</span>
+        <span class="chip-amount">${plan.amount ? plan.amount.toLocaleString() + '원' : ''}</span>
+        <button type="button" class="chip-del-btn" title="삭제">×</button>
       `;
 
-      pill.querySelector('.expense-del-btn').addEventListener('click', () => {
-        day.expenses = (day.expenses || []).filter(e => e.id !== exp.id);
-        const totalSpent = day.expenses.reduce((sum, item) => sum + (item.amount || 0), 0);
-        day.spent = totalSpent;
-        document.getElementById('input-spent').value = totalSpent;
-        renderExpenseList(day);
+      chip.querySelector('.chip-del-btn').addEventListener('click', () => {
+        day.budgetPlans = (day.budgetPlans || []).filter(p => p.id !== plan.id);
+        const newTotal = day.budgetPlans.reduce((sum, p) => sum + (p.amount || 0), 0);
+        day.budget = newTotal;
+        renderBudgetPlans(day);
         calcBudgetDiff();
         saveCurrentDayData();
       });
 
-      container.appendChild(pill);
+      container.appendChild(chip);
     });
   }
 
@@ -2647,7 +2523,7 @@
       day = {
         budget: 0,
         spent: 0,
-        expenses: [],
+        budgetPlans: [],
         routineChecks: {},
         calendarChecks: {},
         priorities: {},
@@ -2664,10 +2540,9 @@
       };
     }
 
-    document.getElementById('input-budget').value = day.budget || '';
+    renderBudgetPlans(day);
     document.getElementById('input-spent').value = day.spent || '';
     calcBudgetDiff();
-    renderExpenseList(day);
 
     if (day.tomePrompt) {
       document.getElementById('tome-q-text').textContent = day.tomePrompt;
@@ -2732,12 +2607,13 @@
 
     const currentDay = daysCache[currentDate] || {};
     const priorities = currentDay.priorities || {};
-    const expenses = currentDay.expenses || [];
+    const budgetPlans = currentDay.budgetPlans || [];
+    const totalBudget = budgetPlans.reduce((sum, p) => sum + (p.amount || 0), 0);
 
     const dayData = {
-      budget: parseInt(document.getElementById('input-budget').value, 10) || 0,
+      budget: totalBudget,
       spent: parseInt(document.getElementById('input-spent').value, 10) || 0,
-      expenses,
+      budgetPlans,
       routineChecks,
       calendarChecks,
       priorities,
@@ -2762,9 +2638,11 @@
   }
 
   function calcBudgetDiff() {
-    const b = parseInt(document.getElementById('input-budget').value, 10) || 0;
+    const curDay = daysCache[currentDate] || {};
+    const b = curDay.budget || 0;
     const s = parseInt(document.getElementById('input-spent').value, 10) || 0;
     const badge = document.getElementById('budget-diff-badge');
+
     if (b === 0 && s === 0) {
       badge.style.display = 'none';
       return;
@@ -2812,7 +2690,7 @@
       rContainer.appendChild(row);
     });
 
-    // 2. 몰입 스케줄 렌더링 (체크 시 분리하지 않고 단일 리스트 유지)
+    // 2. 몰입 스케줄 렌더링 (체크 시 분리하지 않고 동일 목록 유지)
     const tContainer = document.getElementById('daily-timeblock-items');
     tContainer.innerHTML = '';
 
@@ -3340,7 +3218,7 @@
           feedbackHtml = escapeHtml(textFb);
         } else if (hasStrokes) {
           feedbackDays++;
-          feedbackHtml = `<span class="handwrite-feedback-pill">✍️ 손글씨 피드백 작성됨</span>`;
+          feedbackHtml = `<span style="font-size:10.5px; background:#FFF7ED; border:1px solid #FDE68A; color:var(--accent); padding:2px 6px; border-radius:4px; font-weight:700;">✍️ 손글씨 피드백 작성됨</span>`;
         }
       }
 
@@ -3526,7 +3404,6 @@
       const card = document.createElement('div');
       card.className = 'backlog-card-item';
       card.id = `backlog-card-${item.id}`;
-
       const dateStr = new Date(item.createdAt || Date.now()).toLocaleDateString();
 
       card.innerHTML = `
@@ -3617,8 +3494,7 @@
   }
 
   function getRoomKey() {
-    const raw = localStorage.getItem('haru_room_key') || '';
-    return raw.trim().toLowerCase();
+    return (localStorage.getItem('haru_room_key') || '').trim().toLowerCase();
   }
 
   function loadLocalSettings() {
@@ -3716,9 +3592,7 @@
       snapshot.docChanges().forEach(change => {
         const data = change.doc.data();
         const dateKey = change.doc.id;
-        if (!data) return;
-
-        if (data.senderId === CLIENT_ID) return;
+        if (!data || data.senderId === CLIENT_ID) return;
 
         daysCache[dateKey] = data;
         localStorage.setItem(getDayStorageKey(dateKey), JSON.stringify(data));
