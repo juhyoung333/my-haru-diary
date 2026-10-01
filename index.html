@@ -59,9 +59,7 @@
     transition: max-width 0.25s ease;
   }
   @media (min-width: 1180px) {
-    .app-container {
-      max-width: 1380px;
-    }
+    .app-container { max-width: 1380px; }
   }
 
   .washi-tape-title {
@@ -323,6 +321,11 @@
     color: #FFFFFF;
     box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4);
   }
+  .tool-mode-btn.capture-mode-active {
+    background: #059669;
+    color: #FFFFFF;
+    box-shadow: 0 2px 6px rgba(5, 150, 105, 0.4);
+  }
 
   .current-pen-status {
     display: inline-flex;
@@ -487,10 +490,99 @@
   .budget-item { display: flex; align-items: center; gap: 6px; }
   .meta-tag { font-family: var(--font-serif); font-size: 13.5px; font-weight: 700; color: var(--accent); }
   .num-input-wrap { display: inline-flex; align-items: center; background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 8px; padding: 3px 6px; }
-  .num-input { border: none; background: transparent; font-family: var(--font-mono); font-size: 13.5px; font-weight: 600; width: 80px; text-align: right; color: var(--ink); outline: none; }
+  .num-input { border: none; background: transparent; font-family: var(--font-mono); font-size: 13.5px; font-weight: 600; width: 84px; text-align: right; color: var(--ink); outline: none; }
   .diff-badge { font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; font-family: var(--font-mono); white-space: nowrap; }
   .diff-under { background: #ECFDF5; color: #059669; }
   .diff-over { background: #FEF2F2; color: #DC2626; }
+
+  /* 상세 지출 내역 태그 목록 스타일 */
+  .expense-breakdown-box {
+    background: #FFFDFB;
+    border: 1px dashed #FDBA74;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .expense-add-form {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .expense-text-inp {
+    flex: 1;
+    min-width: 130px;
+    border: 1.5px solid var(--line);
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-size: 12px;
+    font-family: var(--font-sans);
+    outline: none;
+    background: #FFFFFF;
+  }
+  .expense-text-inp:focus { border-color: var(--accent); }
+  .expense-num-inp {
+    width: 90px;
+    border: 1.5px solid var(--line);
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    text-align: right;
+    outline: none;
+    background: #FFFFFF;
+  }
+  .expense-num-inp:focus { border-color: var(--accent); }
+  .btn-add-expense-pill {
+    background: var(--accent);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+  }
+  .btn-add-expense-pill:hover { background: var(--accent-hover); }
+
+  .daily-expense-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 24px;
+    align-items: center;
+  }
+  .expense-tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #FFFFFF;
+    border: 1px solid #FCD34D;
+    color: #92400E;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .expense-tag-amount {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .expense-del-btn {
+    border: none;
+    background: transparent;
+    color: #9CA3AF;
+    font-size: 12px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 1px;
+  }
+  .expense-del-btn:hover { color: #DC2626; }
 
   .daily-grid {
     display: grid;
@@ -532,20 +624,29 @@
     justify-content: space-between;
   }
 
+  /* 단일 리스트 유지: 체크 시 자리 유지 + 취소선 */
   .check-item-list { display: flex; flex-direction: column; gap: 4px; transition: all 0.2s ease; }
   .check-item-row {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 5px 6px;
+    padding: 6px 8px;
     border-radius: 6px;
     font-size: 12.5px;
-    transition: background 0.1s ease, opacity 0.15s ease;
+    background: #FFFFFF;
+    border: 1px solid var(--line-subtle);
+    transition: background 0.15s ease, opacity 0.15s ease, border-color 0.15s ease;
   }
-  .check-item-row:hover { background: #F9FAFB; }
-  .check-item-row.done { opacity: 0.65; background: #FAFAFA; }
-  .check-item-row.done span.check-text { text-decoration: line-through; color: var(--ink-faint); }
-  .custom-checkbox { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+  .check-item-row:hover { background: #F9FAFB; border-color: var(--line); }
+  .check-item-row.done {
+    opacity: 0.55;
+    background: #F9FAFB;
+  }
+  .check-item-row.done span.check-text {
+    text-decoration: line-through;
+    color: var(--ink-faint);
+  }
+  .custom-checkbox { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
 
   .timeblock-chip-group { display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0; }
   .time-chip { font-family: var(--font-mono); font-size: 10.5px; padding: 2px 6px; border-radius: 4px; background: #FFF7ED; border: 1px solid #FDBA74; color: #9A3412; font-weight: 700; white-space: nowrap; }
@@ -587,25 +688,7 @@
   .btn-add-block { background: var(--accent); color: #FFFFFF; border: none; border-radius: 6px; padding: 5px 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.15s ease; }
   .btn-add-block:hover { background: var(--accent-hover); }
 
-  .empty-hint-text { font-size: 11.5px; color: var(--ink-faint); font-style: italic; padding: 6px 4px; text-align: center; }
-
-  .done-collapse-toggle-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    font-family: var(--font-sans);
-    color: var(--ink-faint);
-    background: transparent;
-    border: none;
-    padding: 4px 6px;
-    cursor: pointer;
-    border-radius: 4px;
-    align-self: flex-start;
-    margin-top: 2px;
-    transition: color 0.15s ease;
-  }
-  .done-collapse-toggle-btn:hover { color: var(--accent); }
+  .empty-hint-text { font-size: 11.5px; color: var(--ink-faint); font-style: italic; padding: 8px 4px; text-align: center; }
 
   .section-header {
     display: flex;
@@ -662,9 +745,22 @@
       #E5E7EB 35px
     );
   }
-  .ink-canvas { width: 100%; display: block; cursor: crosshair; }
-  .ink-canvas.drawing-active { touch-action: none; }
-  .ink-canvas.scroll-active { touch-action: pan-y; cursor: grab; }
+
+  /* 캔버스 터치 제어: 캡처 및 스크롤 시 터치 간섭 방지 */
+  .ink-canvas {
+    width: 100%;
+    display: block;
+    cursor: crosshair;
+  }
+  .ink-canvas.drawing-active {
+    touch-action: none;
+    pointer-events: auto;
+  }
+  .ink-canvas.scroll-active {
+    touch-action: pan-y !important;
+    cursor: grab;
+    pointer-events: none !important;
+  }
 
   .diary-lined-textarea {
     width: 100%;
@@ -1060,13 +1156,14 @@
     <button type="button" class="nav-tab" data-tab="tab-month">월간 돌아보기</button>
   </nav>
 
+  <!-- 글로벌 펜 툴바 (스크롤 캡처 방지 전용 캡처 모드 포함) -->
   <div class="global-pen-container" id="global-pen-container">
     <div class="global-pen-bar" id="global-pen-bar">
       <div class="pen-group-row">
-        <button type="button" class="tool-mode-btn active" id="btn-global-pen" data-tool="pen" title="만년필 필기">✎ 펜</button>
+        <button type="button" class="tool-mode-btn active" id="btn-global-pen" data-tool="pen" title="만년필 필기 모드">✎ 펜</button>
         <button type="button" class="tool-mode-btn" id="btn-global-highlighter" data-tool="highlighter" title="반투명 형광펜">🖌️ 형광펜</button>
         <button type="button" class="tool-mode-btn" id="btn-global-eraser" data-tool="eraser" title="획 단위 지우개">⌫ 지우개</button>
-        <button type="button" class="tool-mode-btn" id="btn-global-scroll" data-tool="scroll" title="화면 스크롤 터치 이동">✋ 이동</button>
+        <button type="button" class="tool-mode-btn" id="btn-global-capture" data-tool="scroll" title="화면 이동 및 스크롤 캡처 시 줄 그어짐 방지">📸 캡처/이동</button>
       </div>
 
       <div class="palette-divider"></div>
@@ -1146,6 +1243,7 @@
         </div>
       </div>
 
+      <!-- 예산 & 총 지출 입력 -->
       <div class="budget-input-row">
         <div class="budget-item">
           <span class="meta-tag">&lt;예산&gt;</span>
@@ -1155,7 +1253,7 @@
           </div>
         </div>
         <div class="budget-item">
-          <span class="meta-tag">&lt;지출&gt;</span>
+          <span class="meta-tag">&lt;지출 합계&gt;</span>
           <div class="num-input-wrap">
             <input type="number" id="input-spent" class="num-input" placeholder="0">
             <span style="font-size:11.5px; margin-left:2px; color:var(--ink-soft);">원</span>
@@ -1164,12 +1262,33 @@
         <div id="budget-diff-badge" class="diff-badge diff-under" style="display:none;"></div>
       </div>
 
-      <!-- 소비 피드백 -->
+      <!-- 상세 지출 사용처 작성 영역 (어디에 돈을 썼는지 기록) -->
+      <div class="expense-breakdown-box">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:12px; font-weight:700; color:#92400E; display:inline-flex; align-items:center; gap:4px;">
+            <span>💳 오늘 어디에 돈을 썼나요?</span>
+            <span style="font-size:11px; font-weight:normal; color:var(--ink-soft);">(사용처 &amp; 금액)</span>
+          </span>
+          <span id="expense-count-text" style="font-size:11px; font-family:var(--font-mono); color:var(--ink-soft);">0건 기록됨</span>
+        </div>
+
+        <div class="expense-add-form">
+          <input type="text" id="input-expense-item" class="expense-text-inp" placeholder="사용처 (예: 점심 식사, 서적 구입, 편의점...)">
+          <input type="number" id="input-expense-amount" class="expense-num-inp" placeholder="금액 (원)">
+          <button type="button" id="btn-add-expense" class="btn-add-expense-pill">+ 내역 추가</button>
+        </div>
+
+        <div class="daily-expense-list" id="daily-expense-list">
+          <span style="font-size:11px; color:var(--ink-faint); font-style:italic;">기록된 세부 지출 내역이 없습니다.</span>
+        </div>
+      </div>
+
+      <!-- 소비 피드백 손글씨/타자 캔버스 영역 -->
       <div class="budget-feedback-card-section">
         <div class="section-header">
           <div class="section-title">
             <span class="washi-tape-title tape-peach">소비 피드백</span>
-            <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(오늘 소비에 대한 짧은 평)</span>
+            <span style="font-size:11px; color:var(--ink-faint); font-weight:normal;">(오늘 소비와 절약에 대한 아날로그 평)</span>
           </div>
           <div class="direct-action-tools">
             <button type="button" class="btn-mini-action btn-mode-toggle" data-target="budget-feedback" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
@@ -1193,7 +1312,7 @@
 
     <div class="daily-grid">
       <div class="daily-col">
-        <!-- 1. 루틴 & 몰입 스케줄 카드 -->
+        <!-- 1. 루틴 & 몰입 스케줄 카드 (단일 리스트 유지, 분리 없이 체크) -->
         <div class="integrated-auto-card">
           <div class="auto-card-header">
             <div class="auto-card-title">
@@ -1213,7 +1332,7 @@
             <div class="check-item-list" id="daily-routine-items"></div>
           </div>
 
-          <!-- 하단: 몰입 스케줄 -->
+          <!-- 하단: 몰입 스케줄 (완료 시 분리하지 않고 자리 유지) -->
           <div class="auto-block-section" style="border-top: 1.5px dashed var(--line); padding-top: 8px;">
             <div class="block-sub-title">
               <span style="display:inline-flex; align-items:center; gap:5px;">
@@ -1223,7 +1342,7 @@
               <button type="button" class="btn-toggle-dock" id="btn-toggle-timeblock-dock" title="새로운 스터디/몰입 일정 추가">+ 블록 추가</button>
             </div>
 
-            <!-- 평소에는 숨겨져 있는 슬림 토글 등록 독 -->
+            <!-- 슬림 토글 등록 독 -->
             <div class="timeblock-dock" id="timeblock-dock-panel" style="display:none;">
               <div style="font-size:10.5px; font-weight:700; color:#92400E; display:flex; justify-content:space-between; align-items:center;">
                 <span>+ 오늘 몰입할 세션 등록 <span id="dock-duration-calc" style="font-family:var(--font-mono); font-weight:600;">(시간 지정)</span></span>
@@ -1238,13 +1357,8 @@
               </div>
             </div>
 
+            <!-- 단일 일체형 몰입 스케줄 리스트 -->
             <div class="check-item-list" id="daily-timeblock-items" style="margin-top:6px;"></div>
-
-            <button type="button" class="done-collapse-toggle-btn" id="btn-toggle-done-schedules" style="display:none;">
-              <span id="done-collapse-icon">▶</span>
-              <span id="done-collapse-text">완료된 일정 (0건)</span>
-            </button>
-            <div class="check-item-list" id="daily-calendar-done-items" style="display:none;"></div>
           </div>
         </div>
 
@@ -1306,7 +1420,7 @@
             <div class="direct-action-tools">
               <button type="button" class="btn-mini-action btn-mode-toggle" data-target="tome" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
               <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-tome" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
-              <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-tome" title="전체 지우기">🗑️</button>
+              <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-tome" title="전체 지우기">🗑️️</button>
             </div>
           </div>
           <div class="tome-question-row">
@@ -1663,8 +1777,6 @@
   let firestoreDb = null;
   let isFirestoreOnline = false;
 
-  let isDoneSchedulesCollapsed = true;
-
   const canvasControllers = {};
   const daysCache = {};
   let routinesMaster = [
@@ -1841,6 +1953,7 @@
     }
 
     onDown(e) {
+      // 캡처 및 화면 이동 도구 선택 시 pointer event 차단하여 스크롤 캡처 멈춤 방지
       if (currentTool === 'scroll') return;
       if (this.isDrawing) return;
 
@@ -2093,12 +2206,15 @@
     document.querySelectorAll('.tool-mode-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.tool-mode-btn').forEach(b => {
-          b.classList.remove('active', 'highlighter-active');
+          b.classList.remove('active', 'highlighter-active', 'capture-mode-active');
         });
         currentTool = btn.dataset.tool;
 
         if (currentTool === 'highlighter') {
           btn.classList.add('highlighter-active');
+        } else if (currentTool === 'scroll') {
+          btn.classList.add('capture-mode-active');
+          showToast('📸 캡처/이동 모드: 화면 터치 스크롤 캡처 시 줄 그어짐이 방지됩니다.');
         } else {
           btn.classList.add('active');
         }
@@ -2171,7 +2287,15 @@
     const dot = document.getElementById('preview-color-dot');
     const info = document.getElementById('preview-pen-info');
     if (dot) dot.style.backgroundColor = currentColor;
-    if (info) info.textContent = `${currentPenSize.toFixed(1)}px`;
+    if (info) {
+      if (currentTool === 'scroll') {
+        info.textContent = '이동/캡처';
+      } else if (currentTool === 'eraser') {
+        info.textContent = '지우개';
+      } else {
+        info.textContent = `${currentPenSize.toFixed(1)}px`;
+      }
+    }
   }
 
   function initDirectTools() {
@@ -2311,6 +2435,9 @@
       });
     });
 
+    // 세부 지출 항목 추가 버튼 이벤트
+    document.getElementById('btn-add-expense')?.addEventListener('click', addExpenseItem);
+
     ['text-budget-feedback', 'text-todo-feedback', 'text-gratitude', 'text-tome'].forEach(id => {
       document.getElementById(id)?.addEventListener('input', debounce(() => {
         saveCurrentDayData();
@@ -2369,16 +2496,6 @@
 
     document.getElementById('btn-add-daily-block')?.addEventListener('click', addDailyTimeBlock);
 
-    document.getElementById('btn-toggle-done-schedules')?.addEventListener('click', () => {
-      isDoneSchedulesCollapsed = !isDoneSchedulesCollapsed;
-      const doneList = document.getElementById('daily-calendar-done-items');
-      const icon = document.getElementById('done-collapse-icon');
-      if (doneList && icon) {
-        doneList.style.display = isDoneSchedulesCollapsed ? 'none' : 'flex';
-        icon.textContent = isDoneSchedulesCollapsed ? '▶' : '▼';
-      }
-    });
-
     document.getElementById('btn-month-prev')?.addEventListener('click', () => {
       currentMonthView.month--;
       if (currentMonthView.month < 1) {
@@ -2403,204 +2520,73 @@
     });
   }
 
-  function initBacklogDrawerEvents() {
-    const backdrop = document.getElementById('backlog-drawer-backdrop');
-    const panel = document.getElementById('backlog-drawer-panel');
-    const openBtn = document.getElementById('btn-open-backlog-drawer');
-    const monthCalloutBtn = document.getElementById('btn-month-open-backlog');
-    const closeBtn = document.getElementById('btn-close-backlog-drawer');
+  function addExpenseItem() {
+    const itemInput = document.getElementById('input-expense-item');
+    const amountInput = document.getElementById('input-expense-amount');
+    const title = itemInput.value.trim();
+    const amount = parseInt(amountInput.value, 10) || 0;
 
-    const openDrawer = () => {
-      backdrop.classList.add('open');
-      panel.classList.add('open');
-      renderDrawerList();
-    };
-
-    const closeDrawer = () => {
-      backdrop.classList.remove('open');
-      panel.classList.remove('open');
-    };
-
-    openBtn?.addEventListener('click', openDrawer);
-    monthCalloutBtn?.addEventListener('click', openDrawer);
-    closeBtn?.addEventListener('click', closeDrawer);
-    backdrop?.addEventListener('click', closeDrawer);
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && panel.classList.contains('open')) {
-        closeDrawer();
-      }
-    });
-
-    document.querySelectorAll('#drawer-tag-selector .tag-chip-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('#drawer-tag-selector .tag-chip-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedBacklogTag = btn.dataset.tag;
-      });
-    });
-
-    document.getElementById('btn-add-backlog')?.addEventListener('click', addBacklogItem);
-  }
-
-  function loadBacklogs() {
-    const saved = localStorage.getItem('haru_backlogs');
-    if (saved) {
-      try { backlogsMaster = JSON.parse(saved); } catch (e) {}
-    }
-    updateBacklogCounters();
-  }
-
-  function saveBacklogs() {
-    localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster));
-    updateBacklogCounters();
-    if (isFirestoreOnline && firestoreDb) {
-      const roomKey = getRoomKey();
-      if (roomKey) {
-        firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc('backlogs').set({
-          list: backlogsMaster,
-          updatedAt: Date.now(),
-          senderId: CLIENT_ID
-        }, { merge: true });
-      }
-    }
-    renderDrawerList();
-  }
-
-  function updateBacklogCounters() {
-    const count = backlogsMaster.length;
-    const headerEl = document.getElementById('header-backlog-count');
-    const drawerEl = document.getElementById('drawer-backlog-count');
-    if (headerEl) headerEl.textContent = count;
-    if (drawerEl) drawerEl.textContent = count;
-  }
-
-  function addBacklogItem() {
-    const input = document.getElementById('input-drawer-text');
-    const text = input.value.trim();
-    if (!text) {
-      showToast('보관할 내용을 적어주세요.');
+    if (!title) {
+      showToast('지출 사용처를 입력해 주세요.');
       return;
     }
 
-    const item = {
-      id: 'b_' + Date.now(),
-      text,
-      tag: selectedBacklogTag || '공부',
-      createdAt: Date.now()
-    };
+    const day = daysCache[currentDate] || {};
+    day.expenses = day.expenses || [];
+    day.expenses.push({
+      id: 'exp_' + Date.now(),
+      title,
+      amount
+    });
 
-    backlogsMaster.unshift(item);
-    input.value = '';
-    saveBacklogs();
-    showToast('서랍에 쏙 보관되었습니다!');
+    // 지출 내역 합산 금액으로 총 지출 자동 업데이트
+    const totalSpent = day.expenses.reduce((sum, item) => sum + (item.amount || 0), 0);
+    day.spent = totalSpent;
+    document.getElementById('input-spent').value = totalSpent;
+
+    itemInput.value = '';
+    amountInput.value = '';
+
+    renderExpenseList(day);
+    calcBudgetDiff();
+    saveCurrentDayData();
+    showToast(`'${title}' 지출 내역이 추가되었습니다.`);
   }
 
-  function renderDrawerList() {
-    const container = document.getElementById('drawer-item-list');
+  function renderExpenseList(day) {
+    const container = document.getElementById('daily-expense-list');
+    const countText = document.getElementById('expense-count-text');
     if (!container) return;
-    container.innerHTML = '';
 
-    if (backlogsMaster.length === 0) {
-      container.innerHTML = `
-        <div style="text-align:center; padding:30px 10px; color:var(--ink-faint); font-size:12.5px;">
-          서랍이 비어있습니다.<br>나중에 공부할 내용이나 생각거리를 채워보세요.
-        </div>
-      `;
+    container.innerHTML = '';
+    const expenses = day.expenses || [];
+    if (countText) countText.textContent = `${expenses.length}건 기록됨`;
+
+    if (expenses.length === 0) {
+      container.innerHTML = `<span style="font-size:11px; color:var(--ink-faint); font-style:italic;">기록된 세부 지출 내역이 없습니다.</span>`;
       return;
     }
 
-    backlogsMaster.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'backlog-card-item';
-      card.id = `backlog-card-${item.id}`;
-
-      const dateStr = new Date(item.createdAt || Date.now()).toLocaleDateString();
-
-      card.innerHTML = `
-        <div class="card-top-info">
-          <span class="card-tag-pill tag-${item.tag || '공부'}">#${item.tag || '공부'}</span>
-          <button type="button" class="card-del-btn" title="삭제">×</button>
-        </div>
-        <div class="card-content-text">${escapeHtml(item.text)}</div>
-        <div class="card-action-bar">
-          <span class="card-date-badge">${dateStr}</span>
-          <button type="button" class="btn-schedule-picker-toggle" data-bid="${item.id}">
-            <span>📅 날짜에 꽂기</span>
-          </button>
-        </div>
-        <div class="inline-schedule-dock" id="dock-${item.id}" style="display:none;">
-          <div class="dock-header-label">
-            <span>캘린더 배치 날짜 &amp; 시간</span>
-            <button type="button" class="card-del-btn btn-close-dock" data-bid="${item.id}">×</button>
-          </div>
-          <div class="dock-input-row">
-            <input type="date" class="dock-input dock-date" value="${currentDate}">
-            <input type="time" class="dock-input dock-time" title="시작 시간">
-            <input type="time" class="dock-input dock-end-time" title="종료 시간">
-            <button type="button" class="btn-confirm-dock" data-bid="${item.id}">배치</button>
-          </div>
-          <div class="dock-quick-dates">
-            <button type="button" class="dock-quick-btn" data-bid="${item.id}" data-offset="0">오늘</button>
-            <button type="button" class="dock-quick-btn" data-bid="${item.id}" data-offset="1">내일</button>
-            <button type="button" class="dock-quick-btn" data-bid="${item.id}" data-offset="7">1주일 뒤</button>
-          </div>
-        </div>
+    expenses.forEach(exp => {
+      const pill = document.createElement('div');
+      pill.className = 'expense-tag-pill';
+      pill.innerHTML = `
+        <span>${escapeHtml(exp.title)}</span>
+        <span class="expense-tag-amount">${exp.amount ? exp.amount.toLocaleString() + '원' : ''}</span>
+        <button type="button" class="expense-del-btn" title="삭제">×</button>
       `;
 
-      card.querySelector('.card-del-btn').addEventListener('click', () => {
-        backlogsMaster = backlogsMaster.filter(b => b.id !== item.id);
-        saveBacklogs();
+      pill.querySelector('.expense-del-btn').addEventListener('click', () => {
+        day.expenses = (day.expenses || []).filter(e => e.id !== exp.id);
+        const totalSpent = day.expenses.reduce((sum, item) => sum + (item.amount || 0), 0);
+        day.spent = totalSpent;
+        document.getElementById('input-spent').value = totalSpent;
+        renderExpenseList(day);
+        calcBudgetDiff();
+        saveCurrentDayData();
       });
 
-      card.querySelector('.btn-schedule-picker-toggle').addEventListener('click', () => {
-        const dock = card.querySelector(`#dock-${item.id}`);
-        const isShown = dock.style.display !== 'none';
-        dock.style.display = isShown ? 'none' : 'flex';
-      });
-
-      card.querySelector('.btn-close-dock').addEventListener('click', () => {
-        card.querySelector(`#dock-${item.id}`).style.display = 'none';
-      });
-
-      card.querySelectorAll('.dock-quick-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const offset = parseInt(btn.dataset.offset, 10);
-          const d = new Date();
-          d.setDate(d.getDate() + offset);
-          const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-          card.querySelector('.dock-date').value = ds;
-        });
-      });
-
-      card.querySelector('.btn-confirm-dock').addEventListener('click', () => {
-        const dateVal = card.querySelector('.dock-date').value;
-        const timeVal = card.querySelector('.dock-time').value;
-        const endTimeVal = card.querySelector('.dock-end-time').value;
-
-        if (!dateVal) {
-          showToast('배치할 날짜를 선택해주세요.');
-          return;
-        }
-
-        schedulesMaster.push({
-          id: 's_' + Date.now(),
-          date: dateVal,
-          time: timeVal,
-          endTime: endTimeVal,
-          text: `[${item.tag}] ${item.text.slice(0, 30)}`,
-          color: Math.floor(Math.random() * 5),
-          isMonthlyMilestone: true
-        });
-        saveSchedules();
-
-        backlogsMaster = backlogsMaster.filter(b => b.id !== item.id);
-        saveBacklogs();
-
-        showToast(`${dateVal} 달력에 일정이 등록되었습니다!`);
-      });
-
-      container.appendChild(card);
+      container.appendChild(pill);
     });
   }
 
@@ -2661,6 +2647,7 @@
       day = {
         budget: 0,
         spent: 0,
+        expenses: [],
         routineChecks: {},
         calendarChecks: {},
         priorities: {},
@@ -2680,6 +2667,7 @@
     document.getElementById('input-budget').value = day.budget || '';
     document.getElementById('input-spent').value = day.spent || '';
     calcBudgetDiff();
+    renderExpenseList(day);
 
     if (day.tomePrompt) {
       document.getElementById('tome-q-text').textContent = day.tomePrompt;
@@ -2738,16 +2726,18 @@
     });
 
     const calendarChecks = {};
-    document.querySelectorAll('#daily-timeblock-items input[type="checkbox"], #daily-calendar-done-items input[type="checkbox"]').forEach(chk => {
+    document.querySelectorAll('#daily-timeblock-items input[type="checkbox"]').forEach(chk => {
       calendarChecks[chk.dataset.sid] = chk.checked;
     });
 
     const currentDay = daysCache[currentDate] || {};
     const priorities = currentDay.priorities || {};
+    const expenses = currentDay.expenses || [];
 
     const dayData = {
       budget: parseInt(document.getElementById('input-budget').value, 10) || 0,
       spent: parseInt(document.getElementById('input-spent').value, 10) || 0,
+      expenses,
       routineChecks,
       calendarChecks,
       priorities,
@@ -2822,39 +2812,20 @@
       rContainer.appendChild(row);
     });
 
-    // 2. 몰입 스케줄 (시간순 정렬) 렌더링
+    // 2. 몰입 스케줄 렌더링 (체크 시 분리하지 않고 단일 리스트 유지)
     const tContainer = document.getElementById('daily-timeblock-items');
-    const doneContainer = document.getElementById('daily-calendar-done-items');
-    const toggleBtn = document.getElementById('btn-toggle-done-schedules');
-    const doneText = document.getElementById('done-collapse-text');
-    const collapseIcon = document.getElementById('done-collapse-icon');
-
     tContainer.innerHTML = '';
-    doneContainer.innerHTML = '';
 
     const rawDaySchedules = schedulesMaster.filter(s => s.date === currentDate);
     document.getElementById('daily-timeblock-count').textContent = `${rawDaySchedules.length}건`;
 
     if (rawDaySchedules.length === 0) {
       tContainer.innerHTML = '<div class="empty-hint-text">등록된 몰입 스케줄이 없습니다. 위의 [+ 블록 추가]로 계획해보세요.</div>';
-      toggleBtn.style.display = 'none';
-      doneContainer.style.display = 'none';
     } else {
       const sortedSchedules = sortSchedulesByTime(rawDaySchedules);
 
-      const activeSchedules = [];
-      const doneSchedules = [];
-
       sortedSchedules.forEach(s => {
         const isDone = !!(day.calendarChecks && day.calendarChecks[s.id]);
-        if (isDone) {
-          doneSchedules.push(s);
-        } else {
-          activeSchedules.push(s);
-        }
-      });
-
-      const createTimeBlockRow = (s, isDone) => {
         const isPri = !!(day.priorities[s.id]);
         const row = document.createElement('div');
         row.className = `check-item-row ${isDone ? 'done' : ''} ${isPri ? 'is-priority' : ''}`;
@@ -2878,8 +2849,8 @@
         row.querySelector('input').addEventListener('change', (e) => {
           day.calendarChecks = day.calendarChecks || {};
           day.calendarChecks[s.id] = e.target.checked;
+          row.classList.toggle('done', e.target.checked);
           saveCurrentDayData();
-          renderDailyIntegratedSection(day);
         });
 
         row.querySelector('.priority-star-btn').addEventListener('click', (e) => {
@@ -2898,25 +2869,8 @@
           }
         });
 
-        return row;
-      };
-
-      if (activeSchedules.length === 0 && doneSchedules.length > 0) {
-        tContainer.innerHTML = '<div class="empty-hint-text" style="color:#059669; font-weight:700;">✨ 오늘의 모든 몰입 스케줄을 완료했습니다!</div>';
-      } else {
-        activeSchedules.forEach(s => tContainer.appendChild(createTimeBlockRow(s, false)));
-      }
-
-      if (doneSchedules.length > 0) {
-        toggleBtn.style.display = 'inline-flex';
-        doneText.textContent = `완료된 일정 (${doneSchedules.length}건)`;
-        doneSchedules.forEach(s => doneContainer.appendChild(createTimeBlockRow(s, true)));
-        doneContainer.style.display = isDoneSchedulesCollapsed ? 'none' : 'flex';
-        collapseIcon.textContent = isDoneSchedulesCollapsed ? '▶' : '▼';
-      } else {
-        toggleBtn.style.display = 'none';
-        doneContainer.style.display = 'none';
-      }
+        tContainer.appendChild(row);
+      });
     }
 
     updateDailySummaryBadge(day);
@@ -2954,7 +2908,6 @@
     titleInput.value = '';
     saveSchedules();
 
-    // 등록 후 입력 독 자동 접기
     const dockPanel = document.getElementById('timeblock-dock-panel');
     const toggleDockBtn = document.getElementById('btn-toggle-timeblock-dock');
     if (dockPanel) dockPanel.style.display = 'none';
@@ -3460,6 +3413,207 @@
         firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc(`week_${weekKey}`).set(data, { merge: true });
       }
     }
+  }
+
+  function initBacklogDrawerEvents() {
+    const backdrop = document.getElementById('backlog-drawer-backdrop');
+    const panel = document.getElementById('backlog-drawer-panel');
+    const openBtn = document.getElementById('btn-open-backlog-drawer');
+    const monthCalloutBtn = document.getElementById('btn-month-open-backlog');
+    const closeBtn = document.getElementById('btn-close-backlog-drawer');
+
+    const openDrawer = () => {
+      backdrop.classList.add('open');
+      panel.classList.add('open');
+      renderDrawerList();
+    };
+
+    const closeDrawer = () => {
+      backdrop.classList.remove('open');
+      panel.classList.remove('open');
+    };
+
+    openBtn?.addEventListener('click', openDrawer);
+    monthCalloutBtn?.addEventListener('click', openDrawer);
+    closeBtn?.addEventListener('click', closeDrawer);
+    backdrop?.addEventListener('click', closeDrawer);
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && panel.classList.contains('open')) {
+        closeDrawer();
+      }
+    });
+
+    document.querySelectorAll('#drawer-tag-selector .tag-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#drawer-tag-selector .tag-chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedBacklogTag = btn.dataset.tag;
+      });
+    });
+
+    document.getElementById('btn-add-backlog')?.addEventListener('click', addBacklogItem);
+  }
+
+  function loadBacklogs() {
+    const saved = localStorage.getItem('haru_backlogs');
+    if (saved) {
+      try { backlogsMaster = JSON.parse(saved); } catch (e) {}
+    }
+    updateBacklogCounters();
+  }
+
+  function saveBacklogs() {
+    localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster));
+    updateBacklogCounters();
+    if (isFirestoreOnline && firestoreDb) {
+      const roomKey = getRoomKey();
+      if (roomKey) {
+        firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc('backlogs').set({
+          list: backlogsMaster,
+          updatedAt: Date.now(),
+          senderId: CLIENT_ID
+        }, { merge: true });
+      }
+    }
+    renderDrawerList();
+  }
+
+  function updateBacklogCounters() {
+    const count = backlogsMaster.length;
+    const headerEl = document.getElementById('header-backlog-count');
+    const drawerEl = document.getElementById('drawer-backlog-count');
+    if (headerEl) headerEl.textContent = count;
+    if (drawerEl) drawerEl.textContent = count;
+  }
+
+  function addBacklogItem() {
+    const input = document.getElementById('input-drawer-text');
+    const text = input.value.trim();
+    if (!text) {
+      showToast('보관할 내용을 적어주세요.');
+      return;
+    }
+
+    const item = {
+      id: 'b_' + Date.now(),
+      text,
+      tag: selectedBacklogTag || '공부',
+      createdAt: Date.now()
+    };
+
+    backlogsMaster.unshift(item);
+    input.value = '';
+    saveBacklogs();
+    showToast('서랍에 쏙 보관되었습니다!');
+  }
+
+  function renderDrawerList() {
+    const container = document.getElementById('drawer-item-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (backlogsMaster.length === 0) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:30px 10px; color:var(--ink-faint); font-size:12.5px;">
+          서랍이 비어있습니다.<br>나중에 공부할 내용이나 생각거리를 채워보세요.
+        </div>
+      `;
+      return;
+    }
+
+    backlogsMaster.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'backlog-card-item';
+      card.id = `backlog-card-${item.id}`;
+
+      const dateStr = new Date(item.createdAt || Date.now()).toLocaleDateString();
+
+      card.innerHTML = `
+        <div class="card-top-info">
+          <span class="card-tag-pill tag-${item.tag || '공부'}">#${item.tag || '공부'}</span>
+          <button type="button" class="card-del-btn" title="삭제">×</button>
+        </div>
+        <div class="card-content-text">${escapeHtml(item.text)}</div>
+        <div class="card-action-bar">
+          <span class="card-date-badge">${dateStr}</span>
+          <button type="button" class="btn-schedule-picker-toggle" data-bid="${item.id}">
+            <span>📅 날짜에 꽂기</span>
+          </button>
+        </div>
+        <div class="inline-schedule-dock" id="dock-${item.id}" style="display:none;">
+          <div class="dock-header-label">
+            <span>캘린더 배치 날짜 &amp; 시간</span>
+            <button type="button" class="card-del-btn btn-close-dock" data-bid="${item.id}">×</button>
+          </div>
+          <div class="dock-input-row">
+            <input type="date" class="dock-input dock-date" value="${currentDate}">
+            <input type="time" class="dock-input dock-time" title="시작 시간">
+            <input type="time" class="dock-input dock-end-time" title="종료 시간">
+            <button type="button" class="btn-confirm-dock" data-bid="${item.id}">배치</button>
+          </div>
+          <div class="dock-quick-dates">
+            <button type="button" class="dock-quick-btn" data-bid="${item.id}" data-offset="0">오늘</button>
+            <button type="button" class="dock-quick-btn" data-bid="${item.id}" data-offset="1">내일</button>
+            <button type="button" class="dock-quick-btn" data-bid="${item.id}" data-offset="7">1주일 뒤</button>
+          </div>
+        </div>
+      `;
+
+      card.querySelector('.card-del-btn').addEventListener('click', () => {
+        backlogsMaster = backlogsMaster.filter(b => b.id !== item.id);
+        saveBacklogs();
+      });
+
+      card.querySelector('.btn-schedule-picker-toggle').addEventListener('click', () => {
+        const dock = card.querySelector(`#dock-${item.id}`);
+        const isShown = dock.style.display !== 'none';
+        dock.style.display = isShown ? 'none' : 'flex';
+      });
+
+      card.querySelector('.btn-close-dock').addEventListener('click', () => {
+        card.querySelector(`#dock-${item.id}`).style.display = 'none';
+      });
+
+      card.querySelectorAll('.dock-quick-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const offset = parseInt(btn.dataset.offset, 10);
+          const d = new Date();
+          d.setDate(d.getDate() + offset);
+          const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+          card.querySelector('.dock-date').value = ds;
+        });
+      });
+
+      card.querySelector('.btn-confirm-dock').addEventListener('click', () => {
+        const dateVal = card.querySelector('.dock-date').value;
+        const timeVal = card.querySelector('.dock-time').value;
+        const endTimeVal = card.querySelector('.dock-end-time').value;
+
+        if (!dateVal) {
+          showToast('배치할 날짜를 선택해주세요.');
+          return;
+        }
+
+        schedulesMaster.push({
+          id: 's_' + Date.now(),
+          date: dateVal,
+          time: timeVal,
+          endTime: endTimeVal,
+          text: `[${item.tag}] ${item.text.slice(0, 30)}`,
+          color: Math.floor(Math.random() * 5),
+          isMonthlyMilestone: true
+        });
+        saveSchedules();
+
+        backlogsMaster = backlogsMaster.filter(b => b.id !== item.id);
+        saveBacklogs();
+
+        showToast(`${dateVal} 달력에 일정이 등록되었습니다!`);
+      });
+
+      container.appendChild(card);
+    });
   }
 
   function getRoomKey() {
