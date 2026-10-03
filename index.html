@@ -1934,7 +1934,8 @@
   class SmoothCanvas {
     constructor(canvasId) {
       this.canvas = document.getElementById(canvasId);
-      this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
+      // desynchronized: true로 브라우저 합성 큐를 건너뛰어 초저지연 하드웨어 가속 렌더링 적용
+      this.ctx = this.canvas.getContext('2d', { willReadFrequently: true, desynchronized: true });
       this.id = canvasId;
       this.strokes = [];
       this.currentStroke = null;
@@ -1942,6 +1943,17 @@
       this.activePointerId = null;
       this.defaultHeight = DEFAULT_CANVAS_HEIGHTS[canvasId] || 175;
       this.displayWidth = 320;
+
+      // [삼성노트급 고속 렌더링을 위한 오프스크린 버퍼 캔버스]
+      // 기존 획들을 메모리 버퍼에 보관하여 매 움직임마다 전체를 다시 그리지 않고 O(1) 증분 렌더링 실현
+      this.memCanvas = document.createElement('canvas');
+      this.memCtx = this.memCanvas.getContext('2d', { willReadFrequently: true });
+
+      // 곡선 스무딩용 이전 제어점
+      this.prevPoint = null;
+      this.prevMidPoint = null;
+      this.pendingPoints = [];
+      this.animFrameId = null;
 
       this.initEvents();
       this.resizeCanvas();
@@ -1958,16 +1970,25 @@
       let curH = parseInt(this.canvas.style.height) || parseInt(this.canvas.getAttribute('height')) || this.defaultHeight;
       if (curH > MAX_SAFE_HEIGHT || curH < MIN_SAFE_HEIGHT) curH = this.defaultHeight;
 
-      this.canvas.width = Math.round(displayWidth * dpr);
-      this.canvas.height = Math.round(curH * dpr);
+      const newWidth = Math.round(displayWidth * dpr);
+      const newHeight = Math.round(curH * dpr);
+
+      this.canvas.width = newWidth;
+      this.canvas.height = newHeight;
       this.canvas.style.height = `${curH}px`;
       if (this.canvas.parentElement) {
         this.canvas.parentElement.style.height = `${curH}px`;
       }
 
+      this.memCanvas.width = newWidth;
+      this.memCanvas.height = newHeight;
+
       this.ctx.setTransform(1, 0, 0, 1, 0, 0);
       this.ctx.scale(dpr, dpr);
-      this.redraw();
+      this.memCtx.setTransform(1, 0, 0, 1, 0, 0);
+      this.memCtx.scale(dpr, dpr);
+
+      this.redrawFull();
     }
 
     setHeight(newHeight) {
@@ -1996,8 +2017,8 @@
     getPointerPos(e) {
       const rect = this.canvas.getBoundingClientRect();
       return {
-        x: Math.round((e.clientX - rect.left) * 10) / 10,
-        y: Math.round((e.clientY - rect.top) * 10) / 10,
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
         pressure: e.pressure && e.pressure > 0 ? e.pressure : 0.5
       };
     }
@@ -2031,7 +2052,12 @@
         baseW: this.displayWidth || 360,
         points: [pos]
       };
-      this.drawSinglePoint(pos, this.currentStroke, 1, 1);
+
+      this.prevPoint = pos;
+      this.prevMidPoint = pos;
+
+      // 점 하나만 찍었을 때도 즉시 반응
+      this.drawPointToContext(this.ctx, pos, this.currentStroke);
     }
 
     onMove(e) {
@@ -2045,19 +2071,53 @@
 
       if (!this.currentStroke) return;
 
+      // 삼성 S펜 120Hz/240Hz 고주파 입력 이벤트 일괄 처리
       const events = (typeof e.getCoalescedEvents === 'function') ? e.getCoalescedEvents() : [e];
       for (const ev of events) {
         const pos = this.getPointerPos(ev);
         const pts = this.currentStroke.points;
         const last = pts[pts.length - 1];
 
-        if (last && Math.hypot(pos.x - last.x, pos.y - last.y) < 1.5) {
+        // 1px 미만의 초근접 미세 떨림 무시로 연산 최적화
+        if (last && Math.hypot(pos.x - last.x, pos.y - last.y) < 1.0) {
           continue;
         }
 
         pts.push(pos);
-        this.drawSegment(this.currentStroke, 1, 1);
+        // [핵심] 과거 획들을 전체 재렌더링하지 않고, 방금 들어온 미세 선분만 화면에 즉각 다이렉트 드로잉 (O(1) 속도)
+        this.drawIncremental(pos);
       }
+    }
+
+    // 증분 드로잉: 베지에 곡선으로 부드럽게 잇기
+    drawIncremental(newPoint) {
+      if (!this.prevPoint || !this.currentStroke) return;
+
+      const midPoint = {
+        x: (this.prevPoint.x + newPoint.x) / 2,
+        y: (this.prevPoint.y + newPoint.y) / 2
+      };
+
+      const stroke = this.currentStroke;
+      this.ctx.save();
+      this.ctx.beginPath();
+      this.ctx.strokeStyle = stroke.color;
+      this.ctx.globalAlpha = stroke.alpha;
+      this.ctx.lineWidth = Math.max(0.8, stroke.size);
+      this.ctx.lineCap = 'round';
+      this.ctx.lineJoin = 'round';
+
+      if (stroke.tool === 'highlighter') {
+        this.ctx.globalCompositeOperation = 'multiply';
+      }
+
+      this.ctx.moveTo(this.prevMidPoint.x, this.prevMidPoint.y);
+      this.ctx.quadraticCurveTo(this.prevPoint.x, this.prevPoint.y, midPoint.x, midPoint.y);
+      this.ctx.stroke();
+      this.ctx.restore();
+
+      this.prevPoint = newPoint;
+      this.prevMidPoint = midPoint;
     }
 
     onUp(e) {
@@ -2067,8 +2127,29 @@
       try { this.canvas.releasePointerCapture(e.pointerId); } catch (_) {}
 
       if (this.currentStroke && this.currentStroke.points.length > 0) {
+        // 끝점까지 자연스럽게 마무리 선분 연결
+        if (this.prevPoint && this.prevMidPoint) {
+          const lastPt = this.currentStroke.points[this.currentStroke.points.length - 1];
+          this.ctx.save();
+          this.ctx.beginPath();
+          this.ctx.strokeStyle = this.currentStroke.color;
+          this.ctx.globalAlpha = this.currentStroke.alpha;
+          this.ctx.lineWidth = Math.max(0.8, this.currentStroke.size);
+          this.ctx.lineCap = 'round';
+          this.ctx.lineJoin = 'round';
+          this.ctx.moveTo(this.prevMidPoint.x, this.prevMidPoint.y);
+          this.ctx.lineTo(lastPt.x, lastPt.y);
+          this.ctx.stroke();
+          this.ctx.restore();
+        }
+
         this.strokes.push(this.currentStroke);
+        // 완성된 획을 백그라운드 메모리 버퍼 캔버스에 영구 병합
+        this.renderStrokeToContext(this.memCtx, this.currentStroke, 1, 1);
         this.currentStroke = null;
+        this.prevPoint = null;
+        this.prevMidPoint = null;
+
         this.triggerDebouncedSave();
       }
     }
@@ -2095,7 +2176,7 @@
       });
 
       if (origLen !== this.strokes.length) {
-        this.redraw();
+        this.redrawFull();
         this.triggerDebouncedSave();
       }
     }
@@ -2103,7 +2184,7 @@
     undo() {
       if (this.strokes.length > 0) {
         this.strokes.pop();
-        this.redraw();
+        this.redrawFull();
         this.triggerDebouncedSave();
         showToast('마지막 획을 취소했습니다.');
       } else {
@@ -2114,87 +2195,75 @@
     clear() {
       if (this.strokes.length === 0) return;
       this.strokes = [];
-      this.redraw();
+      this.redrawFull();
       this.triggerDebouncedSave();
     }
 
-    drawSinglePoint(p, stroke, scaleX = 1, scaleY = 1) {
-      this.ctx.save();
-      this.ctx.beginPath();
-      this.ctx.fillStyle = stroke.color;
-      this.ctx.globalAlpha = stroke.alpha;
+    drawPointToContext(ctx, p, stroke, scaleX = 1, scaleY = 1) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.fillStyle = stroke.color;
+      ctx.globalAlpha = stroke.alpha;
       const size = Math.max(1, stroke.size / 2);
-      this.ctx.arc(p.x * scaleX, p.y * scaleY, size, 0, Math.PI * 2);
-      this.ctx.fill();
-      this.ctx.restore();
+      ctx.arc(p.x * scaleX, p.y * scaleY, size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     }
 
-    drawSegment(stroke, scaleX = 1, scaleY = 1) {
-      const pts = stroke.points;
-      if (pts.length < 2) return;
-      const p1 = pts[pts.length - 2];
-      const p2 = pts[pts.length - 1];
+    renderStrokeToContext(ctx, s, scaleX = 1, scaleY = 1) {
+      if (!s.points || s.points.length === 0) return;
 
-      this.ctx.save();
-      this.ctx.beginPath();
-      this.ctx.strokeStyle = stroke.color;
-      this.ctx.globalAlpha = stroke.alpha;
-      this.ctx.lineWidth = Math.max(0.9, stroke.size);
-      this.ctx.lineCap = 'round';
-      this.ctx.lineJoin = 'round';
-
-      if (stroke.tool === 'highlighter') {
-        this.ctx.globalCompositeOperation = 'multiply';
+      if (s.points.length === 1) {
+        this.drawPointToContext(ctx, s.points[0], s, scaleX, scaleY);
+        return;
       }
 
-      this.ctx.moveTo(p1.x * scaleX, p1.y * scaleY);
-      this.ctx.lineTo(p2.x * scaleX, p2.y * scaleY);
-      this.ctx.stroke();
-      this.ctx.restore();
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = s.color;
+      ctx.globalAlpha = s.alpha || 1;
+      ctx.lineWidth = Math.max(0.8, s.size);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      if (s.tool === 'highlighter') {
+        ctx.globalCompositeOperation = 'multiply';
+      }
+
+      ctx.moveTo(s.points[0].x * scaleX, s.points[0].y * scaleY);
+      for (let i = 1; i < s.points.length - 1; i++) {
+        const midX = ((s.points[i].x + s.points[i + 1].x) / 2) * scaleX;
+        const midY = ((s.points[i].y + s.points[i + 1].y) / 2) * scaleY;
+        ctx.quadraticCurveTo(s.points[i].x * scaleX, s.points[i].y * scaleY, midX, midY);
+      }
+      const lastPt = s.points[s.points.length - 1];
+      ctx.lineTo(lastPt.x * scaleX, lastPt.y * scaleY);
+      ctx.stroke();
+      ctx.restore();
     }
 
-    redraw() {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    // 캔버스 크기 변경, 되돌리기, 지우개 등 필요할 때만 전체 버퍼 갱신
+    redrawFull() {
+      const dpr = window.devicePixelRatio || 1;
+      this.ctx.clearRect(0, 0, this.canvas.width / dpr, this.canvas.height / dpr);
+      this.memCtx.clearRect(0, 0, this.memCanvas.width / dpr, this.memCanvas.height / dpr);
+
       const currentWidth = this.displayWidth || 360;
 
       for (const s of this.strokes) {
-        if (!s.points || s.points.length === 0) continue;
-
         const baseW = s.baseW || currentWidth;
         const scaleX = currentWidth / baseW;
-        // 핵심 수정: Y축(세로 줄눈 위치)은 압축하지 않고 줄눈 간격(1:1)을 그대로 유지하여 몰빵 방지
-        const scaleY = 1;
-
-        if (s.points.length === 1) {
-          this.drawSinglePoint(s.points[0], s, scaleX, scaleY);
-          continue;
-        }
-
-        this.ctx.save();
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = s.color;
-        this.ctx.globalAlpha = s.alpha || 1;
-        this.ctx.lineWidth = Math.max(0.9, s.size);
-        this.ctx.lineCap = 'round';
-        this.ctx.lineJoin = 'round';
-
-        if (s.tool === 'highlighter') {
-          this.ctx.globalCompositeOperation = 'multiply';
-        }
-
-        this.ctx.moveTo(s.points[0].x * scaleX, s.points[0].y * scaleY);
-        for (let i = 1; i < s.points.length - 1; i++) {
-          const midX = ((s.points[i].x + s.points[i + 1].x) / 2) * scaleX;
-          const midY = ((s.points[i].y + s.points[i + 1].y) / 2) * scaleY;
-          this.ctx.quadraticCurveTo(s.points[i].x * scaleX, s.points[i].y * scaleY, midX, midY);
-        }
-        if (s.points.length > 1) {
-          const lastPt = s.points[s.points.length - 1];
-          this.ctx.lineTo(lastPt.x * scaleX, lastPt.y * scaleY);
-        }
-        this.ctx.stroke();
-        this.ctx.restore();
+        const scaleY = 1; // 줄눈 1:1 보존
+        this.renderStrokeToContext(this.memCtx, s, scaleX, scaleY);
       }
+
+      // 메모리 버퍼의 내용을 메인 캔버스에 단 한 번의 비트맵 전송으로 복사
+      this.ctx.drawImage(this.memCanvas, 0, 0, this.canvas.width / dpr, this.canvas.height / dpr);
+    }
+
+    // 기존 redraw 호출 호환성 유지
+    redraw() {
+      this.redrawFull();
     }
   }
 
