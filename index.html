@@ -366,7 +366,7 @@
   .badge-tomorrow { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
   .badge-past { background: #F3F4F6; color: var(--ink-soft); border: 1px solid var(--line); }
 
-  /* ⭐ 실제 다이어리 원본 양식 1:1 재현: [목표 :] 좌우 2분할 레이아웃 */
+  /* 실제 다이어리 원본 양식 1:1 재현: [목표 :] 좌우 2분할 레이아웃 */
   .daily-goal-box {
     display: flex;
     flex-direction: column;
@@ -421,7 +421,6 @@
     justify-content: space-between;
     align-items: center;
   }
-  /* 라벨과 추가 버튼을 한 묶음으로 배치 */
   .ledger-label-group {
     display: inline-flex;
     align-items: center;
@@ -508,7 +507,6 @@
   }
   .btn-remove-line:hover { color: #DC2626; }
 
-  /* 헤더 라벨 옆으로 이동한 컴팩트 추가 버튼 */
   .btn-add-mini-line {
     background: #FFFFFF;
     border: 1px solid var(--line);
@@ -542,7 +540,6 @@
   .diff-under { background: #ECFDF5; color: #059669; }
   .diff-over { background: #FEF2F2; color: #DC2626; }
 
-  /* 중앙 화살표 연결 기호 (다이어리 사진의 '=>' 느낌) */
   .goal-arrow-connector {
     display: flex;
     align-items: center;
@@ -555,7 +552,7 @@
     opacity: 0.8;
   }
 
-  /* 우측: 소비 피드백 손글씨 영역 (공책 줄눈 일체형) */
+  /* 우측: 소비 피드백 손글씨 영역 */
   .goal-feedback-side {
     display: flex;
     flex-direction: column;
@@ -1275,7 +1272,7 @@
         </div>
       </div>
 
-      <!-- 2. ⭐ 실제 다이어리 원본 양식: [목표 :] (좌: 가계부 예산·정산 / 우: 소비 피드백 손글씨) -->
+      <!-- 2. 실제 다이어리 원본 양식: [목표 :] (좌: 가계부 예산·정산 / 우: 소비 피드백 손글씨) -->
       <div class="daily-goal-box">
         <div class="goal-title-row">
           <span>목표 :</span>
@@ -1331,7 +1328,7 @@
               <div class="direct-action-tools">
                 <button type="button" class="btn-mini-action btn-mode-toggle" data-target="budget-feedback" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
                 <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-budget-feedback" title="되돌리기">↶</button>
-                <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-budget-feedback" title="전체 지우기">🗑️️</button>
+                <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-budget-feedback" title="전체 지우기">🗑</button>
               </div>
             </div>
 
@@ -1723,7 +1720,7 @@
 <div id="sync-modal" class="modal-overlay">
   <div class="modal-card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="font-family:var(--font-serif); font-size:16px; font-weight:700; color:var(--ink);">⚙️ 클라우드 동기화 &amp; 백업 설정</h3>
+      <h3 style="font-family:var(--font-serif); font-size:16px; font-weight:700; color:var(--ink);">⚙️️ 클라우드 동기화 &amp; 백업 설정</h3>
       <button type="button" class="routine-del-btn" id="btn-close-sync" style="font-size:20px;">×</button>
     </div>
 
@@ -1933,7 +1930,7 @@
     return JSON.parse(JSON.stringify(obj, (k, v) => (v === undefined ? null : v)));
   }
 
-  /* High-DPI & S-Pen Optimized Smooth Vector Canvas */
+  /* High-DPI & S-Pen Optimized Smooth Vector Canvas with Line-Aware Decoupled Scaling */
   class SmoothCanvas {
     constructor(canvasId) {
       this.canvas = document.getElementById(canvasId);
@@ -2034,7 +2031,7 @@
         baseW: this.displayWidth || 360,
         points: [pos]
       };
-      this.drawSinglePoint(pos, this.currentStroke, 1);
+      this.drawSinglePoint(pos, this.currentStroke, 1, 1);
     }
 
     onMove(e) {
@@ -2059,7 +2056,7 @@
         }
 
         pts.push(pos);
-        this.drawSegment(this.currentStroke, 1);
+        this.drawSegment(this.currentStroke, 1, 1);
       }
     }
 
@@ -2093,8 +2090,8 @@
 
       this.strokes = this.strokes.filter(s => {
         const baseW = s.baseW || currentWidth;
-        const scale = currentWidth / baseW;
-        return !s.points.some(p => Math.hypot((p.x * scale) - x, (p.y * scale) - y) < radius);
+        const scaleX = currentWidth / baseW;
+        return !s.points.some(p => Math.hypot((p.x * scaleX) - x, p.y - y) < radius);
       });
 
       if (origLen !== this.strokes.length) {
@@ -2121,18 +2118,18 @@
       this.triggerDebouncedSave();
     }
 
-    drawSinglePoint(p, stroke, scale = 1) {
+    drawSinglePoint(p, stroke, scaleX = 1, scaleY = 1) {
       this.ctx.save();
       this.ctx.beginPath();
       this.ctx.fillStyle = stroke.color;
       this.ctx.globalAlpha = stroke.alpha;
-      const size = Math.max(1, (stroke.size * scale) / 2);
-      this.ctx.arc(p.x * scale, p.y * scale, size, 0, Math.PI * 2);
+      const size = Math.max(1, stroke.size / 2);
+      this.ctx.arc(p.x * scaleX, p.y * scaleY, size, 0, Math.PI * 2);
       this.ctx.fill();
       this.ctx.restore();
     }
 
-    drawSegment(stroke, scale = 1) {
+    drawSegment(stroke, scaleX = 1, scaleY = 1) {
       const pts = stroke.points;
       if (pts.length < 2) return;
       const p1 = pts[pts.length - 2];
@@ -2142,7 +2139,7 @@
       this.ctx.beginPath();
       this.ctx.strokeStyle = stroke.color;
       this.ctx.globalAlpha = stroke.alpha;
-      this.ctx.lineWidth = Math.max(0.8, stroke.size * scale);
+      this.ctx.lineWidth = Math.max(0.9, stroke.size);
       this.ctx.lineCap = 'round';
       this.ctx.lineJoin = 'round';
 
@@ -2150,8 +2147,8 @@
         this.ctx.globalCompositeOperation = 'multiply';
       }
 
-      this.ctx.moveTo(p1.x * scale, p1.y * scale);
-      this.ctx.lineTo(p2.x * scale, p2.y * scale);
+      this.ctx.moveTo(p1.x * scaleX, p1.y * scaleY);
+      this.ctx.lineTo(p2.x * scaleX, p2.y * scaleY);
       this.ctx.stroke();
       this.ctx.restore();
     }
@@ -2164,10 +2161,12 @@
         if (!s.points || s.points.length === 0) continue;
 
         const baseW = s.baseW || currentWidth;
-        const scale = currentWidth / baseW;
+        const scaleX = currentWidth / baseW;
+        // 핵심 수정: Y축(세로 줄눈 위치)은 압축하지 않고 줄눈 간격(1:1)을 그대로 유지하여 몰빵 방지
+        const scaleY = 1;
 
         if (s.points.length === 1) {
-          this.drawSinglePoint(s.points[0], s, scale);
+          this.drawSinglePoint(s.points[0], s, scaleX, scaleY);
           continue;
         }
 
@@ -2175,7 +2174,7 @@
         this.ctx.beginPath();
         this.ctx.strokeStyle = s.color;
         this.ctx.globalAlpha = s.alpha || 1;
-        this.ctx.lineWidth = Math.max(0.8, s.size * scale);
+        this.ctx.lineWidth = Math.max(0.9, s.size);
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
 
@@ -2183,15 +2182,15 @@
           this.ctx.globalCompositeOperation = 'multiply';
         }
 
-        this.ctx.moveTo(s.points[0].x * scale, s.points[0].y * scale);
+        this.ctx.moveTo(s.points[0].x * scaleX, s.points[0].y * scaleY);
         for (let i = 1; i < s.points.length - 1; i++) {
-          const midX = ((s.points[i].x + s.points[i + 1].x) / 2) * scale;
-          const midY = ((s.points[i].y + s.points[i + 1].y) / 2) * scale;
-          this.ctx.quadraticCurveTo(s.points[i].x * scale, s.points[i].y * scale, midX, midY);
+          const midX = ((s.points[i].x + s.points[i + 1].x) / 2) * scaleX;
+          const midY = ((s.points[i].y + s.points[i + 1].y) / 2) * scaleY;
+          this.ctx.quadraticCurveTo(s.points[i].x * scaleX, s.points[i].y * scaleY, midX, midY);
         }
         if (s.points.length > 1) {
           const lastPt = s.points[s.points.length - 1];
-          this.ctx.lineTo(lastPt.x * scale, lastPt.y * scale);
+          this.ctx.lineTo(lastPt.x * scaleX, lastPt.y * scaleY);
         }
         this.ctx.stroke();
         this.ctx.restore();
@@ -2741,7 +2740,7 @@
   function createLedgerRow(entry, type, canDelete) {
     const row = document.createElement('div');
     row.className = 'ledger-row-pair';
-    const placeTitle = type === 'budget' ? '지출 예정 (예: 점심)' : '지출 목록 (예: 탈취제)';
+    const placeTitle = type === 'budget' ? '지출 예정 (예: 외식)' : '지출 목록 (예: 탈취제)';
 
     row.innerHTML = `
       <input type="text" class="compact-input-text entry-title" value="${escapeHtml(entry.title || '')}" placeholder="${placeTitle}">
