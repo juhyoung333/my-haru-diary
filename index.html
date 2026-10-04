@@ -48,7 +48,7 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  
+
   /* 앱 전용 제스처 및 필기 방해 요소 차단 */
   html, body {
     background-color: var(--bg-page);
@@ -58,7 +58,7 @@
     padding: 10px 12px 60px;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
-    overscroll-behavior-y: none; /* 필기 중 아래로 당겨 새로고침 방지 */
+    overscroll-behavior-y: none;
     -webkit-overscroll-behavior: none;
     user-select: none;
     -webkit-user-select: none;
@@ -1369,7 +1369,7 @@
                 <span>소비 피드백</span>
               </span>
               <div class="direct-action-tools">
-                <button type="button" class="btn-mini-action btn-mode-toggle" data-target="budget-feedback" title="모드 전환 (✎ 펜 / ⌨️️ 타자)">✎</button>
+                <button type="button" class="btn-mini-action btn-mode-toggle" data-target="budget-feedback" title="모드 전환 (✎ 펜 / ⌨ 타자)">✎</button>
                 <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-budget-feedback" title="되돌리기">↶</button>
                 <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-budget-feedback" title="전체 지우기">🗑</button>
               </div>
@@ -1417,7 +1417,7 @@
           <div class="auto-block-section" style="border-top: 1.5px dashed var(--line); padding-top: 8px;">
             <div class="block-sub-title">
               <span style="display:inline-flex; align-items:center; gap:5px;">
-                <span>⏱️️ 몰입 스케줄 (타임블록)</span>
+                <span>⏱ 몰입 스케줄 (타임블록)</span>
                 <span id="daily-timeblock-count" style="font-size:11px; color:var(--accent); font-weight:700; font-family:var(--font-mono);">0건</span>
               </span>
               <button type="button" class="btn-toggle-dock" id="btn-toggle-timeblock-dock" title="새로운 스터디/몰입 일정 추가">+ 블록 추가</button>
@@ -1825,13 +1825,12 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
       .then(reg => {
         console.log('PWA ServiceWorker 등록 성공:', reg.scope);
-        reg.update(); // 최신 버전 강제 갱신
+        reg.update();
       })
       .catch(err => console.log('PWA ServiceWorker 등록 실패:', err));
   });
 }
 
-// 안드로이드 앱 설치 프롬프트 감지
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
@@ -1997,7 +1996,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
     return JSON.parse(JSON.stringify(obj, (k, v) => (v === undefined ? null : v)));
   }
 
-  /* High-DPI & S-Pen Optimized Smooth Vector Canvas with Line-Aware Decoupled Scaling */
   class SmoothCanvas {
     constructor(canvasId) {
       this.canvas = document.getElementById(canvasId);
@@ -2576,7 +2574,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
       wrapCanvas.style.display = 'none';
       textarea.style.display = 'block';
       if (btnMode) {
-        btnMode.textContent = '⌨️';
+        btnMode.textContent = '⌨️️';
         btnMode.classList.add('type-active');
         btnMode.title = '타자 입력 모드 (터치 시 펜 모드로 전환)';
       }
