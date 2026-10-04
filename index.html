@@ -628,6 +628,7 @@
     background: #FFFFFF;
     overflow: hidden;
     flex: 1;
+    touch-action: none;
   }
   .canvas-wrap {
     position: relative;
@@ -635,6 +636,7 @@
     background: #FFFFFF;
     overflow: hidden;
     transition: height 0.15s ease-out;
+    touch-action: none;
   }
   .lined-canvas-wrap {
     background-color: #FFFFFF;
@@ -650,6 +652,7 @@
     display: block;
     cursor: crosshair;
     touch-action: none !important;
+    -webkit-touch-callout: none;
   }
   .ink-canvas.drawing-active {
     touch-action: none !important;
@@ -2060,35 +2063,50 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
     initEvents() {
       this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-      this.canvas.addEventListener('touchstart', (e) => {
-        if (currentTool !== 'scroll') e.preventDefault();
-      }, { passive: false });
-      this.canvas.addEventListener('touchmove', (e) => {
-        if (currentTool !== 'scroll') e.preventDefault();
-      }, { passive: false });
 
-      this.canvas.addEventListener('pointerdown', (e) => this.onDown(e));
-      window.addEventListener('pointermove', (e) => this.onMove(e));
+      // 모바일 기본 스크롤 및 확대/축소 제스처 강제 차단
+      const blockDefault = (e) => {
+        if (currentTool !== 'scroll') {
+          if (e.cancelable) e.preventDefault();
+        }
+      };
+
+      this.canvas.addEventListener('touchstart', blockDefault, { passive: false });
+      this.canvas.addEventListener('touchmove', blockDefault, { passive: false });
+      this.canvas.addEventListener('touchend', blockDefault, { passive: false });
+
+      // PointerEvent 처리 (S-Pen, Apple Pencil 및 터치 통합)
+      this.canvas.addEventListener('pointerdown', (e) => this.onDown(e), { passive: false });
+      window.addEventListener('pointermove', (e) => this.onMove(e), { passive: false });
       window.addEventListener('pointerup', (e) => this.onUp(e));
       window.addEventListener('pointercancel', (e) => this.onUp(e));
     }
 
     getPointerPos(e) {
       const rect = this.canvas.getBoundingClientRect();
+      const clientX = e.clientX ?? (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+      const clientY = e.clientY ?? (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
       return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
+        x: clientX - rect.left,
+        y: clientY - rect.top,
         pressure: e.pressure && e.pressure > 0 ? e.pressure : 0.5
       };
     }
 
     onDown(e) {
       if (currentTool === 'scroll') return;
+      if (e.button !== undefined && e.button !== 0) return; // 좌클릭/터치만 허용
       if (this.isDrawing) return;
 
+      if (e.cancelable) e.preventDefault();
       this.activePointerId = e.pointerId;
       this.isDrawing = true;
-      try { this.canvas.setPointerCapture(e.pointerId); } catch (_) {}
+
+      try {
+        if (e.pointerId !== undefined && typeof this.canvas.setPointerCapture === 'function') {
+          this.canvas.setPointerCapture(e.pointerId);
+        }
+      } catch (_) {}
 
       const pos = this.getPointerPos(e);
       let strokeColor = currentColor;
@@ -2119,7 +2137,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 
     onMove(e) {
-      if (!this.isDrawing || e.pointerId !== this.activePointerId) return;
+      if (!this.isDrawing) return;
+      if (this.activePointerId !== null && e.pointerId !== undefined && e.pointerId !== this.activePointerId) return;
+
+      if (e.cancelable && currentTool !== 'scroll') e.preventDefault();
 
       if (currentTool === 'eraser') {
         const pos = this.getPointerPos(e);
@@ -2135,7 +2156,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
         const pts = this.currentStroke.points;
         const last = pts[pts.length - 1];
 
-        if (last && Math.hypot(pos.x - last.x, pos.y - last.y) < 1.0) {
+        if (last && Math.hypot(pos.x - last.x, pos.y - last.y) < 0.8) {
           continue;
         }
 
