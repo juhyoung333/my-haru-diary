@@ -1822,11 +1822,22 @@
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('PWA ServiceWorker 등록 성공:', reg.scope))
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => {
+        console.log('PWA ServiceWorker 등록 성공:', reg.scope);
+        reg.update(); // 최신 버전 강제 갱신
+      })
       .catch(err => console.log('PWA ServiceWorker 등록 실패:', err));
   });
 }
+
+// 안드로이드 앱 설치 프롬프트 감지
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  console.log('PWA 앱 설치 준비 완료');
+});
 </script>
 
 <script>
