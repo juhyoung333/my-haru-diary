@@ -2,16 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>하루의 페이지 - 아날로그 감성 데일리 저널</title>
-
-<!-- PWA 메타태그 (독립 실행형 앱 모드 활성화) -->
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="하루의페이지">
-<meta name="theme-color" content="#F8F9FA">
-<link rel="manifest" href="manifest.json">
 
 <!-- Web Fonts: Gowun Batang, Gowun Dodum, JetBrains Mono, Nanum Pen Script -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,9 +40,7 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  /* 앱 전용 제스처 및 필기 방해 요소 차단 */
-  html, body {
+  body {
     background-color: var(--bg-page);
     color: var(--ink);
     font-family: var(--font-sans);
@@ -58,16 +48,6 @@
     padding: 10px 12px 60px;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
-    overscroll-behavior-y: none;
-    -webkit-overscroll-behavior: none;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  input, textarea {
-    user-select: text;
-    -webkit-user-select: text;
   }
 
   .app-container {
@@ -224,7 +204,6 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    transition: transform 0.25s ease, opacity 0.25s ease;
   }
   .global-pen-bar {
     background: rgba(255, 255, 255, 0.98);
@@ -387,7 +366,7 @@
   .badge-tomorrow { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
   .badge-past { background: #F3F4F6; color: var(--ink-soft); border: 1px solid var(--line); }
 
-  /* 가계부 예산 & 소비 피드백 */
+  /* 실제 다이어리 원본 양식 1:1 재현: [목표 :] 좌우 2분할 레이아웃 */
   .daily-goal-box {
     display: flex;
     flex-direction: column;
@@ -406,6 +385,7 @@
     letter-spacing: -0.01em;
   }
 
+  /* 좌우 2단 분할 컨테이너 (왼쪽: 가계부 예산/정산, 오른쪽: 소비 피드백) */
   .goal-split-grid {
     display: grid;
     grid-template-columns: 1fr auto 1.25fr;
@@ -421,6 +401,7 @@
     .goal-arrow-connector { display: none !important; }
   }
 
+  /* 좌측: 예산/정산 블록 */
   .goal-ledger-side {
     display: flex;
     flex-direction: column;
@@ -571,6 +552,7 @@
     opacity: 0.8;
   }
 
+  /* 우측: 소비 피드백 손글씨 영역 */
   .goal-feedback-side {
     display: flex;
     flex-direction: column;
@@ -614,13 +596,14 @@
     transition: all 0.15s ease;
     padding: 0;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
   .btn-mini-action:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
   .btn-mini-action:active { transform: scale(0.92); }
   .btn-mini-action.type-active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
   .btn-mini-action.danger-action:hover { border-color: #EF4444; color: #DC2626; background: #FEF2F2; }
 
-  /* Canvas Lined Paper Styles */
+  /* Editor Box & Lined Canvas */
   .editor-wrapper-box {
     position: relative;
     border: 1px solid var(--line-rule);
@@ -628,7 +611,6 @@
     background: #FFFFFF;
     overflow: hidden;
     flex: 1;
-    touch-action: none;
   }
   .canvas-wrap {
     position: relative;
@@ -636,7 +618,6 @@
     background: #FFFFFF;
     overflow: hidden;
     transition: height 0.15s ease-out;
-    touch-action: none;
   }
   .lined-canvas-wrap {
     background-color: #FFFFFF;
@@ -652,7 +633,8 @@
     display: block;
     cursor: crosshair;
     touch-action: none !important;
-    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .ink-canvas.drawing-active {
     touch-action: none !important;
@@ -713,7 +695,7 @@
   }
   .btn-mini-resize:hover { border-color: var(--accent); color: var(--accent); background: #FFF7ED; }
 
-  /* Daily 2-Column Grid */
+  /* Daily 2-Column Grid for Schedule and Diaries */
   .daily-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -878,7 +860,7 @@
   .tome-q-text { flex: 1; font-family: var(--font-serif); font-style: italic; font-size: 12.5px; color: var(--ink-soft); }
   .tome-shuffle { background: #FFFFFF; border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; font-size: 11px; cursor: pointer; color: var(--ink-soft); }
 
-  /* Weekly & Monthly Spread */
+  /* Weekly & Monthly Spread Styles */
   .stat-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
   .stat-card { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px; text-align: center; box-shadow: var(--shadow-sm); }
   .stat-label { font-size: 11px; color: var(--ink-soft); margin-bottom: 2px; }
@@ -1025,7 +1007,7 @@
   .month-backlog-callout-card { background: #FFFDF9; border: 1.5px dashed #FDE68A; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .month-backlog-callout-title { font-size: 12.5px; font-weight: 700; color: #92400E; display: flex; align-items: center; gap: 6px; }
 
-  /* Drawer & Dialogs */
+  /* Backlog Drawer Panel */
   .backlog-drawer-backdrop {
     position: fixed;
     inset: 0;
@@ -1061,30 +1043,35 @@
   .drawer-title-group { display: flex; flex-direction: column; gap: 2px; }
   .drawer-main-title { font-family: var(--font-serif); font-size: 16px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px; }
   .drawer-sub-hint { font-size: 11px; color: var(--ink-soft); }
-  .drawer-close-btn { border: none; background: transparent; font-size: 22px; line-height: 1; color: var(--ink-soft); cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+  .drawer-close-btn { border: none; background: transparent; font-size: 22px; line-height: 1; color: var(--ink-soft); cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.15s ease, color 0.15s ease; }
+  .drawer-close-btn:hover { background: #F3F4F6; color: var(--accent); }
 
   .drawer-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; background-color: #FAFAFA; }
   .drawer-add-box { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 8px; }
   .tag-select-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-  .tag-chip-btn { border: 1px solid var(--line); background: #FFFFFF; color: var(--ink-soft); font-size: 11px; padding: 2px 8px; border-radius: 999px; cursor: pointer; }
+  .tag-chip-btn { border: 1px solid var(--line); background: #FFFFFF; color: var(--ink-soft); font-size: 11px; padding: 2px 8px; border-radius: 999px; cursor: pointer; transition: all 0.12s ease; }
   .tag-chip-btn.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); font-weight: 700; }
   .drawer-text-input { width: 100%; border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; font-family: var(--font-sans); line-height: 1.5; outline: none; resize: none; background: #FFFFFF; }
   .drawer-text-input:focus { border-color: var(--accent); }
-  .btn-submit-backlog { background: var(--accent); color: #FFFFFF; border: none; padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; align-self: flex-end; }
+  .btn-submit-backlog { background: var(--accent); color: #FFFFFF; border: none; padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; align-self: flex-end; transition: background 0.15s ease; }
+  .btn-submit-backlog:hover { background: var(--accent-hover); }
 
   .drawer-item-list { display: flex; flex-direction: column; gap: 9px; }
-  .backlog-card-item { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 7px; }
+  .backlog-card-item { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 7px; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+  .backlog-card-item:hover { border-color: rgba(194, 65, 12, 0.4); box-shadow: 0 3px 10px rgba(0,0,0,0.06); }
   .card-top-info { display: flex; justify-content: space-between; align-items: center; }
   .card-tag-pill { font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #F3F4F6; color: var(--ink-soft); }
   .card-tag-pill.tag-공부 { background: #FEF3C7; color: #92400E; }
   .card-tag-pill.tag-아이디어 { background: #FCE7F3; color: #9D174D; }
   .card-tag-pill.tag-자료 { background: #E0E7FF; color: #3730A3; }
   .card-tag-pill.tag-과제 { background: #DCFCE7; color: #166534; }
-  .card-del-btn { border: none; background: transparent; color: #9CA3AF; font-size: 14px; cursor: pointer; padding: 0 4px; }
-  .card-content-text { font-size: 12.5px; color: var(--ink); line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
+  .card-del-btn { border: none; background: transparent; color: #9CA3AF; font-size: 14px; cursor: pointer; padding: 0 4px; transition: color 0.15s ease; }
+  .card-del-btn:hover { color: #DC2626; }
+  .card-content-text { font-size: 12.5px; color: var(--ink); line-height: 1.5; white-space: pre-wrap; word-break: break-all; font-family: var(--font-sans); }
   .card-action-bar { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--line); padding-top: 7px; margin-top: 2px; }
   .card-date-badge { font-size: 10px; color: var(--ink-faint); font-family: var(--font-mono); }
-  .btn-schedule-picker-toggle { background: #FFF7ED; border: 1px solid #FFEDD5; color: var(--accent); padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; }
+  .btn-schedule-picker-toggle { background: #FFF7ED; border: 1px solid #FFEDD5; color: var(--accent); padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; transition: all 0.15s ease; }
+  .btn-schedule-picker-toggle:hover { background: var(--accent); color: #FFFFFF; border-color: var(--accent); }
 
   .inline-schedule-dock { background: #FFFDF9; border: 1.5px solid #FDE68A; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 6px; margin-top: 4px; animation: fadeIn 0.15s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
@@ -1093,6 +1080,7 @@
   .dock-input { border: 1px solid var(--line); border-radius: 5px; padding: 4px 6px; font-size: 11.5px; background: #FFFFFF; }
   .dock-quick-dates { display: flex; gap: 3px; }
   .dock-quick-btn { border: 1px solid var(--line); background: #FFFFFF; font-size: 10px; padding: 2px 6px; border-radius: 4px; cursor: pointer; color: var(--ink-soft); }
+  .dock-quick-btn:hover { border-color: var(--accent); color: var(--accent); }
   .btn-confirm-dock { background: var(--accent); color: #FFFFFF; border: none; border-radius: 5px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
   /* Modals & Notifications */
@@ -1160,41 +1148,6 @@
   .sync-input:focus { border-color: var(--accent); }
   .sync-help { font-size: 11px; color: var(--ink-soft); line-height: 1.45; }
   .sync-box-status { background: #FAFAFA; border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
-
-  /* [카페 인증 전용 클린 캡처 모드] 클래스 */
-  body.clean-capture-active .global-pen-container,
-  body.clean-capture-active .top-bar-actions,
-  body.clean-capture-active .nav-tabs,
-  body.clean-capture-active .direct-action-tools,
-  body.clean-capture-active .compact-resize-bar,
-  body.clean-capture-active .btn-add-mini-line,
-  body.clean-capture-active #btn-quick-manage-routines,
-  body.clean-capture-active #btn-toggle-timeblock-dock {
-    display: none !important;
-  }
-  body.clean-capture-active .paper-card {
-    box-shadow: none !important;
-    border: 1px solid #D1D5DB;
-  }
-  #btn-exit-clean-mode {
-    position: fixed;
-    bottom: 18px;
-    right: 18px;
-    background: #1F2937;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 999px;
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: 700;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    z-index: 9999;
-    cursor: pointer;
-    display: none;
-  }
-  body.clean-capture-active #btn-exit-clean-mode {
-    display: block;
-  }
 </style>
 </head>
 <body>
@@ -1208,19 +1161,16 @@
       <span>하루의 페이지</span>
     </div>
     <div class="top-bar-actions">
-      <button type="button" class="header-icon-btn" id="btn-clean-mode" title="카페 인증용 깔끔한 캡처 모드로 전환">
-        <span>📷 인증샷 클린뷰</span>
-      </button>
       <button type="button" class="header-icon-btn" id="btn-open-backlog-drawer" title="공부 & 아이디어 백로그 서랍 열기">
-        <span>📥 백로그</span>
+        <span>📥 백로그 서랍</span>
         <span class="backlog-count-pill" id="header-backlog-count">0</span>
       </button>
       <button type="button" class="header-icon-btn" id="btn-open-routines" title="매일 반복되는 고정 루틴 관리">
-        <span>🔄 루틴</span>
+        <span>🔄 고정 루틴</span>
       </button>
       <button type="button" class="header-icon-btn" id="btn-open-sync" title="동기화 설정 열기">
         <span class="sync-dot" id="sync-dot"></span>
-        <span id="sync-text">로컬</span>
+        <span id="sync-text">로컬 보관</span>
         <span style="font-size:10px; opacity:0.75;">⚙️</span>
       </button>
     </div>
@@ -1240,7 +1190,7 @@
         <button type="button" class="tool-mode-btn active" id="btn-global-pen" data-tool="pen" title="만년필 필기 모드">✎ 펜</button>
         <button type="button" class="tool-mode-btn" id="btn-global-highlighter" data-tool="highlighter" title="반투명 형광펜">🖌️ 형광펜</button>
         <button type="button" class="tool-mode-btn" id="btn-global-eraser" data-tool="eraser" title="획 단위 지우개">⌫ 지우개</button>
-        <button type="button" class="tool-mode-btn" id="btn-global-capture" data-tool="scroll" title="화면 이동 및 스크롤 시 줄 그어짐 방지">👆 스크롤/이동</button>
+        <button type="button" class="tool-mode-btn" id="btn-global-capture" data-tool="scroll" title="화면 이동 및 스크롤 캡처 시 줄 그어짐 방지">📸 캡처/이동</button>
       </div>
 
       <div class="palette-divider"></div>
@@ -1250,7 +1200,7 @@
           <span class="current-color-dot" id="preview-color-dot" style="background:#1F2937;"></span>
           <span id="preview-pen-info">2.0px</span>
         </div>
-        <button type="button" class="btn-toggle-options" id="btn-toggle-options" title="굵기, 농도, 색상 메뉴 열기">
+        <button type="button" class="btn-toggle-options" id="btn-toggle-options" title="굵기, 농도, 색상 꾸미기 메뉴 열기">
           <span>🎨 설정</span>
           <span id="toggle-arrow" style="font-size:9px;">▼</span>
         </button>
@@ -1308,7 +1258,7 @@
   <main id="tab-today" class="tab-content">
     <div class="paper-card" style="margin-bottom: 14px;">
       
-      <!-- 1. 날짜 헤더 행 -->
+      <!-- 1. 날짜 헤더 행 (독립된 행) -->
       <div class="day-header-row">
         <div class="date-nav-group">
           <button type="button" class="date-nav-btn" id="btn-prev-day" title="어제 기록 보기">‹ 어제</button>
@@ -1322,7 +1272,7 @@
         </div>
       </div>
 
-      <!-- 2. 다이어리 원본 양식: [목표 :] -->
+      <!-- 2. 실제 다이어리 원본 양식: [목표 :] (좌: 가계부 예산·정산 / 우: 소비 피드백 손글씨) -->
       <div class="daily-goal-box">
         <div class="goal-title-row">
           <span>목표 :</span>
@@ -1330,8 +1280,9 @@
         </div>
 
         <div class="goal-split-grid">
-          <!-- 좌측: <예산> & <정산> 블록 -->
+          <!-- 좌측: <예산> & <정산> 다중 항목 입력 블록 -->
           <div class="goal-ledger-side">
+            <!-- <예산> 섹션 -->
             <div class="ledger-section-group">
               <div class="ledger-header-compact">
                 <div class="ledger-label-group">
@@ -1343,6 +1294,7 @@
               <div class="ledger-rows-list" id="budget-entries-container"></div>
             </div>
 
+            <!-- <정산> 섹션 -->
             <div class="ledger-section-group" style="border-top:1px dashed var(--line); padding-top:6px;">
               <div class="ledger-header-compact">
                 <div class="ledger-label-group">
@@ -1354,17 +1306,19 @@
               <div class="ledger-rows-list" id="spent-entries-container"></div>
             </div>
 
+            <!-- 하단 차액 결산 -->
             <div class="goal-balance-footer">
               <span style="font-size:11px; color:var(--ink-soft); font-family:var(--font-mono);">차액 결산:</span>
               <div id="budget-diff-badge" class="diff-badge diff-under" style="display:none;"></div>
             </div>
           </div>
 
+          <!-- 중앙 연결 기호 (다이어리 화살표) -->
           <div class="goal-arrow-connector">
             <span>&gt;</span>
           </div>
 
-          <!-- 우측: 소비 피드백 영역 -->
+          <!-- 우측: 소비 피드백 손글씨 & 타자 영역 (가계부와 좌우 나란히 배치) -->
           <div class="goal-feedback-side">
             <div class="feedback-head-bar">
               <span class="feedback-label-text">
@@ -1372,7 +1326,7 @@
                 <span>소비 피드백</span>
               </span>
               <div class="direct-action-tools">
-                <button type="button" class="btn-mini-action btn-mode-toggle" data-target="budget-feedback" title="모드 전환 (✎ 펜 / ⌨ 타자)">✎</button>
+                <button type="button" class="btn-mini-action btn-mode-toggle" data-target="budget-feedback" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
                 <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-budget-feedback" title="되돌리기">↶</button>
                 <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-budget-feedback" title="전체 지우기">🗑</button>
               </div>
@@ -1393,12 +1347,13 @@
           </div>
         </div>
       </div>
+
     </div>
 
-    <!-- 하단 핵심: 투두, 피드백, 감사일기, TO ME -->
+    <!-- 하단 핵심: 오늘의 할 일 & 루틴 / 투두 피드백 / 감사일기 / TO ME -->
     <div class="daily-grid">
       <div class="daily-col">
-        <!-- 루틴 & 몰입 스케줄 -->
+        <!-- 루틴 & 몰입 스케줄 (오늘의 할 일) -->
         <div class="integrated-auto-card">
           <div class="auto-card-header">
             <div class="auto-card-title">
@@ -1420,7 +1375,7 @@
           <div class="auto-block-section" style="border-top: 1.5px dashed var(--line); padding-top: 8px;">
             <div class="block-sub-title">
               <span style="display:inline-flex; align-items:center; gap:5px;">
-                <span>⏱ 몰입 스케줄 (타임블록)</span>
+                <span>⏱️ 몰입 스케줄 (타임블록)</span>
                 <span id="daily-timeblock-count" style="font-size:11px; color:var(--accent); font-weight:700; font-family:var(--font-mono);">0건</span>
               </span>
               <button type="button" class="btn-toggle-dock" id="btn-toggle-timeblock-dock" title="새로운 스터디/몰입 일정 추가">+ 블록 추가</button>
@@ -1453,7 +1408,7 @@
             </div>
             <div class="direct-action-tools">
               <button type="button" class="btn-mini-action btn-mode-toggle" data-target="todo-feedback" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
-              <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-todo-feedback" title="되돌리기">↶</button>
+              <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-todo-feedback" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
               <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-todo-feedback" title="전체 지우기">🗑️</button>
             </div>
           </div>
@@ -1465,8 +1420,8 @@
           </div>
           <div class="compact-resize-bar">
             <button type="button" class="btn-mini-resize" data-canvas="canvas-todo-feedback" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
-            <button type="button" class="btn-mini-resize" data-canvas="canvas-todo-feedback" data-action="shrink" title="줄이기">▲ 줄이기</button>
-            <button type="button" class="btn-mini-resize" data-canvas="canvas-todo-feedback" data-action="expand" title="늘리기">▼ 늘리기</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-todo-feedback" data-action="shrink" title="1줄 줄이기">▲ 줄이기</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-todo-feedback" data-action="expand" title="1줄 늘리기">▼ 늘리기</button>
           </div>
         </div>
       </div>
@@ -1478,7 +1433,7 @@
             <span class="washi-tape-title tape-lavender">&lt;감사일기&gt;</span>
             <div class="direct-action-tools">
               <button type="button" class="btn-mini-action btn-mode-toggle" data-target="gratitude" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
-              <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-gratitude" title="되돌리기">↶</button>
+              <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-gratitude" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
               <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-gratitude" title="전체 지우기">🗑️</button>
             </div>
           </div>
@@ -1490,8 +1445,8 @@
           </div>
           <div class="compact-resize-bar">
             <button type="button" class="btn-mini-resize" data-canvas="canvas-gratitude" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
-            <button type="button" class="btn-mini-resize" data-canvas="canvas-gratitude" data-action="shrink" title="줄이기">▲ 줄이기</button>
-            <button type="button" class="btn-mini-resize" data-canvas="canvas-gratitude" data-action="expand" title="늘리기">▼ 늘리기</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-gratitude" data-action="shrink" title="1줄 줄이기">▲ 줄이기</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-gratitude" data-action="expand" title="1줄 늘리기">▼ 늘리기</button>
           </div>
         </div>
 
@@ -1501,7 +1456,7 @@
             <span class="washi-tape-title tape-peach">Memo &lt;TO ME&gt;</span>
             <div class="direct-action-tools">
               <button type="button" class="btn-mini-action btn-mode-toggle" data-target="tome" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
-              <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-tome" title="되돌리기">↶</button>
+              <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-tome" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
               <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-tome" title="전체 지우기">🗑️</button>
             </div>
           </div>
@@ -1517,8 +1472,8 @@
           </div>
           <div class="compact-resize-bar">
             <button type="button" class="btn-mini-resize" data-canvas="canvas-tome" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
-            <button type="button" class="btn-mini-resize" data-canvas="canvas-tome" data-action="shrink" title="줄이기">▲ 줄이기</button>
-            <button type="button" class="btn-mini-resize" data-canvas="canvas-tome" data-action="expand" title="늘리기">▼ 늘리기</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-tome" data-action="shrink" title="1줄 줄이기">▲ 줄이기</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-tome" data-action="expand" title="1줄 늘리기">▼ 늘리기</button>
           </div>
         </div>
       </div>
@@ -1559,7 +1514,7 @@
         <span class="washi-tape-title tape-sand">주간 총평 &amp; 다음 주 다짐</span>
         <div class="direct-action-tools">
           <button type="button" class="btn-mini-action btn-mode-toggle" data-target="week-review" title="모드 전환 (✎ 펜 / ⌨️ 타자)">✎</button>
-          <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-week-review" title="되돌리기">↶</button>
+          <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-week-review" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
           <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-week-review" title="전체 지우기">🗑️</button>
         </div>
       </div>
@@ -1571,8 +1526,8 @@
       </div>
       <div class="compact-resize-bar">
         <button type="button" class="btn-mini-resize" data-canvas="canvas-week-review" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
-        <button type="button" class="btn-mini-resize" data-canvas="canvas-week-review" data-action="shrink" title="줄이기">▲ 줄이기</button>
-        <button type="button" class="btn-mini-resize" data-canvas="canvas-week-review" data-action="expand" title="늘리기">▼ 늘리기</button>
+        <button type="button" class="btn-mini-resize" data-canvas="canvas-week-review" data-action="shrink" title="1줄 줄이기">▲ 줄이기</button>
+        <button type="button" class="btn-mini-resize" data-canvas="canvas-week-review" data-action="expand" title="1줄 늘리기">▼ 늘리기</button>
       </div>
     </div>
   </section>
@@ -1683,7 +1638,7 @@
             <span class="washi-tape-title tape-sand">이번 달의 성장과 배움</span>
             <div class="direct-action-tools">
               <button type="button" class="btn-mini-action btn-mode-toggle" data-target="month-review" title="모드 전환 (✎ 펜 / ⌨ 타자)">✎</button>
-              <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-month-review" title="되돌리기">↶</button>
+              <button type="button" class="btn-mini-action undo-canvas" data-canvas="canvas-month-review" title="되돌리기 (마지막 획 원터치 취소)">↶</button>
               <button type="button" class="btn-mini-action danger-action clear-canvas" data-canvas="canvas-month-review" title="전체 지우기">🗑️</button>
             </div>
           </div>
@@ -1695,20 +1650,17 @@
           </div>
           <div class="compact-resize-bar">
             <button type="button" class="btn-mini-resize" data-canvas="canvas-month-review" data-action="reset" title="기본 크기로 복구">↺ 기본</button>
-            <button type="button" class="btn-mini-resize" data-canvas="canvas-month-review" data-action="shrink" title="줄이기">▲ 줄이기</button>
-            <button type="button" class="btn-mini-resize" data-canvas="canvas-month-review" data-action="expand" title="늘리기">▼ 늘리기</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-month-review" data-action="shrink" title="1줄 줄이기">▲ 줄이기</button>
+            <button type="button" class="btn-mini-resize" data-canvas="canvas-month-review" data-action="expand" title="1줄 늘리기">▼ 늘리기</button>
           </div>
         </div>
       </div>
     </div>
-  </main>
+  </section>
 
 </div>
 
-<!-- [카페 인증 전용] 클린뷰 종료 플로팅 버튼 -->
-<button type="button" id="btn-exit-clean-mode">✕ 캡처 완료 (일반 모드로 복귀)</button>
-
-<!-- Backlog Drawer & Modals -->
+<!-- Drawer & Modal Popups -->
 <div id="backlog-drawer-backdrop" class="backlog-drawer-backdrop"></div>
 <aside id="backlog-drawer-panel" class="backlog-drawer-panel" aria-label="백로그 서랍">
   <div class="drawer-header">
@@ -1748,7 +1700,7 @@
       <button type="button" class="routine-del-btn" id="btn-close-routines" style="font-size:20px;">×</button>
     </div>
     <p style="font-size:12px; color:var(--ink-soft); margin-bottom:10px;">
-      여기에 등록한 습관은 매일 아침 '오늘의 페이지' 맨 위에 체크박스로 자동 생성됩니다.
+      여기에 등록한 습관은 매일 아침 '오늘의 페이지' 맨 위에 체크박스로 자동 생성되어 하루의 워밍업을 돕습니다.
     </p>
 
     <div style="display:flex; gap:6px; margin-bottom:10px;">
@@ -1768,7 +1720,7 @@
 <div id="sync-modal" class="modal-overlay">
   <div class="modal-card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="font-family:var(--font-serif); font-size:16px; font-weight:700; color:var(--ink);">⚙ 클라우드 동기화 &amp; 백업 설정</h3>
+      <h3 style="font-family:var(--font-serif); font-size:16px; font-weight:700; color:var(--ink);">⚙️️ 클라우드 동기화 &amp; 백업 설정</h3>
       <button type="button" class="routine-del-btn" id="btn-close-sync" style="font-size:20px;">×</button>
     </div>
 
@@ -1786,7 +1738,7 @@
     <div class="sync-field-group">
       <label class="sync-label" for="input-firebase-config">Firebase 설정값 (JSON 전체)</label>
       <textarea id="input-firebase-config" class="sync-input" rows="4" placeholder='{ "apiKey": "...", "projectId": "...", ... }'></textarea>
-      <p class="sync-help">Firebase 콘솔의 웹 구성 객체 <code>{ ... }</code>를 입력합니다.</p>
+      <p class="sync-help">Google Firebase 콘솔의 웹 구성 객체 <code>{ ... }</code>를 입력합니다.</p>
     </div>
 
     <div class="modal-actions" style="margin-top:10px;">
@@ -1820,27 +1772,6 @@
 </div>
 
 <div id="toast-notice" class="toast-notice">저장되었습니다.</div>
-
-<!-- Service Worker Registration for PWA -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => {
-        console.log('PWA ServiceWorker 등록 성공:', reg.scope);
-        reg.update();
-      })
-      .catch(err => console.log('PWA ServiceWorker 등록 실패:', err));
-  });
-}
-
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  console.log('PWA 앱 설치 준비 완료');
-});
-</script>
 
 <script>
 (() => {
@@ -1999,9 +1930,11 @@ window.addEventListener('beforeinstallprompt', (e) => {
     return JSON.parse(JSON.stringify(obj, (k, v) => (v === undefined ? null : v)));
   }
 
+  /* High-DPI & S-Pen Optimized Smooth Vector Canvas with Line-Aware Decoupled Scaling */
   class SmoothCanvas {
     constructor(canvasId) {
       this.canvas = document.getElementById(canvasId);
+      // desynchronized: true로 브라우저 합성 큐를 건너뛰어 초저지연 하드웨어 가속 렌더링 적용
       this.ctx = this.canvas.getContext('2d', { willReadFrequently: true, desynchronized: true });
       this.id = canvasId;
       this.strokes = [];
@@ -2011,11 +1944,16 @@ window.addEventListener('beforeinstallprompt', (e) => {
       this.defaultHeight = DEFAULT_CANVAS_HEIGHTS[canvasId] || 175;
       this.displayWidth = 320;
 
+      // [삼성노트급 고속 렌더링을 위한 오프스크린 버퍼 캔버스]
+      // 기존 획들을 메모리 버퍼에 보관하여 매 움직임마다 전체를 다시 그리지 않고 O(1) 증분 렌더링 실현
       this.memCanvas = document.createElement('canvas');
       this.memCtx = this.memCanvas.getContext('2d', { willReadFrequently: true });
 
+      // 곡선 스무딩용 이전 제어점
       this.prevPoint = null;
       this.prevMidPoint = null;
+      this.pendingPoints = [];
+      this.animFrameId = null;
 
       this.initEvents();
       this.resizeCanvas();
@@ -2063,50 +2001,35 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
     initEvents() {
       this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+      this.canvas.addEventListener('touchstart', (e) => {
+        if (currentTool !== 'scroll') e.preventDefault();
+      }, { passive: false });
+      this.canvas.addEventListener('touchmove', (e) => {
+        if (currentTool !== 'scroll') e.preventDefault();
+      }, { passive: false });
 
-      // 모바일 기본 스크롤 및 확대/축소 제스처 강제 차단
-      const blockDefault = (e) => {
-        if (currentTool !== 'scroll') {
-          if (e.cancelable) e.preventDefault();
-        }
-      };
-
-      this.canvas.addEventListener('touchstart', blockDefault, { passive: false });
-      this.canvas.addEventListener('touchmove', blockDefault, { passive: false });
-      this.canvas.addEventListener('touchend', blockDefault, { passive: false });
-
-      // PointerEvent 처리 (S-Pen, Apple Pencil 및 터치 통합)
-      this.canvas.addEventListener('pointerdown', (e) => this.onDown(e), { passive: false });
-      window.addEventListener('pointermove', (e) => this.onMove(e), { passive: false });
+      this.canvas.addEventListener('pointerdown', (e) => this.onDown(e));
+      window.addEventListener('pointermove', (e) => this.onMove(e));
       window.addEventListener('pointerup', (e) => this.onUp(e));
       window.addEventListener('pointercancel', (e) => this.onUp(e));
     }
 
     getPointerPos(e) {
       const rect = this.canvas.getBoundingClientRect();
-      const clientX = e.clientX ?? (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-      const clientY = e.clientY ?? (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
       return {
-        x: clientX - rect.left,
-        y: clientY - rect.top,
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
         pressure: e.pressure && e.pressure > 0 ? e.pressure : 0.5
       };
     }
 
     onDown(e) {
       if (currentTool === 'scroll') return;
-      if (e.button !== undefined && e.button !== 0) return; // 좌클릭/터치만 허용
       if (this.isDrawing) return;
 
-      if (e.cancelable) e.preventDefault();
       this.activePointerId = e.pointerId;
       this.isDrawing = true;
-
-      try {
-        if (e.pointerId !== undefined && typeof this.canvas.setPointerCapture === 'function') {
-          this.canvas.setPointerCapture(e.pointerId);
-        }
-      } catch (_) {}
+      try { this.canvas.setPointerCapture(e.pointerId); } catch (_) {}
 
       const pos = this.getPointerPos(e);
       let strokeColor = currentColor;
@@ -2133,14 +2056,12 @@ window.addEventListener('beforeinstallprompt', (e) => {
       this.prevPoint = pos;
       this.prevMidPoint = pos;
 
+      // 점 하나만 찍었을 때도 즉시 반응
       this.drawPointToContext(this.ctx, pos, this.currentStroke);
     }
 
     onMove(e) {
-      if (!this.isDrawing) return;
-      if (this.activePointerId !== null && e.pointerId !== undefined && e.pointerId !== this.activePointerId) return;
-
-      if (e.cancelable && currentTool !== 'scroll') e.preventDefault();
+      if (!this.isDrawing || e.pointerId !== this.activePointerId) return;
 
       if (currentTool === 'eraser') {
         const pos = this.getPointerPos(e);
@@ -2150,21 +2071,25 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
       if (!this.currentStroke) return;
 
+      // 삼성 S펜 120Hz/240Hz 고주파 입력 이벤트 일괄 처리
       const events = (typeof e.getCoalescedEvents === 'function') ? e.getCoalescedEvents() : [e];
       for (const ev of events) {
         const pos = this.getPointerPos(ev);
         const pts = this.currentStroke.points;
         const last = pts[pts.length - 1];
 
-        if (last && Math.hypot(pos.x - last.x, pos.y - last.y) < 0.8) {
+        // 1px 미만의 초근접 미세 떨림 무시로 연산 최적화
+        if (last && Math.hypot(pos.x - last.x, pos.y - last.y) < 1.0) {
           continue;
         }
 
         pts.push(pos);
+        // [핵심] 과거 획들을 전체 재렌더링하지 않고, 방금 들어온 미세 선분만 화면에 즉각 다이렉트 드로잉 (O(1) 속도)
         this.drawIncremental(pos);
       }
     }
 
+    // 증분 드로잉: 베지에 곡선으로 부드럽게 잇기
     drawIncremental(newPoint) {
       if (!this.prevPoint || !this.currentStroke) return;
 
@@ -2202,6 +2127,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
       try { this.canvas.releasePointerCapture(e.pointerId); } catch (_) {}
 
       if (this.currentStroke && this.currentStroke.points.length > 0) {
+        // 끝점까지 자연스럽게 마무리 선분 연결
         if (this.prevPoint && this.prevMidPoint) {
           const lastPt = this.currentStroke.points[this.currentStroke.points.length - 1];
           this.ctx.save();
@@ -2218,6 +2144,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
         }
 
         this.strokes.push(this.currentStroke);
+        // 완성된 획을 백그라운드 메모리 버퍼 캔버스에 영구 병합
         this.renderStrokeToContext(this.memCtx, this.currentStroke, 1, 1);
         this.currentStroke = null;
         this.prevPoint = null;
@@ -2315,6 +2242,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
       ctx.restore();
     }
 
+    // 캔버스 크기 변경, 되돌리기, 지우개 등 필요할 때만 전체 버퍼 갱신
     redrawFull() {
       const dpr = window.devicePixelRatio || 1;
       this.ctx.clearRect(0, 0, this.canvas.width / dpr, this.canvas.height / dpr);
@@ -2325,11 +2253,17 @@ window.addEventListener('beforeinstallprompt', (e) => {
       for (const s of this.strokes) {
         const baseW = s.baseW || currentWidth;
         const scaleX = currentWidth / baseW;
-        const scaleY = 1;
+        const scaleY = 1; // 줄눈 1:1 보존
         this.renderStrokeToContext(this.memCtx, s, scaleX, scaleY);
       }
 
+      // 메모리 버퍼의 내용을 메인 캔버스에 단 한 번의 비트맵 전송으로 복사
       this.ctx.drawImage(this.memCanvas, 0, 0, this.canvas.width / dpr, this.canvas.height / dpr);
+    }
+
+    // 기존 redraw 호출 호환성 유지
+    redraw() {
+      this.redrawFull();
     }
   }
 
@@ -2353,7 +2287,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
     initEventListeners();
     initBacklogDrawerEvents();
     initMonthSpread();
-    initCleanMode();
     loadRoutines();
     loadSchedules();
     loadBacklogs();
@@ -2363,21 +2296,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
     setTimeout(() => {
       Object.values(canvasControllers).forEach(c => c.resizeCanvas());
     }, 200);
-  }
-
-  function initCleanMode() {
-    const btnClean = document.getElementById('btn-clean-mode');
-    const btnExit = document.getElementById('btn-exit-clean-mode');
-
-    btnClean?.addEventListener('click', () => {
-      document.body.classList.add('clean-capture-active');
-      showToast('📷 인증샷 모드 ON: 주소창·버튼 없이 깔끔하게 캡처하세요!');
-    });
-
-    btnExit?.addEventListener('click', () => {
-      document.body.classList.remove('clean-capture-active');
-      showToast('일반 모드로 돌아왔습니다.');
-    });
   }
 
   function initCanvases() {
@@ -2430,7 +2348,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
           btn.classList.add('highlighter-active');
         } else if (currentTool === 'scroll') {
           btn.classList.add('capture-mode-active');
-          showToast('👆 화면 이동 모드: 스크롤해도 필기 선이 그어지지 않습니다.');
+          showToast('📸 캡처/이동 모드: 화면 터치 스크롤 캡처 시 줄 그어짐이 방지됩니다.');
         } else {
           btn.classList.add('active');
         }
@@ -2505,7 +2423,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
     if (dot) dot.style.backgroundColor = currentColor;
     if (info) {
       if (currentTool === 'scroll') {
-        info.textContent = '이동/스크롤';
+        info.textContent = '이동/캡처';
       } else if (currentTool === 'eraser') {
         info.textContent = '지우개';
       } else {
@@ -2595,7 +2513,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
       wrapCanvas.style.display = 'none';
       textarea.style.display = 'block';
       if (btnMode) {
-        btnMode.textContent = '⌨️️';
+        btnMode.textContent = '⌨️';
         btnMode.classList.add('type-active');
         btnMode.title = '타자 입력 모드 (터치 시 펜 모드로 전환)';
       }
@@ -2644,6 +2562,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
     document.getElementById('btn-next-day')?.addEventListener('click', () => moveDay(1));
     document.getElementById('btn-goto-today')?.addEventListener('click', () => switchDate(getTodayStr()));
 
+    // 예산 / 정산 행 추가 이벤트
     document.getElementById('btn-add-budget-row')?.addEventListener('click', () => addLedgerEntry('budget'));
     document.getElementById('btn-add-spent-row')?.addEventListener('click', () => addLedgerEntry('spent'));
 
@@ -2804,11 +2723,22 @@ window.addEventListener('beforeinstallprompt', (e) => {
       };
     }
 
+    // 데이터 호환성 보정
     if (!day.budgetEntries || day.budgetEntries.length === 0) {
-      day.budgetEntries = [{ id: 'b_' + Date.now(), title: '', amount: 0 }];
+      if (day.budgetPlanText || day.budgetMemo) {
+        day.budgetEntries = [{ id: 'b_1', title: day.budgetPlanText || day.budgetMemo, amount: day.budget || 0 }];
+      } else if (Array.isArray(day.budgetPlans) && day.budgetPlans.length > 0) {
+        day.budgetEntries = day.budgetPlans;
+      } else {
+        day.budgetEntries = [{ id: 'b_' + Date.now(), title: '', amount: 0 }];
+      }
     }
     if (!day.spentEntries || day.spentEntries.length === 0) {
-      day.spentEntries = [{ id: 's_' + Date.now(), title: '', amount: 0 }];
+      if (day.spentItemText || day.spentMemo) {
+        day.spentEntries = [{ id: 's_1', title: day.spentItemText || day.spentMemo, amount: day.spent || 0 }];
+      } else {
+        day.spentEntries = [{ id: 's_' + Date.now(), title: '', amount: 0 }];
+      }
     }
 
     renderLedgerEntries(day);
@@ -3005,6 +2935,8 @@ window.addEventListener('beforeinstallprompt', (e) => {
       spent: totalSpent,
       budgetEntries,
       spentEntries,
+      budgetPlanText: budgetEntries.map(e => e.title).filter(Boolean).join(', '),
+      spentItemText: spentEntries.map(e => e.title).filter(Boolean).join(', '),
       routineChecks,
       calendarChecks,
       priorities,
