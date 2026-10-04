@@ -1,39 +1,32 @@
-const CACHE_NAME = 'haru-page-cache-v1';
-const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
-  './manifest.json'
-];
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => self.skipWaiting())
-  );
-});
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-      );
-    }).then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).catch(() => {
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
-      });
-    })
-  );
-});
+{
+"id": "/aru-diary",
+"name": "하루의 페이지 - 데일리 저널",
+"short_name": "하루",
+"description": "손글씨와 타임블록을 지원하는 나만의 데일리 투두 저널",
+"start_url": "./index.html",
+"scope": "./",
+"display": "standalone",
+"background_color": "#F8F9FA",
+"theme_color": "#C2410C",
+"orientation": "any",
+"icons": [
+{
+"src": "https://cdn-icons-png.flaticon.com/512/3389/3389081.png",
+"sizes": "192x192",
+"type": "image/png",
+"purpose": "any"
+},
+{
+"src": "https://cdn-icons-png.flaticon.com/512/3389/3389081.png",
+"sizes": "512x512",
+"type": "image/png",
+"purpose": "any"
+},
+{
+"src": "https://cdn-icons-png.flaticon.com/512/3389/3389081.png",
+"sizes": "512x512",
+"type": "image/png",
+"purpose": "maskable"
+}
+]
+}
