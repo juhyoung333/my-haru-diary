@@ -214,6 +214,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 6px;
+    flex-wrap: wrap;
   }
   .pen-group-row { display: flex; align-items: center; gap: 4px; }
   .palette-divider { width: 1px; height: 16px; background: var(--line); margin: 0 1px; }
@@ -236,6 +237,31 @@
   .tool-mode-btn.active { background: var(--accent); color: #FFFFFF; box-shadow: 0 2px 6px rgba(194,65,12,0.3); }
   .tool-mode-btn.highlighter-active { background: #F59E0B; color: #FFFFFF; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4); }
   .tool-mode-btn.capture-mode-active { background: #059669; color: #FFFFFF; box-shadow: 0 2px 6px rgba(5, 150, 105, 0.4); }
+
+  .palm-toggle-btn {
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    color: #166534;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+  }
+  .palm-toggle-btn.palm-on {
+    background: #DCFCE7;
+    border-color: #22C55E;
+    color: #15803D;
+  }
+  .palm-toggle-btn.palm-off {
+    background: #F3F4F6;
+    border-color: var(--line);
+    color: var(--ink-soft);
+  }
 
   .current-pen-status {
     display: inline-flex;
@@ -812,7 +838,7 @@
     padding: 8px 10px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     margin-top: 4px;
     animation: slideDown 0.16s ease-out;
   }
@@ -823,6 +849,47 @@
   .dock-text-input:focus { border-color: var(--accent); }
   .btn-add-block { background: var(--accent); color: #FFFFFF; border: none; border-radius: 6px; padding: 5px 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.15s ease; }
   .btn-add-block:hover { background: var(--accent-hover); }
+
+  /* 스마트 타임 레일 (구글 캘린더 스타일 원터치 선택기) */
+  .time-rail-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 8px;
+  }
+  .time-rail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10.5px;
+    color: var(--ink-soft);
+  }
+  .time-rail-scroll {
+    display: flex;
+    gap: 3px;
+    overflow-x: auto;
+    padding: 4px 1px;
+    scrollbar-width: thin;
+  }
+  .time-slot-btn {
+    border: 1px solid var(--line);
+    background: #F9FAFB;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 4px 7px;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: var(--ink-soft);
+    transition: all 0.12s ease;
+  }
+  .time-slot-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .time-slot-btn.slot-start { background: #EA580C; color: #FFFFFF; border-color: #EA580C; font-weight: 700; }
+  .time-slot-btn.slot-range { background: #FFEDD5; color: #9A3412; border-color: #FDBA74; }
+  .time-slot-btn.slot-end { background: #C2410C; color: #FFFFFF; border-color: #C2410C; font-weight: 700; }
 
   .empty-hint-text { font-size: 11.5px; color: var(--ink-faint); font-style: italic; padding: 8px 4px; text-align: center; }
 
@@ -1174,9 +1241,12 @@
     <div class="global-pen-bar" id="global-pen-bar">
       <div class="pen-group-row">
         <button type="button" class="tool-mode-btn active" id="btn-global-pen" data-tool="pen" title="만년필 필기 모드">✎ 펜</button>
-        <button type="button" class="tool-mode-btn" id="btn-global-highlighter" data-tool="highlighter" title="반투명 형광펜">🖌️ 형광펜</button>
+        <button type="button" class="tool-mode-btn" id="btn-global-highlighter" data-tool="highlighter" title="반투명 직사각 형광펜">🖌️ 형광펜</button>
         <button type="button" class="tool-mode-btn" id="btn-global-eraser" data-tool="eraser" title="획 단위 지우개">⌫ 지우개</button>
         <button type="button" class="tool-mode-btn" id="btn-global-capture" data-tool="scroll" title="화면 이동 및 스크롤 캡처 시 줄 그어짐 방지">📸 캡처/이동</button>
+        
+        <!-- 팜 리젝션 스마트 토글 버튼 -->
+        <button type="button" class="palm-toggle-btn palm-on" id="btn-toggle-palm" title="태블릿 필기 시 손 터치 방지 모드 (펜 전용)">✋ 팜리젝션 ON</button>
       </div>
 
       <div class="palette-divider"></div>
@@ -1367,6 +1437,16 @@
                 <span>+ 오늘 몰입할 세션 등록 <span id="dock-duration-calc" style="font-family:var(--font-mono); font-weight:600;">(시간 지정)</span></span>
                 <button type="button" id="btn-close-dock" style="border:none; background:transparent; cursor:pointer; color:#92400E; font-size:14px; line-height:1;">✕</button>
               </div>
+
+              <!-- 스마트 원터치 타임 레일 (구글 캘린더 스타일) -->
+              <div class="time-rail-container">
+                <div class="time-rail-header">
+                  <span>💡 탭 2번으로 간편 시간 지정: <strong id="rail-selected-range">시작 시간을 탭하세요</strong></span>
+                  <button type="button" id="btn-reset-rail" style="border:none; background:transparent; color:var(--ink-faint); font-size:10px; cursor:pointer;">초기화</button>
+                </div>
+                <div class="time-rail-scroll" id="interactive-time-rail"></div>
+              </div>
+
               <div class="dock-form-row">
                 <input type="time" id="input-block-start" class="dock-time-input" required title="시작 시간">
                 <span style="font-size:11px; color:var(--ink-soft);">~</span>
@@ -1795,6 +1875,14 @@
   let activeTab = 'tab-today';
   let currentDate = getTodayStr();
 
+  // 팜 리젝션 상태 (기본 켜짐, 스타일러스 감지 시 손터치 차단)
+  let isPalmRejectionEnabled = true;
+  let stylusEverDetected = false;
+
+  // 스마트 타임레일 상태
+  let timeRailStart = null;
+  let timeRailEnd = null;
+
   const initDate = new Date();
   let currentMonthView = { year: initDate.getFullYear(), month: initDate.getMonth() + 1 };
 
@@ -1909,6 +1997,7 @@
     return JSON.parse(JSON.stringify(obj, (k, v) => (v === undefined ? null : v)));
   }
 
+  // 캔버스 드로잉 클래스 (팜 리젝션 + 각진 직사각 형광펜 펜촉)
   class SmoothCanvas {
     constructor(canvasId) {
       this.canvas = document.getElementById(canvasId);
@@ -1976,6 +2065,24 @@
       window.addEventListener('pointercancel', (e) => this.onUp(e));
     }
 
+    // 팜 리젝션 필터링
+    shouldRejectPointer(e) {
+      if (e.pointerType === 'pen') {
+        stylusEverDetected = true;
+        return false;
+      }
+      if (e.pointerType === 'mouse') {
+        return false;
+      }
+      // 터치(손) 입력인 경우
+      if (e.pointerType === 'touch') {
+        if (isPalmRejectionEnabled && stylusEverDetected) {
+          return true; // 펜이 감지된 환경에서는 손 터치 필기 무시
+        }
+      }
+      return false;
+    }
+
     getPointerPos(e) {
       const rect = this.canvas.getBoundingClientRect();
       return {
@@ -1984,8 +2091,34 @@
       };
     }
 
+    // 직사각 형광펜 펜촉 (각도 약 25도)
+    drawHighlighterSegment(ctx, p1, p2, width, color, alpha) {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.globalAlpha = alpha;
+      ctx.globalCompositeOperation = 'multiply';
+
+      const angle = -Math.PI / 7; // 약 -25.7도 각도 유지
+      const halfW = width / 2;
+      const dx = Math.cos(angle) * halfW;
+      const dy = Math.sin(angle) * halfW;
+
+      ctx.beginPath();
+      ctx.moveTo(p1.x - dx, p1.y - dy);
+      ctx.lineTo(p1.x + dx, p1.y + dy);
+      ctx.lineTo(p2.x + dx, p2.y + dy);
+      ctx.lineTo(p2.x - dx, p2.y - dy);
+      ctx.closePath();
+      ctx.fill();
+
+      // 시작/끝 직사각 캡
+      ctx.fillRect(p2.x - dx, p2.y - dy, dx * 2, dy * 2);
+      ctx.restore();
+    }
+
     onDown(e) {
       if (currentTool === 'scroll') return;
+      if (this.shouldRejectPointer(e)) return;
       if (this.isDrawing) return;
 
       this.isDrawing = true;
@@ -1997,8 +2130,8 @@
       let strokeAlpha = currentAlpha / 100;
 
       if (currentTool === 'highlighter') {
-        strokeSize = Math.max(12, currentPenSize * 2.8);
-        strokeAlpha = Math.min(0.35, currentAlpha / 100);
+        strokeSize = Math.max(14, currentPenSize * 3.2);
+        strokeAlpha = Math.min(0.4, currentAlpha / 100);
       } else if (currentTool === 'eraser') {
         this.eraseAt(pos.x, pos.y);
         return;
@@ -2013,17 +2146,22 @@
         points: [pos]
       };
 
-      this.ctx.save();
-      this.ctx.beginPath();
-      this.ctx.fillStyle = strokeColor;
-      this.ctx.globalAlpha = strokeAlpha;
-      this.ctx.arc(pos.x, pos.y, Math.max(1, strokeSize / 2), 0, Math.PI * 2);
-      this.ctx.fill();
-      this.ctx.restore();
+      if (currentTool === 'highlighter') {
+        this.drawHighlighterSegment(this.ctx, pos, pos, strokeSize, strokeColor, strokeAlpha);
+      } else {
+        this.ctx.save();
+        this.ctx.beginPath();
+        this.ctx.fillStyle = strokeColor;
+        this.ctx.globalAlpha = strokeAlpha;
+        this.ctx.arc(pos.x, pos.y, Math.max(0.8, strokeSize / 2), 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.restore();
+      }
     }
 
     onMove(e) {
       if (!this.isDrawing) return;
+      if (this.shouldRejectPointer(e)) return;
       const pos = this.getPointerPos(e);
 
       if (currentTool === 'eraser') {
@@ -2033,22 +2171,22 @@
 
       if (!this.currentStroke || !this.lastPos) return;
 
-      this.ctx.save();
-      this.ctx.beginPath();
-      this.ctx.strokeStyle = this.currentStroke.color;
-      this.ctx.globalAlpha = this.currentStroke.alpha;
-      this.ctx.lineWidth = Math.max(0.8, this.currentStroke.size);
-      this.ctx.lineCap = 'round';
-      this.ctx.lineJoin = 'round';
-
       if (this.currentStroke.tool === 'highlighter') {
-        this.ctx.globalCompositeOperation = 'multiply';
-      }
+        this.drawHighlighterSegment(this.ctx, this.lastPos, pos, this.currentStroke.size, this.currentStroke.color, this.currentStroke.alpha);
+      } else {
+        this.ctx.save();
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = this.currentStroke.color;
+        this.ctx.globalAlpha = this.currentStroke.alpha;
+        this.ctx.lineWidth = Math.max(0.8, this.currentStroke.size);
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
 
-      this.ctx.moveTo(this.lastPos.x, this.lastPos.y);
-      this.ctx.lineTo(pos.x, pos.y);
-      this.ctx.stroke();
-      this.ctx.restore();
+        this.ctx.moveTo(this.lastPos.x, this.lastPos.y);
+        this.ctx.lineTo(pos.x, pos.y);
+        this.ctx.stroke();
+        this.ctx.restore();
+      }
 
       this.currentStroke.points.push(pos);
       this.lastPos = pos;
@@ -2123,30 +2261,38 @@
         const baseW = s.baseW || currentWidth;
         const scaleX = currentWidth / baseW;
 
-        this.ctx.save();
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = s.color || '#1F2937';
-        this.ctx.globalAlpha = s.alpha || 1;
-        this.ctx.lineWidth = Math.max(0.8, s.size || 2);
-        this.ctx.lineCap = 'round';
-        this.ctx.lineJoin = 'round';
-
         if (s.tool === 'highlighter') {
-          this.ctx.globalCompositeOperation = 'multiply';
-        }
-
-        if (s.points.length === 1) {
-          this.ctx.arc(s.points[0].x * scaleX, s.points[0].y, Math.max(1, (s.size || 2) / 2), 0, Math.PI * 2);
-          this.ctx.fillStyle = s.color || '#1F2937';
-          this.ctx.fill();
-        } else {
-          this.ctx.moveTo(s.points[0].x * scaleX, s.points[0].y);
-          for (let i = 1; i < s.points.length; i++) {
-            this.ctx.lineTo(s.points[i].x * scaleX, s.points[i].y);
+          for (let i = 0; i < s.points.length - 1; i++) {
+            const p1 = { x: s.points[i].x * scaleX, y: s.points[i].y };
+            const p2 = { x: s.points[i + 1].x * scaleX, y: s.points[i + 1].y };
+            this.drawHighlighterSegment(this.ctx, p1, p2, s.size || 16, s.color || '#FACC15', s.alpha || 0.35);
           }
-          this.ctx.stroke();
+          if (s.points.length === 1) {
+            const p1 = { x: s.points[0].x * scaleX, y: s.points[0].y };
+            this.drawHighlighterSegment(this.ctx, p1, p1, s.size || 16, s.color || '#FACC15', s.alpha || 0.35);
+          }
+        } else {
+          this.ctx.save();
+          this.ctx.beginPath();
+          this.ctx.strokeStyle = s.color || '#1F2937';
+          this.ctx.globalAlpha = s.alpha || 1;
+          this.ctx.lineWidth = Math.max(0.8, s.size || 2);
+          this.ctx.lineCap = 'round';
+          this.ctx.lineJoin = 'round';
+
+          if (s.points.length === 1) {
+            this.ctx.arc(s.points[0].x * scaleX, s.points[0].y, Math.max(0.8, (s.size || 2) / 2), 0, Math.PI * 2);
+            this.ctx.fillStyle = s.color || '#1F2937';
+            this.ctx.fill();
+          } else {
+            this.ctx.moveTo(s.points[0].x * scaleX, s.points[0].y);
+            for (let i = 1; i < s.points.length; i++) {
+              this.ctx.lineTo(s.points[i].x * scaleX, s.points[i].y);
+            }
+            this.ctx.stroke();
+          }
+          this.ctx.restore();
         }
-        this.ctx.restore();
       }
     }
   }
@@ -2164,6 +2310,7 @@
   }
 
   function initApp() {
+    loadSavedPenSettings(); // 펜 설정 영구 복원
     loadLocalSettings();
     initPenToolbar();
     initCanvases();
@@ -2171,6 +2318,7 @@
     initEventListeners();
     initBacklogDrawerEvents();
     initMonthSpread();
+    initTimeRail(); // 구글 캘린더 스타일 스마트 타임레일
     loadRoutines();
     loadSchedules();
     loadBacklogs();
@@ -2185,6 +2333,32 @@
         }
       });
     }, 250);
+  }
+
+  // 펜 설정 저장 및 로드
+  function savePenSettings() {
+    const settings = {
+      color: currentColor,
+      size: currentPenSize,
+      alpha: currentAlpha,
+      tool: currentTool,
+      palmRejection: isPalmRejectionEnabled
+    };
+    localStorage.setItem('haru_pen_settings', JSON.stringify(settings));
+  }
+
+  function loadSavedPenSettings() {
+    const saved = localStorage.getItem('haru_pen_settings');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.color) currentColor = parsed.color;
+        if (parsed.size) currentPenSize = parsed.size;
+        if (parsed.alpha) currentAlpha = parsed.alpha;
+        if (parsed.tool) currentTool = parsed.tool;
+        if (parsed.palmRejection !== undefined) isPalmRejectionEnabled = parsed.palmRejection;
+      } catch (e) {}
+    }
   }
 
   function initCanvases() {
@@ -2216,10 +2390,12 @@
     const chipsContainer = document.getElementById('palette-chips-container');
     if (!chipsContainer) return;
     chipsContainer.innerHTML = '';
-    PALETTE.forEach((item, idx) => {
+    
+    PALETTE.forEach(item => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = `palette-chip ${idx === 0 ? 'active' : ''}`;
+      const isMatched = item.color.toLowerCase() === currentColor.toLowerCase();
+      btn.className = `palette-chip ${isMatched ? 'active' : ''}`;
       btn.style.backgroundColor = item.color;
       btn.title = item.name;
       btn.addEventListener('click', () => {
@@ -2229,11 +2405,34 @@
         const picker = document.getElementById('custom-color-picker');
         if (picker) picker.value = item.color;
         updatePenPreview();
+        savePenSettings();
       });
       chipsContainer.appendChild(btn);
     });
 
+    // 팜 리젝션 버튼 초기화
+    const palmBtn = document.getElementById('btn-toggle-palm');
+    if (palmBtn) {
+      palmBtn.className = `palm-toggle-btn ${isPalmRejectionEnabled ? 'palm-on' : 'palm-off'}`;
+      palmBtn.textContent = isPalmRejectionEnabled ? '✋ 팜리젝션 ON' : '✋ 팜리젝션 OFF';
+      palmBtn.addEventListener('click', () => {
+        isPalmRejectionEnabled = !isPalmRejectionEnabled;
+        palmBtn.className = `palm-toggle-btn ${isPalmRejectionEnabled ? 'palm-on' : 'palm-off'}`;
+        palmBtn.textContent = isPalmRejectionEnabled ? '✋ 팜리젝션 ON' : '✋ 팜리젝션 OFF';
+        showToast(isPalmRejectionEnabled ? '✋ 팜 리젝션 활성화 (펜 전용 필기)' : '✋ 팜 리젝션 해제 (손 터치 필기 허용)');
+        savePenSettings();
+      });
+    }
+
+    // 도구 버튼 초기화
     document.querySelectorAll('.tool-mode-btn').forEach(btn => {
+      if (btn.dataset.tool === currentTool) {
+        document.querySelectorAll('.tool-mode-btn').forEach(b => b.classList.remove('active', 'highlighter-active', 'capture-mode-active'));
+        if (currentTool === 'highlighter') btn.classList.add('highlighter-active');
+        else if (currentTool === 'scroll') btn.classList.add('capture-mode-active');
+        else btn.classList.add('active');
+      }
+
       btn.addEventListener('click', () => {
         document.querySelectorAll('.tool-mode-btn').forEach(b => {
           b.classList.remove('active', 'highlighter-active', 'capture-mode-active');
@@ -2260,6 +2459,7 @@
           }
         });
         updatePenPreview();
+        savePenSettings();
       });
     });
 
@@ -2274,25 +2474,40 @@
     });
 
     const sizeSlider = document.getElementById('slider-pen-size');
+    if (sizeSlider) {
+      sizeSlider.value = currentPenSize;
+      const lbl = document.getElementById('label-size-val');
+      if (lbl) lbl.textContent = `${currentPenSize.toFixed(1)} px`;
+    }
     sizeSlider?.addEventListener('input', (e) => {
       currentPenSize = parseFloat(e.target.value);
       const lbl = document.getElementById('label-size-val');
       if (lbl) lbl.textContent = `${currentPenSize.toFixed(1)} px`;
       updatePenPreview();
+      savePenSettings();
     });
 
     const alphaSlider = document.getElementById('slider-pen-alpha');
+    if (alphaSlider) {
+      alphaSlider.value = currentAlpha;
+      const lbl = document.getElementById('label-alpha-val');
+      if (lbl) lbl.textContent = `${currentAlpha} %`;
+    }
     alphaSlider?.addEventListener('input', (e) => {
       currentAlpha = parseInt(e.target.value, 10);
       const lbl = document.getElementById('label-alpha-val');
       if (lbl) lbl.textContent = `${currentAlpha} %`;
       updatePenPreview();
+      savePenSettings();
     });
 
-    document.getElementById('custom-color-picker')?.addEventListener('input', (e) => {
+    const colorPicker = document.getElementById('custom-color-picker');
+    if (colorPicker) colorPicker.value = currentColor;
+    colorPicker?.addEventListener('input', (e) => {
       currentColor = e.target.value;
       document.querySelectorAll('.palette-chip').forEach(c => c.classList.remove('active'));
       updatePenPreview();
+      savePenSettings();
     });
 
     document.querySelectorAll('#quick-size-chips .quick-chip').forEach(chip => {
@@ -2304,6 +2519,7 @@
         const lbl = document.getElementById('label-size-val');
         if (lbl) lbl.textContent = `${currentPenSize.toFixed(1)} px`;
         updatePenPreview();
+        savePenSettings();
       });
     });
 
@@ -2316,8 +2532,11 @@
         const lbl = document.getElementById('label-alpha-val');
         if (lbl) lbl.textContent = `${currentAlpha} %`;
         updatePenPreview();
+        savePenSettings();
       });
     });
+
+    updatePenPreview();
   }
 
   function updatePenPreview() {
@@ -2329,10 +2548,98 @@
         info.textContent = '이동/캡처';
       } else if (currentTool === 'eraser') {
         info.textContent = '지우개';
+      } else if (currentTool === 'highlighter') {
+        info.textContent = `형광펜 (${Math.max(14, currentPenSize * 3.2).toFixed(0)}px)`;
       } else {
         info.textContent = `${currentPenSize.toFixed(1)}px`;
       }
     }
+  }
+
+  // 구글 캘린더 스타일 원터치 스마트 타임 레일
+  function initTimeRail() {
+    const rail = document.getElementById('interactive-time-rail');
+    if (!rail) return;
+    rail.innerHTML = '';
+
+    // 06:00 ~ 24:00 (30분 간격 슬롯 생성)
+    for (let h = 6; h <= 24; h++) {
+      for (let m = 0; m < 60; m += 30) {
+        if (h === 24 && m > 0) break;
+        const timeStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'time-slot-btn';
+        btn.dataset.time = timeStr;
+        btn.textContent = timeStr;
+        btn.addEventListener('click', () => handleTimeSlotClick(timeStr));
+        rail.appendChild(btn);
+      }
+    }
+
+    document.getElementById('btn-reset-rail')?.addEventListener('click', resetTimeRail);
+  }
+
+  function handleTimeSlotClick(timeStr) {
+    const sInput = document.getElementById('input-block-start');
+    const eInput = document.getElementById('input-block-end');
+    const rangeLabel = document.getElementById('rail-selected-range');
+
+    if (!timeRailStart || (timeRailStart && timeRailEnd)) {
+      // 1번째 탭: 시작 시간 지정
+      timeRailStart = timeStr;
+      timeRailEnd = null;
+      if (sInput) sInput.value = timeStr;
+      if (eInput) eInput.value = '';
+      if (rangeLabel) rangeLabel.textContent = `${timeStr} ~ (종료 시간을 탭하세요)`;
+    } else {
+      // 2번째 탭: 종료 시간 지정
+      if (timeStr <= timeRailStart) {
+        // 시작 시간보다 앞선 경우 시작 시간을 재지정
+        timeRailStart = timeStr;
+        if (sInput) sInput.value = timeStr;
+        if (rangeLabel) rangeLabel.textContent = `${timeStr} ~ (종료 시간을 탭하세요)`;
+      } else {
+        timeRailEnd = timeStr;
+        if (eInput) eInput.value = timeStr;
+        const dur = calculateDuration(timeRailStart, timeRailEnd);
+        if (rangeLabel) rangeLabel.textContent = `${timeRailStart} ~ ${timeRailEnd} (${dur})`;
+        
+        const durBadge = document.getElementById('dock-duration-calc');
+        if (durBadge) durBadge.textContent = `(${dur} 몰입)`;
+      }
+    }
+    renderTimeRailHighlight();
+  }
+
+  function renderTimeRailHighlight() {
+    document.querySelectorAll('.time-slot-btn').forEach(btn => {
+      const t = btn.dataset.time;
+      btn.classList.remove('slot-start', 'slot-range', 'slot-end');
+
+      if (timeRailStart && t === timeRailStart) {
+        btn.classList.add('slot-start');
+      } else if (timeRailEnd && t === timeRailEnd) {
+        btn.classList.add('slot-end');
+      } else if (timeRailStart && timeRailEnd && t > timeRailStart && t < timeRailEnd) {
+        btn.classList.add('slot-range');
+      }
+    });
+  }
+
+  function resetTimeRail() {
+    timeRailStart = null;
+    timeRailEnd = null;
+    const sInput = document.getElementById('input-block-start');
+    const eInput = document.getElementById('input-block-end');
+    const rangeLabel = document.getElementById('rail-selected-range');
+    const durBadge = document.getElementById('dock-duration-calc');
+
+    if (sInput) sInput.value = '';
+    if (eInput) eInput.value = '';
+    if (rangeLabel) rangeLabel.textContent = '시작 시간을 탭하세요';
+    if (durBadge) durBadge.textContent = '(시간 지정)';
+    renderTimeRailHighlight();
   }
 
   function initDirectTools() {
@@ -2442,6 +2749,10 @@
   function initEventListeners() {
     document.querySelectorAll('.nav-tab').forEach(tab => {
       tab.addEventListener('click', () => {
+        // 탭 이동 시 진행 중이던 편집 즉시 보존
+        saveCurrentDayData();
+        saveMonthSideMeta();
+
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         activeTab = tab.dataset.tab;
@@ -2478,13 +2789,18 @@
     document.getElementById('btn-add-spent-row')?.addEventListener('click', () => addLedgerEntry('spent'));
 
     ['text-budget-feedback', 'text-todo-feedback', 'text-gratitude', 'text-tome'].forEach(id => {
-      document.getElementById(id)?.addEventListener('input', debounce(() => {
-        saveCurrentDayData();
-      }, 500));
+      const el = document.getElementById(id);
+      el?.addEventListener('input', debounce(() => saveCurrentDayData(), 500));
+      el?.addEventListener('blur', () => saveCurrentDayData()); // 포커스 아웃 시 즉시 저장
     });
 
-    document.getElementById('text-week-review')?.addEventListener('input', debounce(saveWeekReviewMeta, 500));
-    document.getElementById('text-month-review')?.addEventListener('input', debounce(saveMonthSideMeta, 500));
+    const wRev = document.getElementById('text-week-review');
+    wRev?.addEventListener('input', debounce(saveWeekReviewMeta, 500));
+    wRev?.addEventListener('blur', saveWeekReviewMeta);
+
+    const mRev = document.getElementById('text-month-review');
+    mRev?.addEventListener('input', debounce(saveMonthSideMeta, 500));
+    mRev?.addEventListener('blur', saveMonthSideMeta);
 
     document.getElementById('btn-tome-shuffle')?.addEventListener('click', () => {
       const q = TOME_PROMPTS[Math.floor(Math.random() * TOME_PROMPTS.length)];
@@ -2516,11 +2832,13 @@
       const isShown = dockPanel.style.display !== 'none';
       dockPanel.style.display = isShown ? 'none' : 'flex';
       toggleDockBtn.textContent = isShown ? '+ 블록 추가' : '▲ 접기';
+      if (!isShown) resetTimeRail();
     });
 
     closeDockBtn?.addEventListener('click', () => {
       if (dockPanel) dockPanel.style.display = 'none';
       if (toggleDockBtn) toggleDockBtn.textContent = '+ 블록 추가';
+      resetTimeRail();
     });
 
     const sInput = document.getElementById('input-block-start');
@@ -2539,6 +2857,7 @@
     document.getElementById('btn-add-daily-block')?.addEventListener('click', addDailyTimeBlock);
 
     document.getElementById('btn-month-prev')?.addEventListener('click', () => {
+      saveMonthSideMeta();
       currentMonthView.month--;
       if (currentMonthView.month < 1) {
         currentMonthView.month = 12;
@@ -2547,6 +2866,7 @@
       renderMonthCalendar();
     });
     document.getElementById('btn-month-next')?.addEventListener('click', () => {
+      saveMonthSideMeta();
       currentMonthView.month++;
       if (currentMonthView.month > 12) {
         currentMonthView.month = 1;
@@ -2557,12 +2877,19 @@
 
     document.getElementById('btn-add-schedule')?.addEventListener('click', addMonthMilestone);
 
+    // 월간 목표 3가지 및 위시리스트 메모: input 외에 blur, change 리스너 추가하여 저장 누락 완벽 방지
     ['month-focus-1', 'month-focus-2', 'month-focus-3', 'month-wishlist-memo'].forEach(id => {
-      document.getElementById(id)?.addEventListener('input', debounce(saveMonthSideMeta, 500));
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', debounce(saveMonthSideMeta, 500));
+        el.addEventListener('blur', () => saveMonthSideMeta());
+        el.addEventListener('change', () => saveMonthSideMeta());
+      }
     });
   }
 
   function moveDay(offset) {
+    saveCurrentDayData();
     const [y, m, d] = currentDate.split('-').map(Number);
     const dateObj = new Date(y, m - 1, d);
     dateObj.setDate(dateObj.getDate() + offset);
@@ -3010,1023 +3337,6 @@
     const toggleDockBtn = document.getElementById('btn-toggle-timeblock-dock');
     if (dockPanel) dockPanel.style.display = 'none';
     if (toggleDockBtn) toggleDockBtn.textContent = '+ 블록 추가';
+    resetTimeRail();
 
     showToast(`⏱️ ${sVal}~${eVal} 몰입 스케줄이 등록되었습니다!`);
-  }
-
-  function renderPriorityFocusPills(day) {
-    const container = document.getElementById('priority-focus-container');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const priIds = Object.keys(day.priorities || {}).filter(k => day.priorities[k]);
-    if (priIds.length === 0) {
-      container.style.display = 'none';
-      return;
-    }
-
-    container.style.display = 'flex';
-    const label = document.createElement('span');
-    label.style.fontSize = '11px';
-    label.style.fontWeight = '700';
-    label.style.color = '#92400E';
-    label.style.marginRight = '4px';
-    label.textContent = '⭐ 오늘의 최우선 집중:';
-    container.appendChild(label);
-
-    priIds.forEach(id => {
-      let text = '';
-      const r = routinesMaster.find(item => item.id === id);
-      if (r) text = r.text;
-      const s = schedulesMaster.find(item => item.id === id);
-      if (s) text = s.text;
-
-      if (text) {
-        const pill = document.createElement('span');
-        pill.className = 'focus-pill-item';
-        pill.textContent = text;
-        container.appendChild(pill);
-      }
-    });
-  }
-
-  function updateDailySummaryBadge(day) {
-    const rTotal = routinesMaster.length;
-    const rDone = Object.values(day.routineChecks || {}).filter(Boolean).length;
-    const daySchedules = schedulesMaster.filter(s => s.date === currentDate);
-    const sTotal = daySchedules.length;
-    const sDone = Object.values(day.calendarChecks || {}).filter(Boolean).length;
-
-    const total = rTotal + sTotal;
-    const done = rDone + sDone;
-    const badge = document.getElementById('auto-summary-badge');
-    if (badge) badge.textContent = `달성 ${done} / ${total}`;
-  }
-
-  function loadRoutines() {
-    const saved = localStorage.getItem('haru_routines');
-    if (saved) {
-      try { routinesMaster = JSON.parse(saved); } catch (e) {}
-    }
-  }
-
-  function saveRoutines() {
-    localStorage.setItem('haru_routines', JSON.stringify(routinesMaster));
-    if (isFirestoreOnline && firestoreDb) {
-      const roomKey = getRoomKey();
-      if (roomKey) {
-        firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc('routines').set({
-          list: routinesMaster,
-          updatedAt: Date.now(),
-          senderId: CLIENT_ID
-        }, { merge: true });
-      }
-    }
-    renderDailyIntegratedSection(daysCache[currentDate] || {});
-  }
-
-  function openRoutineModal() {
-    renderRoutineManager();
-    const modal = document.getElementById('routine-modal');
-    if (modal) modal.style.display = 'flex';
-  }
-
-  function closeRoutineModal() {
-    const modal = document.getElementById('routine-modal');
-    if (modal) modal.style.display = 'none';
-  }
-
-  function renderRoutineManager() {
-    const list = document.getElementById('routine-manager-list');
-    if (!list) return;
-    list.innerHTML = '';
-    routinesMaster.forEach(r => {
-      const row = document.createElement('div');
-      row.className = 'routine-row-item';
-      row.innerHTML = `
-        <span>• ${escapeHtml(r.text)}</span>
-        <button type="button" class="routine-del-btn" title="삭제">✕</button>
-      `;
-      row.querySelector('.routine-del-btn')?.addEventListener('click', () => {
-        routinesMaster = routinesMaster.filter(item => item.id !== r.id);
-        saveRoutines();
-        renderRoutineManager();
-      });
-      list.appendChild(row);
-    });
-  }
-
-  function addRoutineItem() {
-    const inp = document.getElementById('new-routine-text');
-    if (!inp) return;
-    const txt = inp.value.trim();
-    if (!txt) return;
-    routinesMaster.push({
-      id: 'r_' + Date.now(),
-      text: txt
-    });
-    inp.value = '';
-    saveRoutines();
-    renderRoutineManager();
-  }
-
-  function loadSchedules() {
-    const saved = localStorage.getItem('haru_schedules');
-    if (saved) {
-      try { schedulesMaster = JSON.parse(saved); } catch (e) {}
-    }
-  }
-
-  function saveSchedules() {
-    localStorage.setItem('haru_schedules', JSON.stringify(schedulesMaster));
-    if (isFirestoreOnline && firestoreDb) {
-      const roomKey = getRoomKey();
-      if (roomKey) {
-        firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc('schedules').set({
-          list: schedulesMaster,
-          updatedAt: Date.now(),
-          senderId: CLIENT_ID
-        }, { merge: true });
-      }
-    }
-    renderDailyIntegratedSection(daysCache[currentDate] || {});
-    renderMonthCalendar();
-  }
-
-  function addMonthMilestone() {
-    const dInp = document.getElementById('new-schedule-date');
-    const tInp = document.getElementById('new-schedule-time');
-    const endTInp = document.getElementById('new-schedule-end-time');
-    const txtInp = document.getElementById('new-schedule-text');
-
-    const d = dInp ? dInp.value : '';
-    const txt = txtInp ? txtInp.value.trim() : '';
-    if (!d || !txt) {
-      showToast('날짜와 마일스톤 일정 내용을 입력해 주세요.');
-      return;
-    }
-
-    schedulesMaster.push({
-      id: 's_' + Date.now(),
-      date: d,
-      time: tInp ? tInp.value : '',
-      endTime: endTInp ? endTInp.value : '',
-      text: txt,
-      color: Math.floor(Math.random() * 5),
-      isMonthlyMilestone: true
-    });
-
-    if (txtInp) txtInp.value = '';
-    if (tInp) tInp.value = '';
-    if (endTInp) endTInp.value = '';
-    saveSchedules();
-    showToast('마스킹 테이프 마일스톤이 달력에 부착되었습니다!');
-  }
-
-  function initMonthSpread() {
-    const dInp = document.getElementById('new-schedule-date');
-    if (dInp) dInp.value = currentDate;
-  }
-
-  function renderMonthCalendar() {
-    const { year, month } = currentMonthView;
-    const monthNamesEn = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const enEl = document.getElementById('month-title-en');
-    const koEl = document.getElementById('month-title-text');
-    if (enEl) enEl.textContent = `${monthNamesEn[month - 1]} ${year}`;
-    if (koEl) koEl.textContent = `${year}년 ${month}월의 기록`;
-
-    loadMonthSideMeta();
-
-    const grid = document.getElementById('month-calendar-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-
-    const firstDay = new Date(year, month - 1, 1).getDay();
-    const lastDate = new Date(year, month, 0).getDate();
-    const prevLastDate = new Date(year, month - 1, 0).getDate();
-
-    let cellCount = 0;
-
-    for (let i = firstDay - 1; i >= 0; i--) {
-      const d = prevLastDate - i;
-      grid.appendChild(createDayCell(d, true, false, false, ''));
-      cellCount++;
-    }
-
-    let monthSpentTotal = 0;
-    let completedDays = 0;
-    const todayStr = getTodayStr();
-
-    for (let d = 1; d <= lastDate; d++) {
-      const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-      const isToday = dateStr === todayStr;
-      const dow = (cellCount % 7);
-      const isSun = dow === 0;
-      const isSat = dow === 6;
-
-      const dayData = daysCache[dateStr] || getLocalDayData(dateStr);
-      if (dayData) {
-        monthSpentTotal += (dayData.spent || 0);
-        const rDone = Object.values(dayData.routineChecks || {}).filter(Boolean).length;
-        if (rDone > 0) completedDays++;
-      }
-
-      grid.appendChild(createDayCell(d, false, isSun, isSat, dateStr, isToday, dayData));
-      cellCount++;
-    }
-
-    const remain = (7 - (cellCount % 7)) % 7;
-    for (let i = 1; i <= remain; i++) {
-      grid.appendChild(createDayCell(i, true, false, false, ''));
-      cellCount++;
-    }
-
-    const spTotal = document.getElementById('month-spent-total');
-    const tDays = document.getElementById('month-todo-days');
-    const avgRate = document.getElementById('month-avg-rate');
-
-    if (spTotal) spTotal.textContent = `${monthSpentTotal.toLocaleString()}원`;
-    if (tDays) tDays.textContent = `${completedDays}일`;
-    const rate = lastDate > 0 ? Math.round((completedDays / lastDate) * 100) : 0;
-    if (avgRate) avgRate.textContent = `${rate}%`;
-  }
-
-  function getLocalDayData(dateStr) {
-    const raw = localStorage.getItem(getDayStorageKey(dateStr));
-    if (raw) {
-      try { return JSON.parse(raw); } catch (e) {}
-    }
-    return null;
-  }
-
-  function createDayCell(dayNum, isOtherMonth, isSun, isSat, dateStr, isToday = false, dayData = null) {
-    const cell = document.createElement('div');
-    cell.className = `diary-day-cell ${isOtherMonth ? 'other-month' : ''} ${isSun ? 'sun' : ''} ${isSat ? 'sat' : ''} ${isToday ? 'is-today' : ''}`;
-
-    const topRow = document.createElement('div');
-    topRow.className = 'day-top-row';
-
-    const numSpan = document.createElement('span');
-    numSpan.className = 'day-num';
-    numSpan.textContent = dayNum;
-    topRow.appendChild(numSpan);
-
-    const badgesWrap = document.createElement('div');
-    badgesWrap.className = 'day-badges-wrap';
-
-    if (!isOtherMonth && dayData) {
-      if (dayData.spent === 0 && (dayData.budget > 0)) {
-        const noSpend = document.createElement('span');
-        noSpend.className = 'no-spend-badge';
-        noSpend.textContent = '☕ 無지출';
-        badgesWrap.appendChild(noSpend);
-      }
-
-      const rTotal = routinesMaster.length;
-      const rDone = Object.values(dayData.routineChecks || {}).filter(Boolean).length;
-      if (rTotal > 0 && rDone >= rTotal) {
-        const stamp = document.createElement('span');
-        stamp.className = 'stamp-done';
-        stamp.textContent = 'DONE';
-        badgesWrap.appendChild(stamp);
-      }
-    }
-    topRow.appendChild(badgesWrap);
-    cell.appendChild(topRow);
-
-    if (!isOtherMonth && dateStr) {
-      const tapeList = document.createElement('div');
-      tapeList.className = 'tape-schedule-list';
-
-      const monthlyMilestones = sortSchedulesByTime(
-        schedulesMaster.filter(s => s.date === dateStr && (s.isMonthlyMilestone !== false))
-      );
-
-      monthlyMilestones.slice(0, 3).forEach(s => {
-        const item = document.createElement('div');
-        item.className = `washi-tape-item tape-color-${s.color || 0}`;
-        item.textContent = s.text;
-        item.title = `${formatScheduleTime(s)} ${s.text}`;
-        tapeList.appendChild(item);
-      });
-
-      if (monthlyMilestones.length > 3) {
-        const more = document.createElement('div');
-        more.className = 'tape-more-hint';
-        more.textContent = `+${monthlyMilestones.length - 3}건`;
-        tapeList.appendChild(more);
-      }
-      cell.appendChild(tapeList);
-
-      cell.addEventListener('click', () => {
-        switchDate(dateStr);
-        document.querySelector('.nav-tab[data-tab="tab-today"]')?.click();
-      });
-    }
-
-    return cell;
-  }
-
-  function getMonthKey() {
-    const { year, month } = currentMonthView;
-    return `${year}-${String(month).padStart(2, '0')}`;
-  }
-
-  function loadMonthSideMeta() {
-    const monthKey = getMonthKey();
-    const saved = localStorage.getItem(`haru_meta_${monthKey}`);
-    let data = null;
-    if (saved) {
-      try { data = JSON.parse(saved); } catch (e) {}
-    }
-    const f1 = document.getElementById('month-focus-1');
-    const f2 = document.getElementById('month-focus-2');
-    const f3 = document.getElementById('month-focus-3');
-    const wMemo = document.getElementById('month-wishlist-memo');
-
-    if (f1) f1.value = data?.focus1 || '';
-    if (f2) f2.value = data?.focus2 || '';
-    if (f3) f3.value = data?.focus3 || '';
-    if (wMemo) wMemo.value = data?.wishlist || '';
-
-    const reviewMode = data?.reviewMode || 'pen';
-    switchEditorMode('month-review', reviewMode);
-
-    const txtArea = document.getElementById('text-month-review');
-    if (txtArea) txtArea.value = data?.reviewText || '';
-
-    const ctrl = canvasControllers['canvas-month-review'];
-    if (ctrl) {
-      ctrl.strokes = data?.reviewStrokes || [];
-      const loadedH = data?.reviewHeight || DEFAULT_CANVAS_HEIGHTS['canvas-month-review'] || 210;
-      ctrl.setHeight(loadedH);
-      if (txtArea) txtArea.style.height = `${loadedH}px`;
-      ctrl.redrawFull();
-    }
-  }
-
-  function saveMonthSideMeta() {
-    const monthKey = getMonthKey();
-    const ctrl = canvasControllers['canvas-month-review'];
-    const btnMode = document.querySelector('.btn-mode-toggle[data-target="month-review"]');
-    const reviewMode = btnMode && btnMode.classList.contains('type-active') ? 'type' : 'pen';
-
-    const f1 = document.getElementById('month-focus-1');
-    const f2 = document.getElementById('month-focus-2');
-    const f3 = document.getElementById('month-focus-3');
-    const wMemo = document.getElementById('month-wishlist-memo');
-    const revTxt = document.getElementById('text-month-review');
-
-    const data = {
-      focus1: f1 ? f1.value : '',
-      focus2: f2 ? f2.value : '',
-      focus3: f3 ? f3.value : '',
-      wishlist: wMemo ? wMemo.value : '',
-      reviewMode,
-      reviewText: revTxt ? revTxt.value : '',
-      reviewStrokes: ctrl ? ctrl.strokes : [],
-      reviewHeight: ctrl && ctrl.canvas ? ctrl.canvas.clientHeight : 210,
-      updatedAt: Date.now(),
-      senderId: CLIENT_ID
-    };
-
-    localStorage.setItem(`haru_meta_${monthKey}`, JSON.stringify(data));
-
-    if (isFirestoreOnline && firestoreDb) {
-      const roomKey = getRoomKey();
-      if (roomKey) {
-        firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc(`month_${monthKey}`).set(data, { merge: true });
-      }
-    }
-  }
-
-  function renderWeekArchive() {
-    const [y, m, d] = currentDate.split('-').map(Number);
-    const cur = new Date(y, m - 1, d);
-    const dayDow = cur.getDay();
-
-    const start = new Date(cur);
-    start.setDate(cur.getDate() - dayDow);
-
-    const end = new Date(start);
-    end.setDate(start.getDate() + 6);
-
-    const rangeText = document.getElementById('week-date-range-text');
-    if (rangeText) {
-      rangeText.textContent = `${start.getFullYear()}.${start.getMonth() + 1}.${start.getDate()} ~ ${end.getFullYear()}.${end.getMonth() + 1}.${end.getDate()}`;
-    }
-
-    loadWeekReviewMeta(getWeekKey(currentDate));
-
-    const container = document.getElementById('week-archive-list');
-    if (!container) return;
-    container.innerHTML = '';
-
-    let totalTodos = 0;
-    let doneTodos = 0;
-    let feedbackDays = 0;
-    const dows = ['일', '월', '화', '수', '목', '금', '토'];
-
-    for (let i = 0; i < 7; i++) {
-      const targetD = new Date(start);
-      targetD.setDate(start.getDate() + i);
-      const ds = `${targetD.getFullYear()}-${String(targetD.getMonth() + 1).padStart(2, '0')}-${String(targetD.getDate()).padStart(2, '0')}`;
-      const dayData = daysCache[ds] || getLocalDayData(ds);
-
-      const col = document.createElement('div');
-      col.className = `day-archive-col ${ds === getTodayStr() ? 'is-today' : ''}`;
-
-      let rateText = '0%';
-      let todoCnt = '0/0';
-      let feedbackHtml = '<span style="color:var(--ink-faint); font-style:italic;">(피드백 없음)</span>';
-
-      if (dayData) {
-        const rTotal = routinesMaster.length;
-        const rDone = Object.values(dayData.routineChecks || {}).filter(Boolean).length;
-        const dayS = schedulesMaster.filter(s => s.date === ds);
-        const sTotal = dayS.length;
-        const sDone = Object.values(dayData.calendarChecks || {}).filter(Boolean).length;
-
-        const allTotal = rTotal + sTotal;
-        const allDone = rDone + sDone;
-
-        totalTodos += allTotal;
-        doneTodos += allDone;
-        if (allTotal > 0) rateText = `${Math.round((allDone / allTotal) * 100)}%`;
-        todoCnt = `${allDone}/${allTotal}`;
-
-        const textFb = dayData.texts && dayData.texts['todo-feedback'] ? dayData.texts['todo-feedback'].trim() : '';
-        const hasStrokes = dayData.strokes && dayData.strokes['canvas-todo-feedback'] && dayData.strokes['canvas-todo-feedback'].length > 0;
-
-        if (textFb) {
-          feedbackDays++;
-          feedbackHtml = escapeHtml(textFb);
-        } else if (hasStrokes) {
-          feedbackDays++;
-          feedbackHtml = `<span style="font-size:10.5px; background:#FFF7ED; border:1px solid #FDE68A; color:var(--accent); padding:2px 6px; border-radius:4px; font-weight:700;">✍️ 손글씨 피드백 작성됨</span>`;
-        }
-      }
-
-      col.innerHTML = `
-        <div class="day-col-title">
-          <span>${targetD.getMonth() + 1}/${targetD.getDate()} (${dows[i]})</span>
-          <span style="color:var(--accent); font-family:var(--font-mono); font-size:11px;">${rateText}</span>
-        </div>
-        <div style="font-size:11px; color:var(--ink-soft); font-family:var(--font-mono);">완료: ${todoCnt}</div>
-        <div style="font-size:11px; color:var(--ink-soft); white-space:pre-wrap; max-height:80px; overflow-y:auto; border-top:1px dashed var(--line); padding-top:4px;">
-          ${feedbackHtml}
-        </div>
-      `;
-
-      col.addEventListener('click', () => {
-        switchDate(ds);
-        document.querySelector('.nav-tab[data-tab="tab-today"]')?.click();
-      });
-      container.appendChild(col);
-    }
-
-    const overallRate = totalTodos > 0 ? Math.round((doneTodos / totalTodos) * 100) : 0;
-    const wRate = document.getElementById('week-todo-rate');
-    const wCount = document.getElementById('week-todo-count');
-    const wFbDays = document.getElementById('week-feedback-days');
-
-    if (wRate) wRate.textContent = `${overallRate}%`;
-    if (wCount) wCount.textContent = `${doneTodos} / ${totalTodos}`;
-    if (wFbDays) wFbDays.textContent = `${feedbackDays} / 7일`;
-  }
-
-  function loadWeekReviewMeta(weekKey) {
-    const saved = localStorage.getItem(`haru_week_${weekKey}`);
-    let data = null;
-    if (saved) {
-      try { data = JSON.parse(saved); } catch (e) {}
-    }
-
-    const reviewMode = data?.mode || 'pen';
-    switchEditorMode('week-review', reviewMode);
-
-    const txtArea = document.getElementById('text-week-review');
-    if (txtArea) txtArea.value = data?.text || '';
-
-    const ctrl = canvasControllers['canvas-week-review'];
-    if (ctrl) {
-      ctrl.strokes = data?.strokes || [];
-      const loadedH = data?.height || DEFAULT_CANVAS_HEIGHTS['canvas-week-review'] || 210;
-      ctrl.setHeight(loadedH);
-      if (txtArea) txtArea.style.height = `${loadedH}px`;
-      ctrl.redrawFull();
-    }
-  }
-
-  function saveWeekReviewMeta() {
-    const weekKey = getWeekKey(currentDate);
-    const ctrl = canvasControllers['canvas-week-review'];
-    const btnMode = document.querySelector('.btn-mode-toggle[data-target="week-review"]');
-    const mode = btnMode && btnMode.classList.contains('type-active') ? 'type' : 'pen';
-    const revTxt = document.getElementById('text-week-review');
-
-    const data = {
-      mode,
-      text: revTxt ? revTxt.value : '',
-      strokes: ctrl ? ctrl.strokes : [],
-      height: ctrl && ctrl.canvas ? ctrl.canvas.clientHeight : 210,
-      updatedAt: Date.now(),
-      senderId: CLIENT_ID
-    };
-
-    localStorage.setItem(`haru_week_${weekKey}`, JSON.stringify(data));
-
-    if (isFirestoreOnline && firestoreDb) {
-      const roomKey = getRoomKey();
-      if (roomKey) {
-        firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc(`week_${weekKey}`).set(data, { merge: true });
-      }
-    }
-  }
-
-  function initBacklogDrawerEvents() {
-    const backdrop = document.getElementById('backlog-drawer-backdrop');
-    const panel = document.getElementById('backlog-drawer-panel');
-    const openBtn = document.getElementById('btn-open-backlog-drawer');
-    const monthCalloutBtn = document.getElementById('btn-month-open-backlog');
-    const closeBtn = document.getElementById('btn-close-backlog-drawer');
-
-    const openDrawer = () => {
-      if (backdrop) backdrop.classList.add('open');
-      if (panel) panel.classList.add('open');
-      renderDrawerList();
-    };
-
-    const closeDrawer = () => {
-      if (backdrop) backdrop.classList.remove('open');
-      if (panel) panel.classList.remove('open');
-    };
-
-    openBtn?.addEventListener('click', openDrawer);
-    monthCalloutBtn?.addEventListener('click', openDrawer);
-    closeBtn?.addEventListener('click', closeDrawer);
-    backdrop?.addEventListener('click', closeDrawer);
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && panel && panel.classList.contains('open')) {
-        closeDrawer();
-      }
-    });
-
-    document.querySelectorAll('#drawer-tag-selector .tag-chip-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('#drawer-tag-selector .tag-chip-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedBacklogTag = btn.dataset.tag;
-      });
-    });
-
-    document.getElementById('btn-add-backlog')?.addEventListener('click', addBacklogItem);
-  }
-
-  function loadBacklogs() {
-    const saved = localStorage.getItem('haru_backlogs');
-    if (saved) {
-      try { backlogsMaster = JSON.parse(saved); } catch (e) {}
-    }
-    updateBacklogCounters();
-  }
-
-  function saveBacklogs() {
-    localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster));
-    updateBacklogCounters();
-    if (isFirestoreOnline && firestoreDb) {
-      const roomKey = getRoomKey();
-      if (roomKey) {
-        firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc('backlogs').set({
-          list: backlogsMaster,
-          updatedAt: Date.now(),
-          senderId: CLIENT_ID
-        }, { merge: true });
-      }
-    }
-    renderDrawerList();
-  }
-
-  function updateBacklogCounters() {
-    const count = backlogsMaster.length;
-    const headerEl = document.getElementById('header-backlog-count');
-    const drawerEl = document.getElementById('drawer-backlog-count');
-    if (headerEl) headerEl.textContent = count;
-    if (drawerEl) drawerEl.textContent = count;
-  }
-
-  function addBacklogItem() {
-    const input = document.getElementById('input-drawer-text');
-    if (!input) return;
-    const text = input.value.trim();
-    if (!text) {
-      showToast('보관할 내용을 적어주세요.');
-      return;
-    }
-
-    const item = {
-      id: 'b_' + Date.now(),
-      text,
-      tag: selectedBacklogTag || '공부',
-      createdAt: Date.now()
-    };
-
-    backlogsMaster.unshift(item);
-    input.value = '';
-    saveBacklogs();
-    showToast('서랍에 쏙 보관되었습니다!');
-  }
-
-  function renderDrawerList() {
-    const container = document.getElementById('drawer-item-list');
-    if (!container) return;
-    container.innerHTML = '';
-
-    if (backlogsMaster.length === 0) {
-      container.innerHTML = `
-        <div style="text-align:center; padding:30px 10px; color:var(--ink-faint); font-size:12.5px;">
-          서랍이 비어있습니다.<br>나중에 공부할 내용이나 생각거리를 채워보세요.
-        </div>
-      `;
-      return;
-    }
-
-    backlogsMaster.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'backlog-card-item';
-      card.id = `backlog-card-${item.id}`;
-      const dateStr = new Date(item.createdAt || Date.now()).toLocaleDateString();
-
-      card.innerHTML = `
-        <div class="card-top-info">
-          <span class="card-tag-pill tag-${item.tag || '공부'}">#${item.tag || '공부'}</span>
-          <button type="button" class="card-del-btn" title="삭제">×</button>
-        </div>
-        <div class="card-content-text">${escapeHtml(item.text)}</div>
-        <div class="card-action-bar">
-          <span class="card-date-badge">${dateStr}</span>
-          <button type="button" class="btn-schedule-picker-toggle" data-bid="${item.id}">
-            <span>📅 날짜에 꽂기</span>
-          </button>
-        </div>
-        <div class="inline-schedule-dock" id="dock-${item.id}" style="display:none;">
-          <div class="dock-header-label">
-            <span>캘린더 배치 날짜 &amp; 시간</span>
-            <button type="button" class="card-del-btn btn-close-dock" data-bid="${item.id}">×</button>
-          </div>
-          <div class="dock-input-row">
-            <input type="date" class="dock-input dock-date" value="${currentDate}">
-            <input type="time" class="dock-input dock-time" title="시작 시간">
-            <input type="time" class="dock-input dock-end-time" title="종료 시간">
-            <button type="button" class="btn-confirm-dock" data-bid="${item.id}">배치</button>
-          </div>
-          <div class="dock-quick-dates">
-            <button type="button" class="dock-quick-btn" data-bid="${item.id}" data-offset="0">오늘</button>
-            <button type="button" class="dock-quick-btn" data-bid="${item.id}" data-offset="1">내일</button>
-            <button type="button" class="dock-quick-btn" data-bid="${item.id}" data-offset="7">1주일 뒤</button>
-          </div>
-        </div>
-      `;
-
-      card.querySelector('.card-del-btn')?.addEventListener('click', () => {
-        backlogsMaster = backlogsMaster.filter(b => b.id !== item.id);
-        saveBacklogs();
-      });
-
-      card.querySelector('.btn-schedule-picker-toggle')?.addEventListener('click', () => {
-        const dock = card.querySelector(`#dock-${item.id}`);
-        if (!dock) return;
-        const isShown = dock.style.display !== 'none';
-        dock.style.display = isShown ? 'none' : 'flex';
-      });
-
-      card.querySelector('.btn-close-dock')?.addEventListener('click', () => {
-        const dock = card.querySelector(`#dock-${item.id}`);
-        if (dock) dock.style.display = 'none';
-      });
-
-      card.querySelectorAll('.dock-quick-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const offset = parseInt(btn.dataset.offset, 10);
-          const d = new Date();
-          d.setDate(d.getDate() + offset);
-          const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-          const dInp = card.querySelector('.dock-date');
-          if (dInp) dInp.value = ds;
-        });
-      });
-
-      card.querySelector('.btn-confirm-dock')?.addEventListener('click', () => {
-        const dateVal = card.querySelector('.dock-date')?.value;
-        const timeVal = card.querySelector('.dock-time')?.value;
-        const endTimeVal = card.querySelector('.dock-end-time')?.value;
-
-        if (!dateVal) {
-          showToast('배치할 날짜를 선택해주세요.');
-          return;
-        }
-
-        schedulesMaster.push({
-          id: 's_' + Date.now(),
-          date: dateVal,
-          time: timeVal,
-          endTime: endTimeVal,
-          text: `[${item.tag}] ${item.text.slice(0, 30)}`,
-          color: Math.floor(Math.random() * 5),
-          isMonthlyMilestone: true
-        });
-        saveSchedules();
-
-        backlogsMaster = backlogsMaster.filter(b => b.id !== item.id);
-        saveBacklogs();
-
-        showToast(`${dateVal} 달력에 일정이 등록되었습니다!`);
-      });
-
-      container.appendChild(card);
-    });
-  }
-
-  function getRoomKey() {
-    return (localStorage.getItem('haru_room_key') || '').trim().toLowerCase();
-  }
-
-  function loadLocalSettings() {
-    const key = localStorage.getItem('haru_room_key') || '';
-    const config = localStorage.getItem('haru_firebase_config') || '';
-    const keyInput = document.getElementById('input-secret-key');
-    const confInput = document.getElementById('input-firebase-config');
-    if (keyInput) keyInput.value = key;
-    if (confInput) confInput.value = config;
-  }
-
-  function openSyncModal() {
-    loadLocalSettings();
-    const modal = document.getElementById('sync-modal');
-    if (modal) modal.style.display = 'flex';
-  }
-
-  function closeSyncModal() {
-    const modal = document.getElementById('sync-modal');
-    if (modal) modal.style.display = 'none';
-  }
-
-  function updateSyncStatusUI(status, text) {
-    const dot = document.getElementById('sync-dot');
-    const txt = document.getElementById('sync-text');
-    const modalBadge = document.getElementById('modal-sync-status-badge');
-
-    if (dot) dot.className = `sync-dot ${status}`;
-    if (txt) txt.textContent = text;
-    if (modalBadge) {
-      modalBadge.textContent = text;
-      modalBadge.style.color = status === 'online' ? '#10B981' : status === 'syncing' ? '#F59E0B' : status === 'error' ? '#EF4444' : 'var(--ink-soft)';
-    }
-  }
-
-  function saveSyncSettings() {
-    const rawKey = document.getElementById('input-secret-key')?.value.trim();
-    const configStr = document.getElementById('input-firebase-config')?.value.trim();
-
-    if (!rawKey || !configStr) {
-      showToast('비밀 코드와 Firebase 설정값 JSON을 모두 입력해 주세요.');
-      return;
-    }
-
-    const key = rawKey.toLowerCase();
-    localStorage.setItem('haru_room_key', key);
-    localStorage.setItem('haru_firebase_config', configStr);
-
-    closeSyncModal();
-    initFirebaseIfAvailable();
-    showToast('동기화 정보가 저장되었습니다. 클라우드 연결을 시작합니다.');
-  }
-
-  async function disconnectFirebase() {
-    const ok = await showConfirmDialog('Firebase 연결 해제', 'Firebase 동기화 연결을 해제하시겠습니까? (로컬 데이터는 그대로 보존됩니다)', true);
-    if (!ok) return;
-
-    if (unsubscribeFirestore) unsubscribeFirestore();
-    localStorage.removeItem('haru_room_key');
-    localStorage.removeItem('haru_firebase_config');
-    isFirestoreOnline = false;
-    firestoreDb = null;
-    updateSyncStatusUI('', '로컬 보관');
-    closeSyncModal();
-    showToast('클라우드 연결이 해제되었습니다.');
-  }
-
-  function initFirebaseIfAvailable() {
-    const roomKey = getRoomKey();
-    const configStr = localStorage.getItem('haru_firebase_config');
-
-    if (!roomKey || !configStr) {
-      updateSyncStatusUI('', '로컬 보관');
-      return;
-    }
-
-    if (typeof firebase === 'undefined') {
-      updateSyncStatusUI('error', 'SDK 로드 대기');
-      return;
-    }
-
-    try {
-      const config = JSON.parse(configStr);
-      if (!firebase.apps.length) {
-        firebase.initializeApp(config);
-      }
-      firestoreDb = firebase.firestore();
-      isFirestoreOnline = true;
-      updateSyncStatusUI('online', '실시간 연동 중');
-      listenToRoomChanges(roomKey);
-      listenToMetaChanges(roomKey);
-    } catch (e) {
-      console.error(e);
-      isFirestoreOnline = false;
-      updateSyncStatusUI('error', '연결 오류');
-    }
-  }
-
-  function listenToRoomChanges(roomKey) {
-    if (unsubscribeFirestore) unsubscribeFirestore();
-
-    const daysCol = firestoreDb.collection('haru_diaries').doc(roomKey).collection('days');
-    unsubscribeFirestore = daysCol.onSnapshot(snapshot => {
-      snapshot.docChanges().forEach(change => {
-        const data = change.doc.data();
-        const dateKey = change.doc.id;
-        if (!data || data.senderId === CLIENT_ID) return;
-
-        daysCache[dateKey] = data;
-        localStorage.setItem(getDayStorageKey(dateKey), JSON.stringify(data));
-
-        if (dateKey === currentDate) {
-          isRemoteApplying = true;
-          loadDayData(currentDate);
-          isRemoteApplying = false;
-        }
-      });
-    }, err => {
-      console.error(err);
-      updateSyncStatusUI('error', '수신 오류');
-    });
-  }
-
-  function listenToMetaChanges(roomKey) {
-    const metaCol = firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta');
-    metaCol.onSnapshot(snapshot => {
-      snapshot.docChanges().forEach(change => {
-        const docId = change.doc.id;
-        const data = change.doc.data();
-        if (!data || data.senderId === CLIENT_ID) return;
-
-        if (docId === 'routines' && data.list) {
-          routinesMaster = data.list;
-          localStorage.setItem('haru_routines', JSON.stringify(routinesMaster));
-          renderDailyIntegratedSection(daysCache[currentDate] || {});
-        } else if (docId === 'schedules' && data.list) {
-          schedulesMaster = data.list;
-          localStorage.setItem('haru_schedules', JSON.stringify(schedulesMaster));
-          renderDailyIntegratedSection(daysCache[currentDate] || {});
-          renderMonthCalendar();
-        } else if (docId === 'backlogs' && data.list) {
-          backlogsMaster = data.list;
-          localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster));
-          updateBacklogCounters();
-          renderDrawerList();
-        }
-      });
-    });
-  }
-
-  function syncDayToFirestore(dateStr, data) {
-    const roomKey = getRoomKey();
-    if (!roomKey || !firestoreDb) return;
-
-    updateSyncStatusUI('syncing', '클라우드 저장 중');
-    const cleanData = sanitizeForFirestore(data);
-
-    firestoreDb.collection('haru_diaries')
-      .doc(roomKey)
-      .collection('days')
-      .doc(dateStr)
-      .set(cleanData, { merge: true })
-      .then(() => {
-        updateSyncStatusUI('online', '실시간 연동 중');
-      })
-      .catch(err => {
-        console.error(err);
-        updateSyncStatusUI('error', '저장 오류');
-      });
-  }
-
-  async function forcePullFromCloud() {
-    const roomKey = getRoomKey();
-    if (!roomKey || !firestoreDb) {
-      showToast('Firebase 연결 설정을 먼저 완료해 주세요.');
-      return;
-    }
-    try {
-      updateSyncStatusUI('syncing', '데이터 가져오는 중');
-      const snap = await firestoreDb.collection('haru_diaries').doc(roomKey).collection('days').get();
-      snap.forEach(doc => {
-        const d = doc.data();
-        daysCache[doc.id] = d;
-        localStorage.setItem(getDayStorageKey(doc.id), JSON.stringify(d));
-      });
-      loadDayData(currentDate);
-      updateSyncStatusUI('online', '실시간 연동 중');
-      showToast('클라우드에서 최신 데이터를 모두 불러왔습니다!');
-    } catch (e) {
-      console.error(e);
-      showToast('데이터 가져오기 실패: ' + e.message);
-      updateSyncStatusUI('error', '오류 발생');
-    }
-  }
-
-  function exportFullBackup() {
-    const backup = {
-      exportTime: new Date().toISOString(),
-      roomKey: getRoomKey(),
-      routines: routinesMaster,
-      schedules: schedulesMaster,
-      backlogs: backlogsMaster,
-      days: {}
-    };
-
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      if (k && k.startsWith('haru_day_')) {
-        try {
-          backup.days[k.replace('haru_day_', '')] = JSON.parse(localStorage.getItem(k));
-        } catch (e) {}
-      }
-    }
-
-    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `하루의페이지_전체백업_${getTodayStr()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast('백업 파일이 안전하게 다운로드되었습니다.');
-  }
-
-  function importBackupFile(event) {
-    const file = event.target.files && event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = JSON.parse(e.target.result);
-        if (data.routines) {
-          routinesMaster = data.routines;
-          localStorage.setItem('haru_routines', JSON.stringify(routinesMaster));
-        }
-        if (data.schedules) {
-          schedulesMaster = data.schedules;
-          localStorage.setItem('haru_schedules', JSON.stringify(schedulesMaster));
-        }
-        if (data.backlogs) {
-          backlogsMaster = data.backlogs;
-          localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster));
-        }
-        if (data.days) {
-          Object.keys(data.days).forEach(dateKey => {
-            const dayObj = data.days[dateKey];
-            daysCache[dateKey] = dayObj;
-            localStorage.setItem(getDayStorageKey(dateKey), JSON.stringify(dayObj));
-          });
-        }
-        updateBacklogCounters();
-        loadDayData(currentDate);
-        showToast('백업 데이터를 성공적으로 복원했습니다!');
-        closeSyncModal();
-      } catch (err) {
-        showToast('올바르지 않은 백업 JSON 파일입니다.');
-      }
-    };
-    reader.readAsText(file);
-    event.target.value = '';
-  }
-
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>'"]/g, tag => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    }[tag] || tag));
-  }
-
-  document.addEventListener('DOMContentLoaded', initApp);
-})();
-</script>
-</body>
-</html>
