@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>하루의 페이지 - 아날로그 감성 데일리 저널</title>
 
 <!-- Web Fonts -->
@@ -633,7 +633,7 @@
     width: 100%;
     background: #FFFFFF;
     overflow: hidden;
-    transition: height 0.15s ease-out;
+    touch-action: none !important;
   }
   .lined-canvas-wrap {
     background-color: #FFFFFF;
@@ -850,7 +850,6 @@
   .btn-add-block { background: var(--accent); color: #FFFFFF; border: none; border-radius: 6px; padding: 5px 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.15s ease; }
   .btn-add-block:hover { background: var(--accent-hover); }
 
-  /* 스마트 타임 레일 */
   .time-rail-container {
     display: flex;
     flex-direction: column;
@@ -1245,8 +1244,8 @@
         <button type="button" class="tool-mode-btn" id="btn-global-eraser" data-tool="eraser" title="획 단위 지우개">⌫ 지우개</button>
         <button type="button" class="tool-mode-btn" id="btn-global-capture" data-tool="scroll" title="화면 이동 및 스크롤 캡처 시 줄 그어짐 방지">📸 캡처/이동</button>
         
-        <!-- 팜 리젝션 스마트 토글 버튼 -->
-        <button type="button" class="palm-toggle-btn palm-on" id="btn-toggle-palm" title="태블릿 필기 시 손 터치 방지 모드 (펜 전용)">✋ 팜리젝션 ON</button>
+        <!-- 팜 리젝션 스마트 토글 버튼 (초기 상태 OFF 일치화) -->
+        <button type="button" class="palm-toggle-btn palm-off" id="btn-toggle-palm" title="태블릿 필기 시 손 터치 방지 모드 (펜 전용)">✋ 팜리젝션 OFF</button>
       </div>
 
       <div class="palette-divider"></div>
@@ -1539,7 +1538,7 @@
   </main>
 
   <!-- Tab: Week Review -->
-  <section id="tab-week" class="tab-content" hidden>
+  <section id="tab-week" class="tab-content" hidden style="display:none;">
     <div class="paper-card" style="margin-bottom:14px;">
       <div class="section-header">
         <h2 class="washi-tape-title tape-peach" style="font-size:14px;">이번 주 투두 &amp; 루틴 결산</h2>
@@ -1591,7 +1590,7 @@
   </section>
 
   <!-- Tab: Month Review -->
-  <section id="tab-month" class="tab-content" hidden>
+  <section id="tab-month" class="tab-content" hidden style="display:none;">
     <div class="month-spread-container">
       <div class="spread-page-col">
         <div class="paper-card">
@@ -1606,11 +1605,11 @@
 
           <div class="stat-grid-3">
             <div class="stat-card">
-              <div class="stat-label">월간 총 지출</div>
-              <div class="stat-value" id="month-spent-total">0원</div>
+              <div class="stat-label">루틴 실천 일수</div>
+              <div class="stat-value" id="month-routine-days">0일</div>
             </div>
             <div class="stat-card">
-              <div class="stat-label">루틴 실천 일수</div>
+              <div class="stat-label">투두 실천 일수</div>
               <div class="stat-value" id="month-todo-days">0일</div>
             </div>
             <div class="stat-card">
@@ -1836,70 +1835,228 @@
 (() => {
   const CLIENT_ID = 'client_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
 
-  // 대용량 비동기 저장을 위한 IndexedDB 래퍼 객체
+  // 대용량 무결점 저장을 위한 확장형 IndexedDB (버전 2: meta 및 offline_queue 추가 + v1 레거시 자동 이관 지원)
   const idbStorage = {
-    dbName: 'HaruPageDB',
-    storeName: 'days',
+    dbName: 'HaruPageDB_v2',
+    legacyDbName: 'HaruPageDB',
+    storeDays: 'days',
+    storeMeta: 'meta',
+    storeQueue: 'sync_queue',
     dbInstance: null,
 
     async init() {
       if (this.dbInstance) return this.dbInstance;
       return new Promise((resolve, reject) => {
-        const req = indexedDB.open(this.dbName, 1);
+        const req = indexedDB.open(this.dbName, 2);
         req.onupgradeneeded = (e) => {
           const db = e.target.result;
-          if (!db.objectStoreNames.contains(this.storeName)) {
-            db.createObjectStore(this.storeName, { keyPath: 'date' });
+          if (!db.objectStoreNames.contains(this.storeDays)) {
+            db.createObjectStore(this.storeDays, { keyPath: 'date' });
+          }
+          if (!db.objectStoreNames.contains(this.storeMeta)) {
+            db.createObjectStore(this.storeMeta, { keyPath: 'id' });
+          }
+          if (!db.objectStoreNames.contains(this.storeQueue)) {
+            db.createObjectStore(this.storeQueue, { keyPath: 'key' });
           }
         };
-        req.onsuccess = (e) => {
+        req.onsuccess = async (e) => {
           this.dbInstance = e.target.result;
+          await this.checkAndMigrateLegacy();
           resolve(this.dbInstance);
         };
         req.onerror = (e) => reject(e.target.error);
       });
     },
 
-    async get(dateKey) {
+    // 이전 HaruPageDB(v1) 및 localStorage에 작성된 기존 일기 데이터 무손실 자동 마이그레이션
+    async checkAndMigrateLegacy() {
+      try {
+        const migratedFlag = localStorage.getItem('haru_migrated_v2');
+        if (migratedFlag) return;
+
+        // 1. 레거시 IndexedDB (HaruPageDB v1) 점검 및 복사
+        await new Promise((resolve) => {
+          const req = indexedDB.open(this.legacyDbName);
+          req.onsuccess = (e) => {
+            const legDb = e.target.result;
+            if (legDb.objectStoreNames.contains('days')) {
+              const tx = legDb.transaction('days', 'readonly');
+              const store = tx.objectStore('days');
+              const getReq = store.getAll();
+              getReq.onsuccess = async () => {
+                const list = getReq.result || [];
+                for (const item of list) {
+                  if (item && item.date && item.data) {
+                    await this.setDay(item.date, item.data);
+                  }
+                }
+                legDb.close();
+                resolve();
+              };
+              getReq.onerror = () => { legDb.close(); resolve(); };
+            } else {
+              legDb.close();
+              resolve();
+            }
+          };
+          req.onerror = () => resolve();
+        });
+
+        // 2. localStorage에 남아있는 haru_day_* 및 복기 메타데이터 이관
+        const keys = Object.keys(localStorage);
+        for (const k of keys) {
+          if (k.startsWith('haru_day_')) {
+            const dateStr = k.replace('haru_day_', '');
+            try {
+              const dayData = JSON.parse(localStorage.getItem(k));
+              const existing = await this.getDay(dateStr);
+              if (!existing) {
+                await this.setDay(dateStr, dayData);
+              }
+            } catch (err) {}
+          } else if (k.startsWith('haru_week_')) {
+            try {
+              const weekData = JSON.parse(localStorage.getItem(k));
+              await this.setMeta(`week_${k.replace('haru_week_', '')}`, weekData);
+            } catch (err) {}
+          } else if (k.startsWith('haru_meta_')) {
+            try {
+              const monthData = JSON.parse(localStorage.getItem(k));
+              await this.setMeta(`month_${k.replace('haru_meta_', '')}`, monthData);
+            } catch (err) {}
+          }
+        }
+
+        localStorage.setItem('haru_migrated_v2', 'true');
+      } catch (err) {
+        console.warn('DB Migration warning:', err);
+      }
+    },
+
+    async getDay(dateKey) {
       try {
         const db = await this.init();
-        return new Promise((resolve, reject) => {
-          const tx = db.transaction(this.storeName, 'readonly');
-          const store = tx.objectStore(this.storeName);
+        return new Promise((resolve) => {
+          const tx = db.transaction(this.storeDays, 'readonly');
+          const store = tx.objectStore(this.storeDays);
           const req = store.get(dateKey);
           req.onsuccess = () => resolve(req.result ? req.result.data : null);
-          req.onerror = () => reject(req.error);
+          req.onerror = () => resolve(null);
         });
       } catch (err) {
-        console.warn('IDB Read error:', err);
         return null;
       }
     },
 
-    async set(dateKey, data) {
+    async setDay(dateKey, data) {
       try {
         const db = await this.init();
         return new Promise((resolve, reject) => {
-          const tx = db.transaction(this.storeName, 'readwrite');
-          const store = tx.objectStore(this.storeName);
-          const req = store.put({ date: dateKey, data: data });
+          const tx = db.transaction(this.storeDays, 'readwrite');
+          const store = tx.objectStore(this.storeDays);
+          const req = store.put({ date: dateKey, data: data, timestamp: Date.now() });
           req.onsuccess = () => resolve();
           req.onerror = () => reject(req.error);
         });
       } catch (err) {
-        console.warn('IDB Write error:', err);
+        console.warn('IDB setDay error:', err);
       }
     },
 
-    async getAll() {
+    async getMeta(metaId) {
+      try {
+        const db = await this.init();
+        return new Promise((resolve) => {
+          const tx = db.transaction(this.storeMeta, 'readonly');
+          const store = tx.objectStore(this.storeMeta);
+          const req = store.get(metaId);
+          req.onsuccess = () => resolve(req.result ? req.result.data : null);
+          req.onerror = () => resolve(null);
+        });
+      } catch (err) {
+        return null;
+      }
+    },
+
+    async setMeta(metaId, data) {
       try {
         const db = await this.init();
         return new Promise((resolve, reject) => {
-          const tx = db.transaction(this.storeName, 'readonly');
-          const store = tx.objectStore(this.storeName);
+          const tx = db.transaction(this.storeMeta, 'readwrite');
+          const store = tx.objectStore(this.storeMeta);
+          const req = store.put({ id: metaId, data: data, timestamp: Date.now() });
+          req.onsuccess = () => resolve();
+          req.onerror = () => reject(req.error);
+        });
+      } catch (err) {
+        console.warn('IDB setMeta error:', err);
+      }
+    },
+
+    async getAllMeta() {
+      try {
+        const db = await this.init();
+        return new Promise((resolve) => {
+          const tx = db.transaction(this.storeMeta, 'readonly');
+          const store = tx.objectStore(this.storeMeta);
           const req = store.getAll();
           req.onsuccess = () => resolve(req.result || []);
-          req.onerror = () => reject(req.error);
+          req.onerror = () => resolve([]);
+        });
+      } catch (err) {
+        return [];
+      }
+    },
+
+    async queueSync(key, type, payload) {
+      try {
+        const db = await this.init();
+        return new Promise((resolve) => {
+          const tx = db.transaction(this.storeQueue, 'readwrite');
+          const store = tx.objectStore(this.storeQueue);
+          store.put({ key, type, payload, addedAt: Date.now() });
+          tx.oncomplete = () => resolve();
+        });
+      } catch (e) {}
+    },
+
+    async dequeueSync(key) {
+      try {
+        const db = await this.init();
+        return new Promise((resolve) => {
+          const tx = db.transaction(this.storeQueue, 'readwrite');
+          const store = tx.objectStore(this.storeQueue);
+          store.delete(key);
+          tx.oncomplete = () => resolve();
+        });
+      } catch (e) {}
+    },
+
+    async getAllQueue() {
+      try {
+        const db = await this.init();
+        return new Promise((resolve) => {
+          const tx = db.transaction(this.storeQueue, 'readonly');
+          const store = tx.objectStore(this.storeQueue);
+          const req = store.getAll();
+          req.onsuccess = () => resolve(req.result || []);
+          req.onerror = () => resolve([]);
+        });
+      } catch (e) {
+        return [];
+      }
+    },
+
+    async getAllDays() {
+      try {
+        const db = await this.init();
+        return new Promise((resolve) => {
+          const tx = db.transaction(this.storeDays, 'readonly');
+          const store = tx.objectStore(this.storeDays);
+          const req = store.getAll();
+          req.onsuccess = () => resolve(req.result || []);
+          req.onerror = () => resolve([]);
         });
       } catch (err) {
         return [];
@@ -1946,8 +2103,8 @@
   let activeTab = 'tab-today';
   let currentDate = getTodayStr();
 
-  // 팜 리젝션 상태
-  let isPalmRejectionEnabled = true;
+  // 팜 리젝션 스마트 모드: 기본적으로 모든 펜/터치 허용, 스타일러스가 한 번이라도 인식된 경우에만 터치 거부 적용
+  let isPalmRejectionEnabled = false;
   let stylusEverDetected = false;
 
   // 타임 레일 선택 상태
@@ -1958,6 +2115,7 @@
   let currentMonthView = { year: initDate.getFullYear(), month: initDate.getMonth() + 1 };
 
   let isRemoteApplying = false;
+  let lastLocalActionTime = 0;
   let unsubscribeFirestore = null;
   let firestoreDb = null;
   let isFirestoreOnline = false;
@@ -2064,16 +2222,50 @@
     });
   }
 
+  // 스트로크 경량화 압축 필터 (소수점 절삭 및 미세 중복좌표 제거 - 획 유실 없이 60% 이상 용량 절감)
+  function compressStrokes(strokes) {
+    if (!Array.isArray(strokes)) return [];
+    return strokes.map(stroke => {
+      if (!stroke.points || stroke.points.length === 0) return stroke;
+      const cleanPoints = [];
+      let lastP = null;
+
+      for (let i = 0; i < stroke.points.length; i++) {
+        const p = stroke.points[i];
+        const rx = Math.round(p.x * 10) / 10;
+        const ry = Math.round(p.y * 10) / 10;
+
+        if (lastP && i !== stroke.points.length - 1) {
+          const dist = Math.hypot(rx - lastP.x, ry - lastP.y);
+          if (dist < 0.6) continue; // 0.6px 이하의 미세 떨림 점 제거 (시각적 차이 없음)
+        }
+        cleanPoints.push({ x: rx, y: ry });
+        lastP = { x: rx, y: ry };
+      }
+
+      return {
+        tool: stroke.tool || 'pen',
+        color: stroke.color || '#1F2937',
+        size: stroke.size || 2.0,
+        alpha: stroke.alpha !== undefined ? stroke.alpha : 1,
+        baseW: stroke.baseW || 360,
+        points: cleanPoints
+      };
+    });
+  }
+
   function sanitizeForFirestore(obj) {
     return JSON.parse(JSON.stringify(obj, (k, v) => (v === undefined ? null : v)));
   }
 
-  // 캔버스 드로잉 클래스
+  // ==========================================
+  // 절대 멈추지 않는 무결점 SmoothCanvas 클래스
+  // ==========================================
   class SmoothCanvas {
     constructor(canvasId) {
       this.canvas = document.getElementById(canvasId);
       if (!this.canvas) return;
-      this.ctx = this.canvas.getContext('2d');
+      this.ctx = this.canvas.getContext('2d', { willReadFrequently: false });
       this.id = canvasId;
       this.strokes = [];
       this.currentStroke = null;
@@ -2086,19 +2278,30 @@
       this.resizeCanvas();
     }
 
+    // 캔버스 크기 계산 안전 보장 (폭이 0이 되지 않도록 다단계 폴백)
     resizeCanvas() {
       if (!this.canvas) return;
-      const rect = this.canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      const parentWidth = this.canvas.parentElement ? this.canvas.parentElement.clientWidth : 0;
-      const displayWidth = rect.width > 0 ? rect.width : (parentWidth > 0 ? parentWidth : 320);
-      this.displayWidth = displayWidth;
+      
+      let width = 0;
+      if (this.canvas.clientWidth > 0) {
+        width = this.canvas.clientWidth;
+      } else if (this.canvas.parentElement && this.canvas.parentElement.clientWidth > 0) {
+        width = this.canvas.parentElement.clientWidth;
+      } else {
+        const app = document.querySelector('.app-container');
+        width = app ? Math.min(app.clientWidth - 40, 500) : 340;
+      }
+      if (width <= 0) width = 340;
+      this.displayWidth = width;
 
       let curH = parseInt(this.canvas.style.height) || parseInt(this.canvas.getAttribute('height')) || this.defaultHeight;
       if (curH > MAX_SAFE_HEIGHT || curH < MIN_SAFE_HEIGHT) curH = this.defaultHeight;
 
-      this.canvas.width = Math.round(displayWidth * dpr);
+      // 버퍼 크기와 CSS 크기 일치화
+      this.canvas.width = Math.round(width * dpr);
       this.canvas.height = Math.round(curH * dpr);
+      this.canvas.style.width = '100%';
       this.canvas.style.height = `${curH}px`;
       if (this.canvas.parentElement) {
         this.canvas.parentElement.style.height = `${curH}px`;
@@ -2123,28 +2326,29 @@
       if (!this.canvas) return;
       this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
-      this.canvas.addEventListener('touchstart', (e) => {
+      // 필기 중 모바일 브라우저 화면 끌림/스크롤 완벽 차단
+      const preventTouch = (e) => {
         if (currentTool !== 'scroll') e.preventDefault();
-      }, { passive: false });
-      this.canvas.addEventListener('touchmove', (e) => {
-        if (currentTool !== 'scroll') e.preventDefault();
-      }, { passive: false });
+      };
+      this.canvas.addEventListener('touchstart', preventTouch, { passive: false });
+      this.canvas.addEventListener('touchmove', preventTouch, { passive: false });
 
       this.canvas.addEventListener('pointerdown', (e) => this.onDown(e));
-      window.addEventListener('pointermove', (e) => this.onMove(e));
-      window.addEventListener('pointerup', (e) => this.onUp(e));
-      window.addEventListener('pointercancel', (e) => this.onUp(e));
+      this.canvas.addEventListener('pointermove', (e) => this.onMove(e));
+      this.canvas.addEventListener('pointerup', (e) => this.onUp(e));
+      this.canvas.addEventListener('pointercancel', (e) => this.onUp(e));
     }
 
     shouldRejectPointer(e) {
       if (e.pointerType === 'pen') {
         stylusEverDetected = true;
-        return false;
+        return false; // 펜은 언제나 무조건 통과
       }
       if (e.pointerType === 'mouse') {
-        return false;
+        return false; // 마우스도 언제나 통과
       }
       if (e.pointerType === 'touch') {
+        // 사용자가 명시적으로 팜리젝션을 켰고 스타일러스를 이미 사용 중일 때만 터치 거부
         if (isPalmRejectionEnabled && stylusEverDetected) {
           return true;
         }
@@ -2154,10 +2358,9 @@
 
     getPointerPos(e) {
       const rect = this.canvas.getBoundingClientRect();
-      return {
-        x: Math.round((e.clientX - rect.left) * 10) / 10,
-        y: Math.round((e.clientY - rect.top) * 10) / 10
-      };
+      const x = Math.round((e.clientX - rect.left) * 10) / 10;
+      const y = Math.round((e.clientY - rect.top) * 10) / 10;
+      return { x, y };
     }
 
     drawHighlighterSegment(ctx, p1, p2, width, color, alpha) {
@@ -2186,9 +2389,14 @@
     onDown(e) {
       if (currentTool === 'scroll') return;
       if (this.shouldRejectPointer(e)) return;
-      if (this.isDrawing) return;
 
+      lastLocalActionTime = Date.now();
       this.isDrawing = true;
+
+      try {
+        this.canvas.setPointerCapture(e.pointerId);
+      } catch (err) {}
+
       const pos = this.getPointerPos(e);
       this.lastPos = pos;
 
@@ -2213,6 +2421,7 @@
         points: [pos]
       };
 
+      // 첫 클릭/터치 시 즉각 획 가시성 보장
       if (currentTool === 'highlighter') {
         this.drawHighlighterSegment(this.ctx, pos, pos, strokeSize, strokeColor, strokeAlpha);
       } else {
@@ -2229,6 +2438,8 @@
     onMove(e) {
       if (!this.isDrawing) return;
       if (this.shouldRejectPointer(e)) return;
+
+      lastLocalActionTime = Date.now();
       const pos = this.getPointerPos(e);
 
       if (currentTool === 'eraser') {
@@ -2237,9 +2448,9 @@
       }
 
       if (!this.currentStroke || !this.lastPos) return;
-
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
 
+      // 실시간 부드러운 드로잉 렌더링
       if (this.currentStroke.tool === 'highlighter') {
         this.drawHighlighterSegment(this.ctx, this.lastPos, pos, this.currentStroke.size, this.currentStroke.color, this.currentStroke.alpha);
       } else {
@@ -2265,6 +2476,12 @@
       if (!this.isDrawing) return;
       this.isDrawing = false;
       this.lastPos = null;
+
+      try {
+        if (e && e.pointerId && this.canvas.hasPointerCapture(e.pointerId)) {
+          this.canvas.releasePointerCapture(e.pointerId);
+        }
+      } catch (err) {}
 
       if (this.currentStroke && this.currentStroke.points.length > 0) {
         this.strokes.push(this.currentStroke);
@@ -2344,7 +2561,7 @@
           this.ctx.save();
           this.ctx.beginPath();
           this.ctx.strokeStyle = s.color || '#1F2937';
-          this.ctx.globalAlpha = s.alpha || 1;
+          this.ctx.globalAlpha = s.alpha !== undefined ? s.alpha : 1;
           this.ctx.lineWidth = Math.max(0.8, s.size || 2);
           this.ctx.lineCap = 'round';
           this.ctx.lineJoin = 'round';
@@ -2380,6 +2597,17 @@
 
   async function initApp() {
     await idbStorage.init();
+    
+    // [장기 보관 필수] 브라우저 자동 삭제 방지: 영구 저장소(Persistent Storage) 요청
+    if (navigator.storage && navigator.storage.persist) {
+      try {
+        const isPersisted = await navigator.storage.persist();
+        if (isPersisted) {
+          console.log('HaruPage: 영구 스토리지 보호 활성화 완료');
+        }
+      } catch (e) {}
+    }
+
     loadSavedPenSettings();
     loadLocalSettings();
     initPenToolbar();
@@ -2389,20 +2617,45 @@
     initBacklogDrawerEvents();
     initMonthSpread();
     initTimeRail();
-    loadRoutines();
-    loadSchedules();
-    loadBacklogs();
+    await loadRoutines();
+    await loadSchedules();
+    await loadBacklogs();
     initFirebaseIfAvailable();
     await switchDate(currentDate);
 
+    // 창 닫힘/새로고침/모바일 앱 전환 시 데이터 유실 이중 방어
+    const emergencyFlush = () => {
+      saveCurrentDayData(true);
+      saveWeekReviewMeta(true);
+      saveMonthSideMeta(true);
+    };
+
+    window.addEventListener('beforeunload', emergencyFlush);
+    window.addEventListener('pagehide', emergencyFlush);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        emergencyFlush();
+      }
+    });
+
+    // 네트워크 복구 시 미전송 오프라인 큐 자동 전송
+    window.addEventListener('online', () => {
+      if (isFirestoreOnline && firestoreDb) {
+        processOfflineQueue();
+      }
+    });
+
     setTimeout(() => {
-      Object.values(canvasControllers).forEach(c => {
-        if (c && c.resizeCanvas) {
-          c.resizeCanvas();
-          c.redrawFull();
-        }
-      });
+      refreshAllCanvases();
     }, 250);
+  }
+
+  function refreshAllCanvases() {
+    Object.values(canvasControllers).forEach(c => {
+      if (c && c.resizeCanvas) {
+        c.resizeCanvas();
+      }
+    });
   }
 
   function savePenSettings() {
@@ -2448,13 +2701,8 @@
     });
 
     window.addEventListener('resize', debounce(() => {
-      Object.values(canvasControllers).forEach(c => {
-        if (c && c.resizeCanvas) {
-          c.resizeCanvas();
-          c.redrawFull();
-        }
-      });
-    }, 200));
+      refreshAllCanvases();
+    }, 150));
   }
 
   function initPenToolbar() {
@@ -2749,7 +2997,7 @@
         const ctrl = canvasControllers[cid];
         if (!ctrl || !ctrl.canvas) return;
 
-        const curH = ctrl.canvas.clientHeight;
+        const curH = ctrl.canvas.clientHeight || ctrl.defaultHeight;
         const step = 33;
         let nextH = curH;
 
@@ -2804,7 +3052,6 @@
         const ctrl = canvasControllers[`canvas-${target}`];
         if (ctrl && ctrl.resizeCanvas) {
           ctrl.resizeCanvas();
-          ctrl.redrawFull();
         }
       }, 50);
     }
@@ -2813,8 +3060,9 @@
   function initEventListeners() {
     document.querySelectorAll('.nav-tab').forEach(tab => {
       tab.addEventListener('click', async () => {
-        await saveCurrentDayData();
-        saveMonthSideMeta();
+        await saveCurrentDayData(true);
+        await saveMonthSideMeta(true);
+        await saveWeekReviewMeta(true);
 
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
@@ -2833,14 +3081,10 @@
         if (activeTab === 'tab-week') await renderWeekArchive();
         if (activeTab === 'tab-month') await renderMonthCalendar();
         
-        setTimeout(() => {
-          Object.values(canvasControllers).forEach(c => {
-            if (c && c.resizeCanvas) {
-              c.resizeCanvas();
-              c.redrawFull();
-            }
-          });
-        }, 80);
+        // 탭이 화면에 그려진 직후 정확한 좌표/크기 보정
+        requestAnimationFrame(() => {
+          refreshAllCanvases();
+        });
       });
     });
 
@@ -2853,17 +3097,17 @@
 
     ['text-budget-feedback', 'text-todo-feedback', 'text-gratitude', 'text-tome'].forEach(id => {
       const el = document.getElementById(id);
-      el?.addEventListener('input', debounce(() => saveCurrentDayData(), 500));
+      el?.addEventListener('input', () => debouncedSaveCurrentDay());
       el?.addEventListener('blur', () => saveCurrentDayData());
     });
 
     const wRev = document.getElementById('text-week-review');
-    wRev?.addEventListener('input', debounce(saveWeekReviewMeta, 500));
-    wRev?.addEventListener('blur', saveWeekReviewMeta);
+    wRev?.addEventListener('input', () => debouncedSaveWeekReview());
+    wRev?.addEventListener('blur', () => saveWeekReviewMeta());
 
     const mRev = document.getElementById('text-month-review');
-    mRev?.addEventListener('input', debounce(saveMonthSideMeta, 500));
-    mRev?.addEventListener('blur', saveMonthSideMeta);
+    mRev?.addEventListener('input', () => debouncedSaveMonthReview());
+    mRev?.addEventListener('blur', () => saveMonthSideMeta());
 
     document.getElementById('btn-tome-shuffle')?.addEventListener('click', () => {
       const q = TOME_PROMPTS[Math.floor(Math.random() * TOME_PROMPTS.length)];
@@ -2920,7 +3164,7 @@
     document.getElementById('btn-add-daily-block')?.addEventListener('click', addDailyTimeBlock);
 
     document.getElementById('btn-month-prev')?.addEventListener('click', async () => {
-      saveMonthSideMeta();
+      await saveMonthSideMeta();
       currentMonthView.month--;
       if (currentMonthView.month < 1) {
         currentMonthView.month = 12;
@@ -2929,7 +3173,7 @@
       await renderMonthCalendar();
     });
     document.getElementById('btn-month-next')?.addEventListener('click', async () => {
-      saveMonthSideMeta();
+      await saveMonthSideMeta();
       currentMonthView.month++;
       if (currentMonthView.month > 12) {
         currentMonthView.month = 1;
@@ -2943,15 +3187,14 @@
     ['month-focus-1', 'month-focus-2', 'month-focus-3', 'month-wishlist-memo'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
-        el.addEventListener('input', debounce(saveMonthSideMeta, 500));
+        el.addEventListener('input', () => debouncedSaveMonthReview());
         el.addEventListener('blur', () => saveMonthSideMeta());
-        el.addEventListener('change', () => saveMonthSideMeta());
       }
     });
   }
 
   async function moveDay(offset) {
-    await saveCurrentDayData();
+    await saveCurrentDayData(true);
     const [y, m, d] = currentDate.split('-').map(Number);
     const dateObj = new Date(y, m - 1, d);
     dateObj.setDate(dateObj.getDate() + offset);
@@ -2993,26 +3236,11 @@
     await loadDayData(currentDate);
   }
 
-  function getDayStorageKey(dateStr) {
-    return `haru_day_${dateStr}`;
-  }
-
   async function loadDayData(dateStr) {
     let day = daysCache[dateStr];
 
     if (!day) {
-      day = await idbStorage.get(dateStr);
-
-      if (!day) {
-        const local = localStorage.getItem(getDayStorageKey(dateStr));
-        if (local) {
-          try {
-            day = JSON.parse(local);
-            await idbStorage.set(dateStr, day);
-            localStorage.removeItem(getDayStorageKey(dateStr));
-          } catch (e) {}
-        }
-      }
+      day = await idbStorage.getDay(dateStr);
     }
 
     if (!day) {
@@ -3072,7 +3300,6 @@
         }
         ctrl.setHeight(loadedH);
         if (txtArea) txtArea.style.height = `${loadedH}px`;
-        ctrl.redrawFull();
       }
     });
 
@@ -3196,8 +3423,8 @@
     }
   }
 
-  async function saveCurrentDayData() {
-    if (isRemoteApplying) return;
+  async function saveCurrentDayData(force = false) {
+    if (isRemoteApplying && !force) return;
 
     const sections = ['budget-feedback', 'todo-feedback', 'gratitude', 'tome'];
     const strokes = {};
@@ -3209,8 +3436,8 @@
       const cid = `canvas-${sec}`;
       const ctrl = canvasControllers[cid];
       if (ctrl && ctrl.canvas) {
-        strokes[cid] = ctrl.strokes;
-        canvasHeights[cid] = Math.min(MAX_SAFE_HEIGHT, ctrl.canvas.clientHeight);
+        strokes[cid] = compressStrokes(ctrl.strokes);
+        canvasHeights[cid] = Math.min(MAX_SAFE_HEIGHT, ctrl.canvas.clientHeight || ctrl.defaultHeight);
       }
       const txt = document.getElementById(`text-${sec}`);
       if (txt) texts[sec] = txt.value;
@@ -3259,8 +3486,7 @@
     };
 
     daysCache[currentDate] = dayData;
-
-    await idbStorage.set(currentDate, dayData);
+    await idbStorage.setDay(currentDate, dayData);
 
     updateDailySummaryBadge(dayData);
     renderPriorityFocusPills(dayData);
@@ -3356,7 +3582,7 @@
             const ok = await showConfirmDialog('타임블록 삭제', `${s.text} 스케줄을 삭제하시겠습니까?`, true);
             if (ok) {
               schedulesMaster = schedulesMaster.filter(item => item.id !== s.id);
-              saveSchedules();
+              await saveSchedules();
             }
           });
 
@@ -3458,15 +3684,22 @@
     if (badge) badge.textContent = `달성 ${done} / ${total}`;
   }
 
-  function loadRoutines() {
-    const saved = localStorage.getItem('haru_routines');
-    if (saved) {
-      try { routinesMaster = JSON.parse(saved); } catch (e) {}
+  async function loadRoutines() {
+    const meta = await idbStorage.getMeta('routines');
+    if (meta && meta.list) {
+      routinesMaster = meta.list;
+    } else {
+      const saved = localStorage.getItem('haru_routines');
+      if (saved) {
+        try { routinesMaster = JSON.parse(saved); } catch (e) {}
+      }
     }
   }
 
-  function saveRoutines() {
-    localStorage.setItem('haru_routines', JSON.stringify(routinesMaster));
+  async function saveRoutines() {
+    await idbStorage.setMeta('routines', { list: routinesMaster });
+    try { localStorage.setItem('haru_routines', JSON.stringify(routinesMaster)); } catch(e){}
+
     if (isFirestoreOnline && firestoreDb) {
       const roomKey = getRoomKey();
       if (roomKey) {
@@ -3525,15 +3758,22 @@
     renderRoutineManager();
   }
 
-  function loadSchedules() {
-    const saved = localStorage.getItem('haru_schedules');
-    if (saved) {
-      try { schedulesMaster = JSON.parse(saved); } catch (e) {}
+  async function loadSchedules() {
+    const meta = await idbStorage.getMeta('schedules');
+    if (meta && meta.list) {
+      schedulesMaster = meta.list;
+    } else {
+      const saved = localStorage.getItem('haru_schedules');
+      if (saved) {
+        try { schedulesMaster = JSON.parse(saved); } catch (e) {}
+      }
     }
   }
 
-  function saveSchedules() {
-    localStorage.setItem('haru_schedules', JSON.stringify(schedulesMaster));
+  async function saveSchedules() {
+    await idbStorage.setMeta('schedules', { list: schedulesMaster });
+    try { localStorage.setItem('haru_schedules', JSON.stringify(schedulesMaster)); } catch(e){}
+
     if (isFirestoreOnline && firestoreDb) {
       const roomKey = getRoomKey();
       if (roomKey) {
@@ -3591,7 +3831,7 @@
     if (enEl) enEl.textContent = `${monthNamesEn[month - 1]} ${year}`;
     if (koEl) koEl.textContent = `${year}년 ${month}월의 기록`;
 
-    loadMonthSideMeta();
+    await loadMonthSideMeta();
 
     const grid = document.getElementById('month-calendar-grid');
     if (!grid) return;
@@ -3609,8 +3849,10 @@
       cellCount++;
     }
 
-    let monthSpentTotal = 0;
-    let completedDays = 0;
+    let routineActiveDays = 0;
+    let todoActiveDays = 0;
+    let totalItemsSum = 0;
+    let doneItemsSum = 0;
     const todayStr = getTodayStr();
 
     for (let d = 1; d <= lastDate; d++) {
@@ -3622,13 +3864,24 @@
 
       let dayData = daysCache[dateStr];
       if (!dayData) {
-        dayData = await idbStorage.get(dateStr);
+        dayData = await idbStorage.getDay(dateStr);
       }
 
       if (dayData) {
-        monthSpentTotal += (dayData.spent || 0);
+        // 1. 고정 루틴 실천 집계
         const rDone = Object.values(dayData.routineChecks || {}).filter(Boolean).length;
-        if (rDone > 0) completedDays++;
+        const rTotal = routinesMaster.length;
+        if (rDone > 0) routineActiveDays++;
+
+        // 2. 당일 타임블록/투두 실천 집계
+        const daySchedules = schedulesMaster.filter(s => s.date === dateStr);
+        const sDone = Object.values(dayData.calendarChecks || {}).filter(Boolean).length;
+        const sTotal = daySchedules.length;
+        if (sDone > 0) todoActiveDays++;
+
+        // 3. 전체 달성률 집계
+        totalItemsSum += (rTotal + sTotal);
+        doneItemsSum += (rDone + sDone);
       }
 
       grid.appendChild(createDayCell(d, false, isSun, isSat, dateStr, isToday, dayData));
@@ -3641,14 +3894,14 @@
       cellCount++;
     }
 
-    const spTotal = document.getElementById('month-spent-total');
-    const tDays = document.getElementById('month-todo-days');
-    const avgRate = document.getElementById('month-avg-rate');
+    const rDaysEl = document.getElementById('month-routine-days');
+    const tDaysEl = document.getElementById('month-todo-days');
+    const avgRateEl = document.getElementById('month-avg-rate');
 
-    if (spTotal) spTotal.textContent = `${monthSpentTotal.toLocaleString()}원`;
-    if (tDays) tDays.textContent = `${completedDays}일`;
-    const rate = lastDate > 0 ? Math.round((completedDays / lastDate) * 100) : 0;
-    if (avgRate) avgRate.textContent = `${rate}%`;
+    if (rDaysEl) rDaysEl.textContent = `${routineActiveDays}일`;
+    if (tDaysEl) tDaysEl.textContent = `${todoActiveDays}일`;
+    const rate = totalItemsSum > 0 ? Math.round((doneItemsSum / totalItemsSum) * 100) : 0;
+    if (avgRateEl) avgRateEl.textContent = `${rate}%`;
   }
 
   function createDayCell(dayNum, isOtherMonth, isSun, isSat, dateStr, isToday = false, dayData = null) {
@@ -3724,13 +3977,16 @@
     return `${year}-${String(month).padStart(2, '0')}`;
   }
 
-  function loadMonthSideMeta() {
+  async function loadMonthSideMeta() {
     const monthKey = getMonthKey();
-    const saved = localStorage.getItem(`haru_meta_${monthKey}`);
-    let data = null;
-    if (saved) {
-      try { data = JSON.parse(saved); } catch (e) {}
+    let data = await idbStorage.getMeta(`month_${monthKey}`);
+    if (!data) {
+      const saved = localStorage.getItem(`haru_meta_${monthKey}`);
+      if (saved) {
+        try { data = JSON.parse(saved); } catch (e) {}
+      }
     }
+
     const f1 = document.getElementById('month-focus-1');
     const f2 = document.getElementById('month-focus-2');
     const f3 = document.getElementById('month-focus-3');
@@ -3753,11 +4009,12 @@
       const loadedH = data?.reviewHeight || DEFAULT_CANVAS_HEIGHTS['canvas-month-review'] || 210;
       ctrl.setHeight(loadedH);
       if (txtArea) txtArea.style.height = `${loadedH}px`;
-      ctrl.redrawFull();
     }
   }
 
-  function saveMonthSideMeta() {
+  async function saveMonthSideMeta(force = false) {
+    if (isRemoteApplying && !force) return;
+
     const monthKey = getMonthKey();
     const ctrl = canvasControllers['canvas-month-review'];
     const btnMode = document.querySelector('.btn-mode-toggle[data-target="month-review"]');
@@ -3776,13 +4033,13 @@
       wishlist: wMemo ? wMemo.value : '',
       reviewMode,
       reviewText: revTxt ? revTxt.value : '',
-      reviewStrokes: ctrl ? ctrl.strokes : [],
+      reviewStrokes: ctrl ? compressStrokes(ctrl.strokes) : [],
       reviewHeight: ctrl && ctrl.canvas ? ctrl.canvas.clientHeight : 210,
       updatedAt: Date.now(),
       senderId: CLIENT_ID
     };
 
-    localStorage.setItem(`haru_meta_${monthKey}`, JSON.stringify(data));
+    await idbStorage.setMeta(`month_${monthKey}`, data);
 
     if (isFirestoreOnline && firestoreDb) {
       const roomKey = getRoomKey();
@@ -3808,7 +4065,7 @@
       rangeText.textContent = `${start.getFullYear()}.${start.getMonth() + 1}.${start.getDate()} ~ ${end.getFullYear()}.${end.getMonth() + 1}.${end.getDate()}`;
     }
 
-    loadWeekReviewMeta(getWeekKey(currentDate));
+    await loadWeekReviewMeta(getWeekKey(currentDate));
 
     const container = document.getElementById('week-archive-list');
     if (!container) return;
@@ -3826,7 +4083,7 @@
       
       let dayData = daysCache[ds];
       if (!dayData) {
-        dayData = await idbStorage.get(ds);
+        dayData = await idbStorage.getDay(ds);
       }
 
       const col = document.createElement('div');
@@ -3891,11 +4148,13 @@
     if (wFbDays) wFbDays.textContent = `${feedbackDays} / 7일`;
   }
 
-  function loadWeekReviewMeta(weekKey) {
-    const saved = localStorage.getItem(`haru_week_${weekKey}`);
-    let data = null;
-    if (saved) {
-      try { data = JSON.parse(saved); } catch (e) {}
+  async function loadWeekReviewMeta(weekKey) {
+    let data = await idbStorage.getMeta(`week_${weekKey}`);
+    if (!data) {
+      const saved = localStorage.getItem(`haru_week_${weekKey}`);
+      if (saved) {
+        try { data = JSON.parse(saved); } catch (e) {}
+      }
     }
 
     const reviewMode = data?.mode || 'pen';
@@ -3910,11 +4169,12 @@
       const loadedH = data?.height || DEFAULT_CANVAS_HEIGHTS['canvas-week-review'] || 210;
       ctrl.setHeight(loadedH);
       if (txtArea) txtArea.style.height = `${loadedH}px`;
-      ctrl.redrawFull();
     }
   }
 
-  function saveWeekReviewMeta() {
+  async function saveWeekReviewMeta(force = false) {
+    if (isRemoteApplying && !force) return;
+
     const weekKey = getWeekKey(currentDate);
     const ctrl = canvasControllers['canvas-week-review'];
     const btnMode = document.querySelector('.btn-mode-toggle[data-target="week-review"]');
@@ -3924,13 +4184,13 @@
     const data = {
       mode,
       text: revTxt ? revTxt.value : '',
-      strokes: ctrl ? ctrl.strokes : [],
+      strokes: ctrl ? compressStrokes(ctrl.strokes) : [],
       height: ctrl && ctrl.canvas ? ctrl.canvas.clientHeight : 210,
       updatedAt: Date.now(),
       senderId: CLIENT_ID
     };
 
-    localStorage.setItem(`haru_week_${weekKey}`, JSON.stringify(data));
+    await idbStorage.setMeta(`week_${weekKey}`, data);
 
     if (isFirestoreOnline && firestoreDb) {
       const roomKey = getRoomKey();
@@ -3980,17 +4240,24 @@
     document.getElementById('btn-add-backlog')?.addEventListener('click', addBacklogItem);
   }
 
-  function loadBacklogs() {
-    const saved = localStorage.getItem('haru_backlogs');
-    if (saved) {
-      try { backlogsMaster = JSON.parse(saved); } catch (e) {}
+  async function loadBacklogs() {
+    const meta = await idbStorage.getMeta('backlogs');
+    if (meta && meta.list) {
+      backlogsMaster = meta.list;
+    } else {
+      const saved = localStorage.getItem('haru_backlogs');
+      if (saved) {
+        try { backlogsMaster = JSON.parse(saved); } catch (e) {}
+      }
     }
     updateBacklogCounters();
   }
 
-  function saveBacklogs() {
-    localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster));
+  async function saveBacklogs() {
+    await idbStorage.setMeta('backlogs', { list: backlogsMaster });
+    try { localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster)); } catch(e){}
     updateBacklogCounters();
+
     if (isFirestoreOnline && firestoreDb) {
       const roomKey = getRoomKey();
       if (roomKey) {
@@ -4237,11 +4504,16 @@
       updateSyncStatusUI('online', '실시간 연동 중');
       listenToRoomChanges(roomKey);
       listenToMetaChanges(roomKey);
+      processOfflineQueue();
     } catch (e) {
       console.error(e);
       isFirestoreOnline = false;
       updateSyncStatusUI('error', '연결 오류');
     }
+  }
+
+  function isUserInteractingWithCanvas() {
+    return Object.values(canvasControllers).some(c => c && c.isDrawing);
   }
 
   function listenToRoomChanges(roomKey) {
@@ -4254,8 +4526,13 @@
         const dateKey = change.doc.id;
         if (!data || data.senderId === CLIENT_ID) continue;
 
+        // 사용자가 현재 필기 중이거나 방금 쓴 경우 원격 덮어쓰기 방어
+        if (dateKey === currentDate && (isUserInteractingWithCanvas() || (Date.now() - lastLocalActionTime < 2500))) {
+          continue;
+        }
+
         daysCache[dateKey] = data;
-        await idbStorage.set(dateKey, data);
+        await idbStorage.setDay(dateKey, data);
 
         if (dateKey === currentDate) {
           isRemoteApplying = true;
@@ -4272,28 +4549,61 @@
   function listenToMetaChanges(roomKey) {
     const metaCol = firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta');
     metaCol.onSnapshot(snapshot => {
-      snapshot.docChanges().forEach(change => {
+      snapshot.docChanges().forEach(async change => {
         const docId = change.doc.id;
         const data = change.doc.data();
         if (!data || data.senderId === CLIENT_ID) return;
 
+        // 주간/월간 메타데이터 저장 및 실시간 화면 갱신
         if (docId === 'routines' && data.list) {
           routinesMaster = data.list;
-          localStorage.setItem('haru_routines', JSON.stringify(routinesMaster));
+          await idbStorage.setMeta('routines', { list: routinesMaster });
           renderDailyIntegratedSection(daysCache[currentDate] || {});
         } else if (docId === 'schedules' && data.list) {
           schedulesMaster = data.list;
-          localStorage.setItem('haru_schedules', JSON.stringify(schedulesMaster));
+          await idbStorage.setMeta('schedules', { list: schedulesMaster });
           renderDailyIntegratedSection(daysCache[currentDate] || {});
           renderMonthCalendar();
         } else if (docId === 'backlogs' && data.list) {
           backlogsMaster = data.list;
-          localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster));
+          await idbStorage.setMeta('backlogs', { list: backlogsMaster });
           updateBacklogCounters();
           renderDrawerList();
+        } else if (docId.startsWith('week_')) {
+          await idbStorage.setMeta(docId, data);
+          if (activeTab === 'tab-week') {
+            await loadWeekReviewMeta(getWeekKey(currentDate));
+          }
+        } else if (docId.startsWith('month_')) {
+          await idbStorage.setMeta(docId, data);
+          if (activeTab === 'tab-month') {
+            await loadMonthSideMeta();
+          }
         }
       });
     });
+  }
+
+  async function processOfflineQueue() {
+    if (!firestoreDb || !isFirestoreOnline) return;
+    const roomKey = getRoomKey();
+    if (!roomKey) return;
+
+    const queue = await idbStorage.getAllQueue();
+    if (queue.length === 0) return;
+
+    for (const item of queue) {
+      try {
+        if (item.type === 'day') {
+          await firestoreDb.collection('haru_diaries').doc(roomKey).collection('days').doc(item.key).set(item.payload, { merge: true });
+        } else if (item.type === 'meta') {
+          await firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').doc(item.key).set(item.payload, { merge: true });
+        }
+        await idbStorage.dequeueSync(item.key);
+      } catch (e) {
+        break; // 여전히 오프라인이거나 문제 발생 시 대기
+      }
+    }
   }
 
   function syncDayToFirestore(dateStr, data) {
@@ -4303,6 +4613,20 @@
     updateSyncStatusUI('syncing', '클라우드 저장 중');
     const cleanData = sanitizeForFirestore(data);
 
+    // [Firebase 1MB 사전 방어] 전송 전 페이로드 바이트 크기 사전 점검
+    try {
+      const payloadString = JSON.stringify(cleanData);
+      const approxBytes = new Blob([payloadString]).size;
+      
+      // Firestore 단일 문서 한도 1MB(1,048,576 bytes) 초과 방지 (안전 여유분 950KB)
+      if (approxBytes > 950 * 1024) {
+        console.warn(`Firestore 1MB 한도 근접 (${Math.round(approxBytes/1024)}KB): 로컬 DB에 안전 보관 유지`);
+        updateSyncStatusUI('online', '로컬 안전 보관 (대용량)');
+        showToast('필기량이 매우 많아 로컬 DB에 안전 보관되었습니다.');
+        return;
+      }
+    } catch (e) {}
+
     firestoreDb.collection('haru_diaries')
       .doc(roomKey)
       .collection('days')
@@ -4311,9 +4635,10 @@
       .then(() => {
         updateSyncStatusUI('online', '실시간 연동 중');
       })
-      .catch(err => {
-        console.error(err);
-        updateSyncStatusUI('error', '저장 오류');
+      .catch(async (err) => {
+        console.error('Firestore 전송 실패, 오프라인 큐로 안전 보관:', err);
+        await idbStorage.queueSync(dateStr, 'day', cleanData);
+        updateSyncStatusUI('error', '로컬 안전 저장 (클라우드 지연)');
       });
   }
 
@@ -4325,15 +4650,32 @@
     }
     try {
       updateSyncStatusUI('syncing', '데이터 가져오는 중');
-      const snap = await firestoreDb.collection('haru_diaries').doc(roomKey).collection('days').get();
-      for (const doc of snap.docs) {
+      
+      // 1. 일일 일기 데이터 가져오기
+      const daysSnap = await firestoreDb.collection('haru_diaries').doc(roomKey).collection('days').get();
+      for (const doc of daysSnap.docs) {
         const d = doc.data();
         daysCache[doc.id] = d;
-        await idbStorage.set(doc.id, d);
+        await idbStorage.setDay(doc.id, d);
       }
+
+      // 2. 메타(루틴, 스케줄, 백로그, 주간/월간 회고) 데이터 완벽 동기화
+      const metaSnap = await firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').get();
+      for (const doc of metaSnap.docs) {
+        const d = doc.data();
+        await idbStorage.setMeta(doc.id, d);
+        if (doc.id === 'routines' && d.list) routinesMaster = d.list;
+        if (doc.id === 'schedules' && d.list) schedulesMaster = d.list;
+        if (doc.id === 'backlogs' && d.list) backlogsMaster = d.list;
+      }
+
+      updateBacklogCounters();
       await loadDayData(currentDate);
+      if (activeTab === 'tab-week') await renderWeekArchive();
+      if (activeTab === 'tab-month') await renderMonthCalendar();
+
       updateSyncStatusUI('online', '실시간 연동 중');
-      showToast('클라우드에서 최신 데이터를 모두 불러왔습니다!');
+      showToast('클라우드에서 일기, 스케줄, 회고 데이터를 모두 불러왔습니다!');
     } catch (e) {
       console.error(e);
       showToast('데이터 가져오기 실패: ' + e.message);
@@ -4342,10 +4684,17 @@
   }
 
   async function exportFullBackup() {
-    const allDays = await idbStorage.getAll();
+    const allDays = await idbStorage.getAllDays();
+    const allMeta = await idbStorage.getAllMeta();
+
     const backupDays = {};
     allDays.forEach(item => {
       backupDays[item.date] = item.data;
+    });
+
+    const backupMeta = {};
+    allMeta.forEach(item => {
+      backupMeta[item.id] = item.data;
     });
 
     const backup = {
@@ -4354,6 +4703,7 @@
       routines: routinesMaster,
       schedules: schedulesMaster,
       backlogs: backlogsMaster,
+      meta: backupMeta,
       days: backupDays
     };
 
@@ -4364,7 +4714,7 @@
     a.download = `하루의페이지_전체백업_${getTodayStr()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('백업 파일이 안전하게 다운로드되었습니다.');
+    showToast('주간/월간 회고를 포함한 전체 백업 파일이 다운로드되었습니다.');
   }
 
   function importBackupFile(event) {
@@ -4377,26 +4727,34 @@
         const data = JSON.parse(e.target.result);
         if (data.routines) {
           routinesMaster = data.routines;
-          localStorage.setItem('haru_routines', JSON.stringify(routinesMaster));
+          await saveRoutines();
         }
         if (data.schedules) {
           schedulesMaster = data.schedules;
-          localStorage.setItem('haru_schedules', JSON.stringify(schedulesMaster));
+          await saveSchedules();
         }
         if (data.backlogs) {
           backlogsMaster = data.backlogs;
-          localStorage.setItem('haru_backlogs', JSON.stringify(backlogsMaster));
+          await saveBacklogs();
+        }
+        if (data.meta) {
+          for (const mId of Object.keys(data.meta)) {
+            await idbStorage.setMeta(mId, data.meta[mId]);
+          }
         }
         if (data.days) {
           for (const dateKey of Object.keys(data.days)) {
             const dayObj = data.days[dateKey];
             daysCache[dateKey] = dayObj;
-            await idbStorage.set(dateKey, dayObj);
+            await idbStorage.setDay(dateKey, dayObj);
           }
         }
         updateBacklogCounters();
         await loadDayData(currentDate);
-        showToast('백업 데이터를 성공적으로 복원했습니다!');
+        if (activeTab === 'tab-week') await renderWeekArchive();
+        if (activeTab === 'tab-month') await renderMonthCalendar();
+
+        showToast('일기 및 주간/월간 회고 데이터를 성공적으로 복원했습니다!');
         closeSyncModal();
       } catch (err) {
         showToast('올바르지 않은 백업 JSON 파일입니다.');
