@@ -15,6 +15,10 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
 
+<!-- Google Calendar API & GIS SDK -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js" async defer></script>
+
 <style>
   :root {
     --bg-page: #F8F9FA;
@@ -30,6 +34,8 @@
     --accent-hover: #9A3412;
     --accent-soft: #FFEDD5;
     --accent-badge: #FEF3C7;
+    --google-blue: #1A73E8;
+    --google-blue-soft: #E8F0FE;
     --shadow-sm: 0 1px 3px rgba(31, 41, 55, 0.05);
     --shadow-md: 0 4px 16px -2px rgba(31, 41, 55, 0.06), 0 2px 6px -1px rgba(31, 41, 55, 0.03);
     --shadow-lg: 0 10px 25px -3px rgba(31, 41, 55, 0.08), 0 4px 10px -2px rgba(31, 41, 55, 0.04);
@@ -91,6 +97,7 @@
   .tape-sage { background-color: #E2ECE0; color: #274D2E; transform: rotate(0.4deg); border-top: 1px solid rgba(255, 255, 255, 0.7); }
   .tape-sand { background-color: #F5EEDB; color: #5D431F; transform: rotate(-0.3deg); border-top: 1px solid rgba(255, 255, 255, 0.7); }
   .tape-lavender { background-color: #EAE6F7; color: #453472; transform: rotate(0.5deg); border-top: 1px solid rgba(255, 255, 255, 0.7); }
+  .tape-google { background-color: #E8F0FE; color: #174EA6; transform: rotate(-0.2deg); border-top: 1px solid rgba(255, 255, 255, 0.7); }
 
   .top-bar-row {
     display: flex;
@@ -99,6 +106,7 @@
     padding: 6px 2px 10px;
     border-bottom: 1.5px solid var(--line);
     gap: 8px;
+    flex-wrap: wrap;
   }
   .app-brand {
     font-family: var(--font-serif);
@@ -116,7 +124,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
   }
   .header-icon-btn {
     display: inline-flex;
@@ -135,6 +143,9 @@
     transition: all 0.15s ease;
   }
   .header-icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .header-icon-btn.gcal-btn:hover { border-color: var(--google-blue); color: var(--google-blue); }
+  .header-icon-btn.gcal-connected { background: var(--google-blue-soft); border-color: #AECBFA; color: var(--google-blue); font-weight: 700; }
+  
   .backlog-count-pill {
     background: var(--accent);
     color: #FFFFFF;
@@ -194,6 +205,7 @@
     box-shadow: 0 2px 6px rgba(194,65,12,0.25);
   }
 
+  /* Toolbar */
   .global-pen-container {
     position: sticky;
     top: 6px;
@@ -252,16 +264,8 @@
     gap: 4px;
     transition: all 0.15s ease;
   }
-  .palm-toggle-btn.palm-on {
-    background: #DCFCE7;
-    border-color: #22C55E;
-    color: #15803D;
-  }
-  .palm-toggle-btn.palm-off {
-    background: #F3F4F6;
-    border-color: var(--line);
-    color: var(--ink-soft);
-  }
+  .palm-toggle-btn.palm-on { background: #DCFCE7; border-color: #22C55E; color: #15803D; }
+  .palm-toggle-btn.palm-off { background: #F3F4F6; border-color: var(--line); color: var(--ink-soft); }
 
   .current-pen-status {
     display: inline-flex;
@@ -387,6 +391,7 @@
   .badge-tomorrow { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
   .badge-past { background: #F3F4F6; color: var(--ink-soft); border: 1px solid var(--line); }
 
+  /* Ledger Side */
   .daily-goal-box {
     display: flex;
     flex-direction: column;
@@ -404,7 +409,6 @@
     color: var(--ink);
     letter-spacing: -0.01em;
   }
-
   .goal-split-grid {
     display: grid;
     grid-template-columns: 1fr auto 1.25fr;
@@ -429,146 +433,30 @@
     border-radius: 10px;
     padding: 10px 12px;
   }
-  .ledger-section-group {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  .ledger-header-compact {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .ledger-label-group {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .ledger-tag-label {
-    font-family: var(--font-serif);
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--accent);
-  }
-  .ledger-sum-text {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    color: var(--ink-soft);
-    font-weight: 600;
-  }
-  .ledger-sum-text strong {
-    color: var(--ink);
-  }
-
-  .ledger-rows-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .ledger-row-pair {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 5px;
-    align-items: center;
-    width: 100%;
-  }
-  .compact-input-text {
-    width: 100%;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 4px 7px;
-    font-size: 12px;
-    font-family: var(--font-sans);
-    outline: none;
-    background: #FFFFFF;
-    transition: border-color 0.15s ease;
-  }
+  .ledger-section-group { display: flex; flex-direction: column; gap: 5px; }
+  .ledger-header-compact { display: flex; justify-content: space-between; align-items: center; }
+  .ledger-label-group { display: inline-flex; align-items: center; gap: 6px; }
+  .ledger-tag-label { font-family: var(--font-serif); font-size: 12.5px; font-weight: 700; color: var(--accent); }
+  .ledger-sum-text { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-soft); font-weight: 600; }
+  .ledger-sum-text strong { color: var(--ink); }
+  .ledger-rows-list { display: flex; flex-direction: column; gap: 4px; }
+  .ledger-row-pair { display: grid; grid-template-columns: 1fr 1fr auto; gap: 5px; align-items: center; width: 100%; }
+  .compact-input-text { width: 100%; border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px; font-size: 12px; font-family: var(--font-sans); outline: none; background: #FFFFFF; }
   .compact-input-text:focus { border-color: var(--accent); }
-
-  .compact-amount-box {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    background: #FFFFFF;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 2px 7px;
-    transition: border-color 0.15s ease;
-  }
+  .compact-amount-box { width: 100%; display: flex; align-items: center; background: #FFFFFF; border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; }
   .compact-amount-box:focus-within { border-color: var(--accent); }
-  .compact-input-amount {
-    flex: 1;
-    min-width: 0;
-    border: none;
-    outline: none;
-    font-size: 12px;
-    font-family: var(--font-mono);
-    text-align: right;
-    background: transparent;
-    color: var(--ink);
-  }
-  .compact-unit {
-    font-size: 11px;
-    color: var(--ink-soft);
-    margin-left: 2px;
-    flex-shrink: 0;
-  }
-
-  .btn-remove-line {
-    border: none;
-    background: transparent;
-    color: #9CA3AF;
-    font-size: 12px;
-    cursor: pointer;
-    padding: 2px 4px;
-    line-height: 1;
-  }
+  .compact-input-amount { flex: 1; min-width: 0; border: none; outline: none; font-size: 12px; font-family: var(--font-mono); text-align: right; background: transparent; color: var(--ink); }
+  .compact-unit { font-size: 11px; color: var(--ink-soft); margin-left: 2px; flex-shrink: 0; }
+  .btn-remove-line { border: none; background: transparent; color: #9CA3AF; font-size: 12px; cursor: pointer; padding: 2px 4px; line-height: 1; }
   .btn-remove-line:hover { color: #DC2626; }
-
-  .btn-add-mini-line {
-    background: #FFFFFF;
-    border: 1px solid var(--line);
-    color: var(--accent);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    line-height: 1.4;
-  }
+  .btn-add-mini-line { background: #FFFFFF; border: 1px solid var(--line); color: var(--accent); padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer; }
   .btn-add-mini-line:hover { background: var(--accent-soft); border-color: var(--accent); }
 
-  .goal-balance-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 6px;
-    border-top: 1px dashed var(--line);
-    margin-top: 2px;
-  }
-  .diff-badge {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 5px;
-    font-family: var(--font-mono);
-    white-space: nowrap;
-  }
+  .goal-balance-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 6px; border-top: 1px dashed var(--line); margin-top: 2px; }
+  .diff-badge { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 5px; font-family: var(--font-mono); white-space: nowrap; }
   .diff-under { background: #ECFDF5; color: #059669; }
   .diff-over { background: #FEF2F2; color: #DC2626; }
-
-  .goal-arrow-connector {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-hand);
-    font-size: 24px;
-    color: var(--accent);
-    font-weight: 700;
-    user-select: none;
-    opacity: 0.8;
-  }
+  .goal-arrow-connector { display: flex; align-items: center; justify-content: center; font-family: var(--font-hand); font-size: 24px; color: var(--accent); font-weight: 700; user-select: none; opacity: 0.8; }
 
   .goal-feedback-side {
     display: flex;
@@ -580,21 +468,8 @@
     padding: 10px 12px;
     position: relative;
   }
-  .feedback-head-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2px;
-  }
-  .feedback-label-text {
-    font-family: var(--font-serif);
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--ink);
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
+  .feedback-head-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+  .feedback-label-text { font-family: var(--font-serif); font-size: 12.5px; font-weight: 700; color: var(--ink); display: inline-flex; align-items: center; gap: 4px; }
   .direct-action-tools { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
   .btn-mini-action {
@@ -652,15 +527,8 @@
     -webkit-user-select: none;
     user-select: none;
   }
-  .ink-canvas.drawing-active {
-    touch-action: none !important;
-    pointer-events: auto;
-  }
-  .ink-canvas.scroll-active {
-    touch-action: pan-y !important;
-    cursor: grab;
-    pointer-events: none !important;
-  }
+  .ink-canvas.drawing-active { touch-action: none !important; pointer-events: auto; }
+  .ink-canvas.scroll-active { touch-action: pan-y !important; cursor: grab; pointer-events: none !important; }
 
   .diary-lined-textarea {
     width: 100%;
@@ -814,6 +682,7 @@
   .time-chip { font-family: var(--font-mono); font-size: 10.5px; padding: 2px 6px; border-radius: 4px; background: #FFF7ED; border: 1px solid #FDBA74; color: #9A3412; font-weight: 700; white-space: nowrap; }
   .duration-pill { font-family: var(--font-mono); font-size: 9.5px; padding: 1px 5px; border-radius: 3px; background: #F3F4F6; color: var(--ink-soft); font-weight: 600; white-space: nowrap; }
   .source-tag { font-size: 9.5px; padding: 1px 5px; border-radius: 3px; background: #E0E7FF; color: #3730A3; font-weight: 700; white-space: nowrap; }
+  .source-tag.gcal { background: #E8F0FE; color: #174EA6; border: 1px solid #AECBFA; }
 
   .btn-toggle-dock {
     background: #FFF7ED;
@@ -831,64 +700,173 @@
   }
   .btn-toggle-dock:hover { background: var(--accent); color: #FFFFFF; border-color: var(--accent); }
 
+  /* -------------------------------------------------------------
+     안드로이드 구글 캘린더 스타일 모바일 최적화 타임 도크
+  ------------------------------------------------------------- */
   .timeblock-dock {
-    background: #FFFDF9;
-    border: 1.5px solid #FDE68A;
-    border-radius: 8px;
-    padding: 8px 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 4px;
-    animation: slideDown 0.16s ease-out;
-  }
-  .dock-form-row { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-  .dock-time-input { border: 1.5px solid var(--line); border-radius: 6px; padding: 4px 6px; font-size: 11px; font-family: var(--font-mono); outline: none; background: #FFFFFF; }
-  .dock-time-input:focus { border-color: var(--accent); }
-  .dock-text-input { flex: 1; min-width: 140px; border: 1.5px solid var(--line); border-radius: 6px; padding: 4px 8px; font-size: 12px; font-family: var(--font-sans); outline: none; background: #FFFFFF; }
-  .dock-text-input:focus { border-color: var(--accent); }
-  .btn-add-block { background: var(--accent); color: #FFFFFF; border: none; border-radius: 6px; padding: 5px 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.15s ease; }
-  .btn-add-block:hover { background: var(--accent-hover); }
-
-  .time-rail-container {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
     background: #FFFFFF;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 6px 8px;
+    border: 1.5px solid #FDBA74;
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+    box-shadow: 0 4px 14px rgba(194,65,12,0.08);
+    animation: slideDown 0.18s ease-out;
   }
-  .time-rail-header {
+  .dock-header-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 6px;
+  }
+  .dock-header-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #9A3412;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .dock-duration-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    background: #FFEDD5;
+    color: var(--accent);
+    padding: 2px 7px;
+    border-radius: 999px;
+  }
+  .btn-close-dock {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #9A3412;
+    font-size: 16px;
+    padding: 0 4px;
+    line-height: 1;
+  }
+
+  /* 모바일 구글 캘린더 시간 선택 상자 (터치 친화형) */
+  .android-time-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #FDFBF7;
+    border: 1px solid #FED7AA;
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .time-inputs-pair {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+  .time-field-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .time-field-label {
     font-size: 10.5px;
+    font-weight: 700;
     color: var(--ink-soft);
   }
-  .time-rail-scroll {
-    display: flex;
-    gap: 3px;
-    overflow-x: auto;
-    padding: 4px 1px;
-    scrollbar-width: thin;
-  }
-  .time-slot-btn {
-    border: 1px solid var(--line);
-    background: #F9FAFB;
+  .android-time-input {
+    width: 100%;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    padding: 7px 8px;
+    font-size: 14px;
     font-family: var(--font-mono);
-    font-size: 10px;
-    padding: 4px 7px;
-    border-radius: 4px;
+    font-weight: 700;
+    text-align: center;
+    background: #FFFFFF;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .android-time-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(194,65,12,0.15);
+  }
+  .time-arrow-separator {
+    font-size: 14px;
+    color: #9A3412;
+    font-weight: 700;
+    margin-top: 14px;
+  }
+
+  /* 구글 캘린더식 원터치 시간 더하기/프리셋 칩 */
+  .quick-chips-scroll {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .quick-chips-scroll::-webkit-scrollbar { display: none; }
+  .btn-quick-duration {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    color: var(--ink-soft);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
     cursor: pointer;
     white-space: nowrap;
-    color: var(--ink-soft);
     transition: all 0.12s ease;
   }
-  .time-slot-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .time-slot-btn.slot-start { background: #EA580C; color: #FFFFFF; border-color: #EA580C; font-weight: 700; }
-  .time-slot-btn.slot-range { background: #FFEDD5; color: #9A3412; border-color: #FDBA74; }
-  .time-slot-btn.slot-end { background: #C2410C; color: #FFFFFF; border-color: #C2410C; font-weight: 700; }
+  .btn-quick-duration:hover, .btn-quick-duration:active {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* 풀 너비 할 일 입력창 & 추가 버튼 */
+  .dock-text-input-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .dock-full-text-input {
+    width: 100%;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: var(--font-sans);
+    outline: none;
+    background: #FFFFFF;
+  }
+  .dock-full-text-input:focus { border-color: var(--accent); }
+  
+  .btn-submit-daily-block {
+    width: 100%;
+    background: var(--accent);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 2px 6px rgba(194,65,12,0.25);
+    transition: background 0.15s ease;
+  }
+  .btn-submit-daily-block:hover { background: var(--accent-hover); }
 
   .empty-hint-text { font-size: 11.5px; color: var(--ink-faint); font-style: italic; padding: 8px 4px; text-align: center; }
 
@@ -915,28 +893,185 @@
   .tome-q-text { flex: 1; font-family: var(--font-serif); font-style: italic; font-size: 12.5px; color: var(--ink-soft); }
   .tome-shuffle { background: #FFFFFF; border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; font-size: 11px; cursor: pointer; color: var(--ink-soft); }
 
+  /* -------------------------------------------------------------
+     통계 카드 및 루틴/투두 상세 분석 (주간 / 월간)
+  ------------------------------------------------------------- */
   .stat-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+  @media (max-width: 600px) { .stat-grid-3 { grid-template-columns: 1fr; gap: 6px; } }
   .stat-card { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px; text-align: center; box-shadow: var(--shadow-sm); }
   .stat-label { font-size: 11px; color: var(--ink-soft); margin-bottom: 2px; }
   .stat-value { font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: var(--accent); }
+  .stat-sub { font-size: 10px; color: var(--ink-faint); font-family: var(--font-mono); }
 
-  .week-archive-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 14px; }
-  @media (max-width: 768px) { .week-archive-grid { grid-template-columns: 1fr; } }
+  /* 루틴별 진행 현황 카드 리스트 */
+  .routine-breakdown-card {
+    background: #FAFAFA;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .routine-breakdown-item {
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 7px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .routine-item-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .routine-item-rate-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .progress-bar-wrap {
+    width: 100%;
+    height: 6px;
+    background: #F3F4F6;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+  .dow-check-dots {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3px;
+    margin-top: 4px;
+    width: 100%;
+  }
+  .dow-dot-item {
+    flex: 1;
+    text-align: center;
+    font-size: 9.5px;
+    font-family: var(--font-serif);
+    padding: 2px 0;
+    border-radius: 4px;
+    background: #F3F4F6;
+    color: var(--ink-faint);
+  }
+  .dow-dot-item.active {
+    background: #DCFCE7;
+    color: #15803D;
+    font-weight: 700;
+    border: 1px solid #BBF7D0;
+  }
+
+  /* 주간 돌아보기: 좌측(루틴) vs 우측(투두) 2분할 반응형 그리드 */
+  .week-split-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 14px;
+    align-items: start;
+  }
+  @media (max-width: 820px) {
+    .week-split-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+  .week-split-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #FDFBF7;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    min-width: 0;
+  }
+  .week-split-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 7px;
+    border-bottom: 1.5px dashed var(--line);
+  }
+
+  /* 우측: 7일 투두 및 피드백 리스트 (세로 스크롤형 카드 뷰) */
+  .week-archive-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    max-height: 480px;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  .week-archive-grid::-webkit-scrollbar {
+    width: 4px;
+  }
+  .week-archive-grid::-webkit-scrollbar-thumb {
+    background: #E5E7EB;
+    border-radius: 4px;
+  }
   .day-archive-col {
     background: #FFFFFF;
     border: 1.5px solid var(--line);
     border-radius: 8px;
-    padding: 8px;
+    padding: 8px 10px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
     cursor: pointer;
-    transition: transform 0.1s ease, border-color 0.1s ease;
+    transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
   }
-  .day-archive-col:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .day-archive-col.is-today { border-color: var(--accent); background: #FFF7ED; }
-  .day-col-title { font-size: 11.5px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+  .day-archive-col:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(194, 65, 12, 0.08);
+  }
+  .day-archive-col.is-today {
+    border-color: var(--accent);
+    background: #FFF7ED;
+  }
+  .day-col-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .day-col-rate-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #FFF7ED;
+    border: 1px solid #FED7AA;
+    color: var(--accent);
+  }
+  .day-col-feedback-box {
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.45;
+    white-space: pre-wrap;
+    max-height: 46px;
+    overflow-y: auto;
+    border-top: 1px dashed var(--line);
+    padding-top: 3px;
+    margin-top: 1px;
+  }
 
+  /* 월간 뷰 */
   .month-spread-container { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: start; }
   @media (min-width: 1100px) { .month-spread-container { grid-template-columns: 1.25fr 0.75fr; gap: 18px; } }
   .spread-page-col { display: flex; flex-direction: column; gap: 14px; }
@@ -1033,6 +1168,7 @@
   .tape-color-2 { background: #DCFCE7; color: #14532D; border-left: 2px solid #22C55E; }
   .tape-color-3 { background: #E0E7FF; color: #3730A3; border-left: 2px solid #6366F1; }
   .tape-color-4 { background: #F3E8FF; color: #581C87; border-left: 2px solid #A855F7; }
+  .tape-color-gcal { background: #E8F0FE; color: #174EA6; border-left: 2.5px solid #1A73E8; }
   .tape-more-hint { font-size: 9px; color: var(--ink-faint); text-align: right; font-family: var(--font-mono); }
 
   .monthly-side-card { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 10px; }
@@ -1061,6 +1197,7 @@
   .month-backlog-callout-card { background: #FFFDF9; border: 1.5px dashed #FDE68A; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .month-backlog-callout-title { font-size: 12.5px; font-weight: 700; color: #92400E; display: flex; align-items: center; gap: 6px; }
 
+  /* Drawer & Popups */
   .backlog-drawer-backdrop {
     position: fixed;
     inset: 0;
@@ -1096,44 +1233,38 @@
   .drawer-title-group { display: flex; flex-direction: column; gap: 2px; }
   .drawer-main-title { font-family: var(--font-serif); font-size: 16px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px; }
   .drawer-sub-hint { font-size: 11px; color: var(--ink-soft); }
-  .drawer-close-btn { border: none; background: transparent; font-size: 22px; line-height: 1; color: var(--ink-soft); cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.15s ease, color 0.15s ease; }
-  .drawer-close-btn:hover { background: #F3F4F6; color: var(--accent); }
+  .drawer-close-btn { border: none; background: transparent; font-size: 22px; line-height: 1; color: var(--ink-soft); cursor: pointer; padding: 4px 8px; border-radius: 6px; }
 
   .drawer-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; background-color: #FAFAFA; }
   .drawer-add-box { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 8px; }
   .tag-select-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-  .tag-chip-btn { border: 1px solid var(--line); background: #FFFFFF; color: var(--ink-soft); font-size: 11px; padding: 2px 8px; border-radius: 999px; cursor: pointer; transition: all 0.12s ease; }
+  .tag-chip-btn { border: 1px solid var(--line); background: #FFFFFF; color: var(--ink-soft); font-size: 11px; padding: 2px 8px; border-radius: 999px; cursor: pointer; }
   .tag-chip-btn.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); font-weight: 700; }
   .drawer-text-input { width: 100%; border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; font-family: var(--font-sans); line-height: 1.5; outline: none; resize: none; background: #FFFFFF; }
   .drawer-text-input:focus { border-color: var(--accent); }
-  .btn-submit-backlog { background: var(--accent); color: #FFFFFF; border: none; padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; align-self: flex-end; transition: background 0.15s ease; }
-  .btn-submit-backlog:hover { background: var(--accent-hover); }
+  .btn-submit-backlog { background: var(--accent); color: #FFFFFF; border: none; padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; align-self: flex-end; }
 
   .drawer-item-list { display: flex; flex-direction: column; gap: 9px; }
-  .backlog-card-item { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 7px; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
-  .backlog-card-item:hover { border-color: rgba(194, 65, 12, 0.4); box-shadow: 0 3px 10px rgba(0,0,0,0.06); }
+  .backlog-card-item { background: #FFFFFF; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 7px; }
   .card-top-info { display: flex; justify-content: space-between; align-items: center; }
   .card-tag-pill { font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #F3F4F6; color: var(--ink-soft); }
   .card-tag-pill.tag-공부 { background: #FEF3C7; color: #92400E; }
   .card-tag-pill.tag-아이디어 { background: #FCE7F3; color: #9D174D; }
   .card-tag-pill.tag-자료 { background: #E0E7FF; color: #3730A3; }
   .card-tag-pill.tag-과제 { background: #DCFCE7; color: #166534; }
-  .card-del-btn { border: none; background: transparent; color: #9CA3AF; font-size: 14px; cursor: pointer; padding: 0 4px; transition: color 0.15s ease; }
+  .card-del-btn { border: none; background: transparent; color: #9CA3AF; font-size: 14px; cursor: pointer; padding: 0 4px; }
   .card-del-btn:hover { color: #DC2626; }
   .card-content-text { font-size: 12.5px; color: var(--ink); line-height: 1.5; white-space: pre-wrap; word-break: break-all; font-family: var(--font-sans); }
   .card-action-bar { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--line); padding-top: 7px; margin-top: 2px; }
   .card-date-badge { font-size: 10px; color: var(--ink-faint); font-family: var(--font-mono); }
-  .btn-schedule-picker-toggle { background: #FFF7ED; border: 1px solid #FFEDD5; color: var(--accent); padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; transition: all 0.15s ease; }
-  .btn-schedule-picker-toggle:hover { background: var(--accent); color: #FFFFFF; border-color: var(--accent); }
+  .btn-schedule-picker-toggle { background: #FFF7ED; border: 1px solid #FFEDD5; color: var(--accent); padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; }
 
-  .inline-schedule-dock { background: #FFFDF9; border: 1.5px solid #FDE68A; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 6px; margin-top: 4px; animation: fadeIn 0.15s ease-out; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .inline-schedule-dock { background: #FFFDF9; border: 1.5px solid #FDE68A; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
   .dock-header-label { font-size: 11px; font-weight: 700; color: #92400E; display: flex; justify-content: space-between; }
   .dock-input-row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
   .dock-input { border: 1px solid var(--line); border-radius: 5px; padding: 4px 6px; font-size: 11.5px; background: #FFFFFF; }
   .dock-quick-dates { display: flex; gap: 3px; }
   .dock-quick-btn { border: 1px solid var(--line); background: #FFFFFF; font-size: 10px; padding: 2px 6px; border-radius: 4px; cursor: pointer; color: var(--ink-soft); }
-  .dock-quick-btn:hover { border-color: var(--accent); color: var(--accent); }
   .btn-confirm-dock { background: var(--accent); color: #FFFFFF; border: none; border-radius: 5px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
   .toast-notice {
@@ -1188,6 +1319,7 @@
     text-align: center;
   }
   .modal-btn.primary { background: var(--accent); color: #FFFFFF; border-color: var(--accent); }
+  .modal-btn.google { background: var(--google-blue); color: #FFFFFF; border-color: var(--google-blue); }
   .modal-btn.danger { background: #DC2626; color: #FFFFFF; border-color: #DC2626; }
 
   .routine-manager-list { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; max-height: 220px; overflow-y: auto; }
@@ -1196,7 +1328,7 @@
 
   .sync-field-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; text-align: left; }
   .sync-label { font-size: 12px; font-weight: 700; color: var(--ink); }
-  .sync-input { border: 1.5px solid var(--line); border-radius: 8px; padding: 7px 10px; font-size: 13px; font-family: var(--font-mono); outline: none; background: #FFFFFF; }
+  .sync-input { border: 1.5px solid var(--line); border-radius: 8px; padding: 7px 10px; font-size: 13px; font-family: var(--font-mono); outline: none; background: #FFFFFF; width: 100%; }
   .sync-input:focus { border-color: var(--accent); }
   .sync-help { font-size: 11px; color: var(--ink-soft); line-height: 1.45; }
   .sync-box-status { background: #FAFAFA; border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
@@ -1213,6 +1345,12 @@
       <span>하루의 페이지</span>
     </div>
     <div class="top-bar-actions">
+      <!-- 구글 캘린더 연동 바로가기 버튼 추가 -->
+      <button type="button" class="header-icon-btn gcal-btn" id="btn-open-gcal" title="구글 캘린더 연동 및 일정 가져오기">
+        <span>📅 구글 캘린더</span>
+        <span id="gcal-status-pill" style="font-size:10px; opacity:0.8;">연동</span>
+      </button>
+
       <button type="button" class="header-icon-btn" id="btn-open-backlog-drawer" title="공부 & 아이디어 백로그 서랍 열기">
         <span>📥 백로그 서랍</span>
         <span class="backlog-count-pill" id="header-backlog-count">0</span>
@@ -1244,7 +1382,7 @@
         <button type="button" class="tool-mode-btn" id="btn-global-eraser" data-tool="eraser" title="획 단위 지우개">⌫ 지우개</button>
         <button type="button" class="tool-mode-btn" id="btn-global-capture" data-tool="scroll" title="화면 이동 및 스크롤 캡처 시 줄 그어짐 방지">📸 캡처/이동</button>
         
-        <!-- 팜 리젝션 스마트 토글 버튼 (초기 상태 OFF 일치화) -->
+        <!-- 팜 리젝션 스마트 토글 버튼 -->
         <button type="button" class="palm-toggle-btn palm-off" id="btn-toggle-palm" title="태블릿 필기 시 손 터치 방지 모드 (펜 전용)">✋ 팜리젝션 OFF</button>
       </div>
 
@@ -1428,30 +1566,57 @@
                 <span>⏱️ 몰입 스케줄 (타임블록)</span>
                 <span id="daily-timeblock-count" style="font-size:11px; color:var(--accent); font-weight:700; font-family:var(--font-mono);">0건</span>
               </span>
-              <button type="button" class="btn-toggle-dock" id="btn-toggle-timeblock-dock" title="새로운 스터디/몰입 일정 추가">+ 블록 추가</button>
+              <button type="button" class="btn-toggle-dock" id="btn-toggle-timeblock-dock" title="새로운 스케줄 추가">+ 블록 추가</button>
             </div>
 
+            <!-- 안드로이드 구글 캘린더 스타일 모바일 최적화 시간 설정 도크 -->
             <div class="timeblock-dock" id="timeblock-dock-panel" style="display:none;">
-              <div style="font-size:10.5px; font-weight:700; color:#92400E; display:flex; justify-content:space-between; align-items:center;">
-                <span>+ 오늘 몰입할 세션 등록 <span id="dock-duration-calc" style="font-family:var(--font-mono); font-weight:600;">(시간 지정)</span></span>
-                <button type="button" id="btn-close-dock" style="border:none; background:transparent; cursor:pointer; color:#92400E; font-size:14px; line-height:1;">✕</button>
-              </div>
-
-              <!-- 스마트 원터치 타임 레일 (구글 캘린더 스타일) -->
-              <div class="time-rail-container">
-                <div class="time-rail-header">
-                  <span>💡 탭 2번으로 간편 시간 지정: <strong id="rail-selected-range">시작 시간을 탭하세요</strong></span>
-                  <button type="button" id="btn-reset-rail" style="border:none; background:transparent; color:var(--ink-faint); font-size:10px; cursor:pointer;">초기화</button>
+              <div class="dock-header-bar">
+                <span class="dock-header-title">
+                  <span>⏰</span>
+                  <span>몰입 스케줄 시간 설정</span>
+                </span>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span class="dock-duration-badge" id="dock-duration-calc">1시간 몰입</span>
+                  <button type="button" class="btn-close-dock" id="btn-close-dock">✕</button>
                 </div>
-                <div class="time-rail-scroll" id="interactive-time-rail"></div>
               </div>
 
-              <div class="dock-form-row">
-                <input type="time" id="input-block-start" class="dock-time-input" required title="시작 시간">
-                <span style="font-size:11px; color:var(--ink-soft);">~</span>
-                <input type="time" id="input-block-end" class="dock-time-input" required title="종료 시간">
-                <input type="text" id="input-block-title" class="dock-text-input" placeholder="스터디 과제 / 몰입 주제 입력...">
-                <button type="button" id="btn-add-daily-block" class="btn-add-block">+ 등록</button>
+              <!-- 시간 선택 카드 (시작 ~ 종료) -->
+              <div class="android-time-card">
+                <div class="time-inputs-pair">
+                  <div class="time-field-box">
+                    <span class="time-field-label">시작 시간</span>
+                    <input type="time" id="input-block-start" class="android-time-input" value="09:00" required>
+                  </div>
+                  <div class="time-arrow-separator">➔</div>
+                  <div class="time-field-box">
+                    <span class="time-field-label">종료 시간</span>
+                    <input type="time" id="input-block-end" class="android-time-input" value="10:00" required>
+                  </div>
+                </div>
+
+                <!-- 빠른 시간 조정 칩 (구글 캘린더 원터치 스타일) -->
+                <div style="margin-top:2px;">
+                  <div style="font-size:10.5px; color:var(--ink-soft); font-weight:600; margin-bottom:4px;">⚡ 빠른 시간 더하기 / 프리셋:</div>
+                  <div class="quick-chips-scroll">
+                    <button type="button" class="btn-quick-duration" data-add="30">+30분</button>
+                    <button type="button" class="btn-quick-duration" data-add="60">+1시간</button>
+                    <button type="button" class="btn-quick-duration" data-add="90">+1.5시간</button>
+                    <button type="button" class="btn-quick-duration" data-add="120">+2시간</button>
+                    <button type="button" class="btn-quick-duration" data-set-time="09:00|10:00">오전 9시</button>
+                    <button type="button" class="btn-quick-duration" data-set-time="14:00|15:00">오후 2시</button>
+                    <button type="button" class="btn-quick-duration" data-set-time="19:00|20:30">저녁 7시</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dock-text-input-wrap">
+                <input type="text" id="input-block-title" class="dock-full-text-input" placeholder="스터디 과제, 업무, 몰입할 주제를 입력하세요...">
+                <button type="button" id="btn-add-daily-block" class="btn-submit-daily-block">
+                  <span>✓</span>
+                  <span>스케줄 등록하기</span>
+                </button>
               </div>
             </div>
 
@@ -1545,25 +1710,45 @@
         <span id="week-date-range-text" style="font-family:var(--font-mono); font-size:11.5px; color:var(--ink-soft);"></span>
       </div>
 
+      <!-- 개선된 주간 핵심 지표 3가지: 투두 계획대비 이행률 명확화 -->
       <div class="stat-grid-3">
         <div class="stat-card">
-          <div class="stat-label">주간 총 달성률</div>
+          <div class="stat-label">투두 계획 대비 이행률</div>
           <div class="stat-value" id="week-todo-rate">0%</div>
+          <div class="stat-sub" id="week-todo-count-detail">완료 0 / 계획 0건</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">완료한 루틴/타임블록</div>
-          <div class="stat-value" id="week-todo-count">0 / 0</div>
+          <div class="stat-label">루틴 종합 실천율</div>
+          <div class="stat-value" id="week-routine-rate">0%</div>
+          <div class="stat-sub" id="week-routine-count-detail">완료 0 / 총 0회</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">피드백 작성 일수</div>
           <div class="stat-value" id="week-feedback-days">0 / 7일</div>
+          <div class="stat-sub">회고 기록 완료 일수</div>
         </div>
       </div>
 
-      <div class="section-header" style="margin-top:10px;">
-        <span class="washi-tape-title tape-sage" style="font-size:12px;">이번 주 7일 투두 &amp; 피드백 아카이브</span>
+      <!-- 신규: 좌측(루틴 실천 현황) vs 우측(투두 이행 & 피드백) 2분할 레이아웃 -->
+      <div class="week-split-grid">
+        <!-- 좌측: 루틴별 주간 실천 현황 -->
+        <div class="week-split-col">
+          <div class="week-split-header">
+            <span class="washi-tape-title tape-sand" style="font-size:12px;">🔄 루틴별 실천 현황 (7일)</span>
+            <span style="font-size:11px; color:var(--ink-faint);">루틴별 주간 성공률</span>
+          </div>
+          <div class="routine-breakdown-card" id="week-routine-breakdown-list" style="margin-bottom:0; background:transparent; border:none; padding:0;"></div>
+        </div>
+
+        <!-- 우측: 이번 주 7일 투두 & 피드백 아카이브 -->
+        <div class="week-split-col">
+          <div class="week-split-header">
+            <span class="washi-tape-title tape-sage" style="font-size:12px;">⏱️ 투두 실천 &amp; 7일 피드백</span>
+            <span style="font-size:11px; color:var(--ink-faint);">일자별 달성률 (클릭 시 이동)</span>
+          </div>
+          <div class="week-archive-grid" id="week-archive-list"></div>
+        </div>
       </div>
-      <div class="week-archive-grid" id="week-archive-list"></div>
     </div>
 
     <div class="paper-card">
@@ -1603,19 +1788,38 @@
             <button type="button" class="date-nav-btn" id="btn-month-next">다음 달 ›</button>
           </div>
 
+          <!-- 개선된 월간 지표: 투두 계획 대비 이행률과 루틴 상세 집계 -->
           <div class="stat-grid-3">
+            <div class="stat-card">
+              <div class="stat-label">월간 투두 계획대비 이행률</div>
+              <div class="stat-value" id="month-todo-rate">0%</div>
+              <div class="stat-sub" id="month-todo-detail-sub">완료 0 / 계획 0건</div>
+            </div>
             <div class="stat-card">
               <div class="stat-label">루틴 실천 일수</div>
               <div class="stat-value" id="month-routine-days">0일</div>
+              <div class="stat-sub" id="month-routine-detail-sub">전체 루틴 평균 달성률 0%</div>
             </div>
             <div class="stat-card">
-              <div class="stat-label">투두 실천 일수</div>
+              <div class="stat-label">투두 실천 일수 (활동일)</div>
               <div class="stat-value" id="month-todo-days">0일</div>
+              <div class="stat-sub">한 달 동안 계획을 실천한 날</div>
             </div>
-            <div class="stat-card">
-              <div class="stat-label">평균 달성률</div>
-              <div class="stat-value" id="month-avg-rate">0%</div>
-            </div>
+          </div>
+
+          <!-- 신규: 루틴별 월간 누적 실천 현황 -->
+          <div class="section-header" style="margin-top:10px;">
+            <span class="washi-tape-title tape-peach" style="font-size:12px;">🔄 루틴별 월간 실천 현황</span>
+            <span style="font-size:11px; color:var(--ink-faint);">루틴별 실천 일수 및 성공률</span>
+          </div>
+          <div class="routine-breakdown-card" id="month-routine-breakdown-list"></div>
+
+          <!-- 캘린더 상단: 구글 캘린더 동기화 상태 바 -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; padding:0 2px;">
+            <span style="font-size:11.5px; font-weight:700; color:var(--ink-soft);">📅 월간 다이어리 달력</span>
+            <button type="button" id="btn-month-sync-gcal" style="background:#E8F0FE; border:1px solid #AECBFA; color:#174EA6; font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+              <span>📅 구글 캘린더 동기화</span>
+            </button>
           </div>
 
           <div class="paper-diary-sheet">
@@ -1757,7 +1961,7 @@
       <button type="button" class="routine-del-btn" id="btn-close-routines" style="font-size:20px;">×</button>
     </div>
     <p style="font-size:12px; color:var(--ink-soft); margin-bottom:10px;">
-      여기에 등록한 습관은 매일 아침 오늘의 페이지 맨 위에 체크박스로 자동 생성되어 하루의 워밍업을 돕습니다.
+      여기에 등록한 습관은 매일 아침 오늘의 페이지 맨 위에 체크박스로 자동 생성되며, 주간/월간 루틴 실천 분석에 자동으로 반영됩니다.
     </p>
 
     <div style="display:flex; gap:6px; margin-bottom:10px;">
@@ -1816,6 +2020,55 @@
   </div>
 </div>
 
+<!-- Google Calendar Sync Modal (신규) -->
+<div id="gcal-modal" class="modal-overlay">
+  <div class="modal-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="font-family:var(--font-serif); font-size:16px; font-weight:700; color:#1A73E8; display:flex; align-items:center; gap:6px;">
+        <span>📅</span>
+        <span>Google 캘린더 실시간 연동</span>
+      </h3>
+      <button type="button" class="routine-del-btn" id="btn-close-gcal" style="font-size:20px;">×</button>
+    </div>
+
+    <div class="sync-box-status" style="background:#F8FAFD; border-color:#D2E3FC;">
+      <span>구글 캘린더 상태:</span>
+      <span id="gcal-conn-status" style="font-weight:700; color:#1A73E8;">⚪ 연동 대기 중</span>
+    </div>
+
+    <p style="font-size:12px; color:var(--ink-soft); line-height:1.5; margin-bottom:12px;">
+      Google 캘린더의 일정을 월간 달력과 오늘의 몰입 스케줄에 자동으로 불러옵니다.<br>
+      API 연동 외에도 <strong>Google 캘린더 웹에서 1초 만에 새 일정 만들기</strong> 바로가기를 지원합니다.
+    </p>
+
+    <div class="sync-field-group">
+      <label class="sync-label" for="input-gcal-client-id">Google OAuth Client ID (선택)</label>
+      <input type="text" id="input-gcal-client-id" class="sync-input" placeholder="예: xxxxx.apps.googleusercontent.com">
+      <p class="sync-help">Google Cloud Console에서 발급받은 웹 클라이언트 ID입니다. 입력 후 1회 로그인하면 달력과 완벽히 동기화됩니다.</p>
+    </div>
+
+    <div class="sync-field-group">
+      <label class="sync-label" for="input-gcal-api-key">Google API Key (선택)</label>
+      <input type="text" id="input-gcal-api-key" class="sync-input" placeholder="예: AIzaSy...">
+    </div>
+
+    <div class="modal-actions" style="margin-top:10px;">
+      <button type="button" class="modal-btn google" id="btn-gcal-login-sync">
+        <span>G</span> Google 계정 로그인 &amp; 일정 가져오기
+      </button>
+    </div>
+
+    <!-- 간편 Google 캘린더 웹 바로 등록 기능 -->
+    <div style="border-top:1.5px solid var(--line); margin-top:14px; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
+      <span style="font-size:11.5px; font-weight:700; color:var(--ink);">💡 빠른 웹 바로가기:</span>
+      <button type="button" class="modal-btn" id="btn-open-gcal-web" style="border-color:#1A73E8; color:#1A73E8; font-size:12px;">
+        ↗ Google 캘린더 웹 화면에서 일정 열기
+      </button>
+      <button type="button" class="modal-btn danger" id="btn-gcal-disconnect" style="font-size:11px;">구글 캘린더 연동 정보 초기화</button>
+    </div>
+  </div>
+</div>
+
 <!-- Confirm Modal -->
 <div id="confirm-modal" class="modal-overlay">
   <div class="modal-card" style="max-width:340px;">
@@ -1869,13 +2122,11 @@
       });
     },
 
-    // 이전 HaruPageDB(v1) 및 localStorage에 작성된 기존 일기 데이터 무손실 자동 마이그레이션
     async checkAndMigrateLegacy() {
       try {
         const migratedFlag = localStorage.getItem('haru_migrated_v2');
         if (migratedFlag) return;
 
-        // 1. 레거시 IndexedDB (HaruPageDB v1) 점검 및 복사
         await new Promise((resolve) => {
           const req = indexedDB.open(this.legacyDbName);
           req.onsuccess = (e) => {
@@ -1903,7 +2154,6 @@
           req.onerror = () => resolve();
         });
 
-        // 2. localStorage에 남아있는 haru_day_* 및 복기 메타데이터 이관
         const keys = Object.keys(localStorage);
         for (const k of keys) {
           if (k.startsWith('haru_day_')) {
@@ -2103,13 +2353,8 @@
   let activeTab = 'tab-today';
   let currentDate = getTodayStr();
 
-  // 팜 리젝션 스마트 모드: 기본적으로 모든 펜/터치 허용, 스타일러스가 한 번이라도 인식된 경우에만 터치 거부 적용
   let isPalmRejectionEnabled = false;
   let stylusEverDetected = false;
-
-  // 타임 레일 선택 상태
-  let timeRailStart = null;
-  let timeRailEnd = null;
 
   const initDate = new Date();
   let currentMonthView = { year: initDate.getFullYear(), month: initDate.getMonth() + 1 };
@@ -2119,6 +2364,10 @@
   let unsubscribeFirestore = null;
   let firestoreDb = null;
   let isFirestoreOnline = false;
+
+  // 구글 캘린더 클라이언트 상태
+  let gcalTokenClient = null;
+  let isGcalAuthorized = false;
 
   const canvasControllers = {};
   const daysCache = {};
@@ -2154,9 +2403,9 @@
     if (diffMinutes < 0) diffMinutes += 24 * 60;
     const hours = Math.floor(diffMinutes / 60);
     const mins = diffMinutes % 60;
-    if (hours > 0 && mins > 0) return `${hours}h ${mins}m`;
-    if (hours > 0) return `${hours}h 00m`;
-    return `${mins}m`;
+    if (hours > 0 && mins > 0) return `${hours}시간 ${mins}분`;
+    if (hours > 0) return `${hours}시간`;
+    return `${mins}분`;
   }
 
   function formatScheduleTime(item) {
@@ -2222,7 +2471,6 @@
     });
   }
 
-  // 스트로크 경량화 압축 필터 (소수점 절삭 및 미세 중복좌표 제거 - 획 유실 없이 60% 이상 용량 절감)
   function compressStrokes(strokes) {
     if (!Array.isArray(strokes)) return [];
     return strokes.map(stroke => {
@@ -2237,7 +2485,7 @@
 
         if (lastP && i !== stroke.points.length - 1) {
           const dist = Math.hypot(rx - lastP.x, ry - lastP.y);
-          if (dist < 0.6) continue; // 0.6px 이하의 미세 떨림 점 제거 (시각적 차이 없음)
+          if (dist < 0.6) continue;
         }
         cleanPoints.push({ x: rx, y: ry });
         lastP = { x: rx, y: ry };
@@ -2259,7 +2507,7 @@
   }
 
   // ==========================================
-  // 절대 멈추지 않는 무결점 SmoothCanvas 클래스
+  // SmoothCanvas 클래스 (손글씨 엔진 원본 100% 보존)
   // ==========================================
   class SmoothCanvas {
     constructor(canvasId) {
@@ -2278,7 +2526,6 @@
       this.resizeCanvas();
     }
 
-    // 캔버스 크기 계산 안전 보장 (폭이 0이 되지 않도록 다단계 폴백)
     resizeCanvas() {
       if (!this.canvas) return;
       const dpr = window.devicePixelRatio || 1;
@@ -2298,7 +2545,6 @@
       let curH = parseInt(this.canvas.style.height) || parseInt(this.canvas.getAttribute('height')) || this.defaultHeight;
       if (curH > MAX_SAFE_HEIGHT || curH < MIN_SAFE_HEIGHT) curH = this.defaultHeight;
 
-      // 버퍼 크기와 CSS 크기 일치화
       this.canvas.width = Math.round(width * dpr);
       this.canvas.height = Math.round(curH * dpr);
       this.canvas.style.width = '100%';
@@ -2326,7 +2572,6 @@
       if (!this.canvas) return;
       this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
-      // 필기 중 모바일 브라우저 화면 끌림/스크롤 완벽 차단
       const preventTouch = (e) => {
         if (currentTool !== 'scroll') e.preventDefault();
       };
@@ -2342,13 +2587,12 @@
     shouldRejectPointer(e) {
       if (e.pointerType === 'pen') {
         stylusEverDetected = true;
-        return false; // 펜은 언제나 무조건 통과
+        return false;
       }
       if (e.pointerType === 'mouse') {
-        return false; // 마우스도 언제나 통과
+        return false;
       }
       if (e.pointerType === 'touch') {
-        // 사용자가 명시적으로 팜리젝션을 켰고 스타일러스를 이미 사용 중일 때만 터치 거부
         if (isPalmRejectionEnabled && stylusEverDetected) {
           return true;
         }
@@ -2421,7 +2665,6 @@
         points: [pos]
       };
 
-      // 첫 클릭/터치 시 즉각 획 가시성 보장
       if (currentTool === 'highlighter') {
         this.drawHighlighterSegment(this.ctx, pos, pos, strokeSize, strokeColor, strokeAlpha);
       } else {
@@ -2450,7 +2693,6 @@
       if (!this.currentStroke || !this.lastPos) return;
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
 
-      // 실시간 부드러운 드로잉 렌더링
       if (this.currentStroke.tool === 'highlighter') {
         this.drawHighlighterSegment(this.ctx, this.lastPos, pos, this.currentStroke.size, this.currentStroke.color, this.currentStroke.alpha);
       } else {
@@ -2598,14 +2840,8 @@
   async function initApp() {
     await idbStorage.init();
     
-    // [장기 보관 필수] 브라우저 자동 삭제 방지: 영구 저장소(Persistent Storage) 요청
     if (navigator.storage && navigator.storage.persist) {
-      try {
-        const isPersisted = await navigator.storage.persist();
-        if (isPersisted) {
-          console.log('HaruPage: 영구 스토리지 보호 활성화 완료');
-        }
-      } catch (e) {}
+      try { await navigator.storage.persist(); } catch (e) {}
     }
 
     loadSavedPenSettings();
@@ -2614,16 +2850,16 @@
     initCanvases();
     initDirectTools();
     initEventListeners();
+    initAndroidTimePicker(); // 개선된 구글 캘린더 스타일 시간 피커
     initBacklogDrawerEvents();
     initMonthSpread();
-    initTimeRail();
+    initGoogleCalendarIntegration(); // 구글 캘린더 연동 모듈
     await loadRoutines();
     await loadSchedules();
     await loadBacklogs();
     initFirebaseIfAvailable();
     await switchDate(currentDate);
 
-    // 창 닫힘/새로고침/모바일 앱 전환 시 데이터 유실 이중 방어
     const emergencyFlush = () => {
       saveCurrentDayData(true);
       saveWeekReviewMeta(true);
@@ -2633,28 +2869,19 @@
     window.addEventListener('beforeunload', emergencyFlush);
     window.addEventListener('pagehide', emergencyFlush);
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') {
-        emergencyFlush();
-      }
+      if (document.visibilityState === 'hidden') emergencyFlush();
     });
 
-    // 네트워크 복구 시 미전송 오프라인 큐 자동 전송
     window.addEventListener('online', () => {
-      if (isFirestoreOnline && firestoreDb) {
-        processOfflineQueue();
-      }
+      if (isFirestoreOnline && firestoreDb) processOfflineQueue();
     });
 
-    setTimeout(() => {
-      refreshAllCanvases();
-    }, 250);
+    setTimeout(() => { refreshAllCanvases(); }, 250);
   }
 
   function refreshAllCanvases() {
     Object.values(canvasControllers).forEach(c => {
-      if (c && c.resizeCanvas) {
-        c.resizeCanvas();
-      }
+      if (c && c.resizeCanvas) c.resizeCanvas();
     });
   }
 
@@ -2666,9 +2893,7 @@
       tool: currentTool,
       palmRejection: isPalmRejectionEnabled
     };
-    try {
-      localStorage.setItem('haru_pen_settings', JSON.stringify(settings));
-    } catch (e) {}
+    try { localStorage.setItem('haru_pen_settings', JSON.stringify(settings)); } catch (e) {}
   }
 
   function loadSavedPenSettings() {
@@ -2700,9 +2925,7 @@
       }
     });
 
-    window.addEventListener('resize', debounce(() => {
-      refreshAllCanvases();
-    }, 150));
+    window.addEventListener('resize', debounce(() => { refreshAllCanvases(); }, 150));
   }
 
   function initPenToolbar() {
@@ -2873,85 +3096,58 @@
     }
   }
 
-  function initTimeRail() {
-    const rail = document.getElementById('interactive-time-rail');
-    if (!rail) return;
-    rail.innerHTML = '';
-
-    for (let h = 6; h <= 24; h++) {
-      for (let m = 0; m < 60; m += 30) {
-        if (h === 24 && m > 0) break;
-        const timeStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'time-slot-btn';
-        btn.dataset.time = timeStr;
-        btn.textContent = timeStr;
-        btn.addEventListener('click', () => handleTimeSlotClick(timeStr));
-        rail.appendChild(btn);
-      }
-    }
-
-    document.getElementById('btn-reset-rail')?.addEventListener('click', resetTimeRail);
-  }
-
-  function handleTimeSlotClick(timeStr) {
+  // ---------------------------------------------------------------------
+  // 안드로이드 구글 캘린더 스타일 모바일 시간 설정 로직
+  // ---------------------------------------------------------------------
+  function initAndroidTimePicker() {
     const sInput = document.getElementById('input-block-start');
     const eInput = document.getElementById('input-block-end');
-    const rangeLabel = document.getElementById('rail-selected-range');
-
-    if (!timeRailStart || (timeRailStart && timeRailEnd)) {
-      timeRailStart = timeStr;
-      timeRailEnd = null;
-      if (sInput) sInput.value = timeStr;
-      if (eInput) eInput.value = '';
-      if (rangeLabel) rangeLabel.textContent = `${timeStr} ~ (종료 시간을 탭하세요)`;
-    } else {
-      if (timeStr <= timeRailStart) {
-        timeRailStart = timeStr;
-        if (sInput) sInput.value = timeStr;
-        if (rangeLabel) rangeLabel.textContent = `${timeStr} ~ (종료 시간을 탭하세요)`;
-      } else {
-        timeRailEnd = timeStr;
-        if (eInput) eInput.value = timeStr;
-        const dur = calculateDuration(timeRailStart, timeRailEnd);
-        if (rangeLabel) rangeLabel.textContent = `${timeRailStart} ~ ${timeRailEnd} (${dur})`;
-        
-        const durBadge = document.getElementById('dock-duration-calc');
-        if (durBadge) durBadge.textContent = `(${dur} 몰입)`;
-      }
-    }
-    renderTimeRailHighlight();
-  }
-
-  function renderTimeRailHighlight() {
-    document.querySelectorAll('.time-slot-btn').forEach(btn => {
-      const t = btn.dataset.time;
-      btn.classList.remove('slot-start', 'slot-range', 'slot-end');
-
-      if (timeRailStart && t === timeRailStart) {
-        btn.classList.add('slot-start');
-      } else if (timeRailEnd && t === timeRailEnd) {
-        btn.classList.add('slot-end');
-      } else if (timeRailStart && timeRailEnd && t > timeRailStart && t < timeRailEnd) {
-        btn.classList.add('slot-range');
-      }
-    });
-  }
-
-  function resetTimeRail() {
-    timeRailStart = null;
-    timeRailEnd = null;
-    const sInput = document.getElementById('input-block-start');
-    const eInput = document.getElementById('input-block-end');
-    const rangeLabel = document.getElementById('rail-selected-range');
     const durBadge = document.getElementById('dock-duration-calc');
 
-    if (sInput) sInput.value = '';
-    if (eInput) eInput.value = '';
-    if (rangeLabel) rangeLabel.textContent = '시작 시간을 탭하세요';
-    if (durBadge) durBadge.textContent = '(시간 지정)';
-    renderTimeRailHighlight();
+    const updateCalc = () => {
+      if (!sInput || !eInput) return;
+      let sVal = sInput.value;
+      let eVal = eInput.value;
+      if (!sVal) return;
+      if (!eVal || eVal <= sVal) {
+        // 종료 시간이 시작 시간보다 앞서면 자동으로 1시간 뒤로 설정
+        const [h, m] = sVal.split(':').map(Number);
+        const nh = (h + 1) % 24;
+        eVal = `${String(nh).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        eInput.value = eVal;
+      }
+      const dur = calculateDuration(sVal, eVal);
+      if (durBadge) durBadge.textContent = dur ? `${dur} 몰입` : '시간 지정';
+    };
+
+    sInput?.addEventListener('input', updateCalc);
+    eInput?.addEventListener('input', updateCalc);
+
+    // 빠른 시간 더하기 버튼 (+30분, +1시간, +2시간 등)
+    document.querySelectorAll('.btn-quick-duration').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const addMins = btn.dataset.add;
+        const setTime = btn.dataset.setTime;
+
+        if (setTime) {
+          const [s, e] = setTime.split('|');
+          if (sInput) sInput.value = s;
+          if (eInput) eInput.value = e;
+          updateCalc();
+          return;
+        }
+
+        if (addMins && sInput && eInput) {
+          let sVal = sInput.value || '09:00';
+          const [sh, sm] = sVal.split(':').map(Number);
+          const totalMins = sh * 60 + sm + parseInt(addMins, 10);
+          const eh = Math.floor((totalMins / 60)) % 24;
+          const em = totalMins % 60;
+          eInput.value = `${String(eh).padStart(2, '0')}:${String(em).padStart(2, '0')}`;
+          updateCalc();
+        }
+      });
+    });
   }
 
   function initDirectTools() {
@@ -3050,9 +3246,7 @@
       }
       setTimeout(() => {
         const ctrl = canvasControllers[`canvas-${target}`];
-        if (ctrl && ctrl.resizeCanvas) {
-          ctrl.resizeCanvas();
-        }
+        if (ctrl && ctrl.resizeCanvas) ctrl.resizeCanvas();
       }, 50);
     }
   }
@@ -3081,10 +3275,7 @@
         if (activeTab === 'tab-week') await renderWeekArchive();
         if (activeTab === 'tab-month') await renderMonthCalendar();
         
-        // 탭이 화면에 그려진 직후 정확한 좌표/크기 보정
-        requestAnimationFrame(() => {
-          refreshAllCanvases();
-        });
+        requestAnimationFrame(() => { refreshAllCanvases(); });
       });
     });
 
@@ -3130,6 +3321,7 @@
     document.getElementById('btn-export-backup')?.addEventListener('click', exportFullBackup);
     document.getElementById('input-import-backup')?.addEventListener('change', importBackupFile);
 
+    // 모바일 최적화 타임 도크 토글
     const dockPanel = document.getElementById('timeblock-dock-panel');
     const toggleDockBtn = document.getElementById('btn-toggle-timeblock-dock');
     const closeDockBtn = document.getElementById('btn-close-dock');
@@ -3139,27 +3331,12 @@
       const isShown = dockPanel.style.display !== 'none';
       dockPanel.style.display = isShown ? 'none' : 'flex';
       toggleDockBtn.textContent = isShown ? '+ 블록 추가' : '▲ 접기';
-      if (!isShown) resetTimeRail();
     });
 
     closeDockBtn?.addEventListener('click', () => {
       if (dockPanel) dockPanel.style.display = 'none';
       if (toggleDockBtn) toggleDockBtn.textContent = '+ 블록 추가';
-      resetTimeRail();
     });
-
-    const sInput = document.getElementById('input-block-start');
-    const eInput = document.getElementById('input-block-end');
-    const durBadge = document.getElementById('dock-duration-calc');
-
-    const updateCalcBadge = () => {
-      if (!sInput || !eInput || !durBadge) return;
-      const dur = calculateDuration(sInput.value, eInput.value);
-      durBadge.textContent = dur ? `(${dur} 몰입)` : '(시간 지정)';
-    };
-
-    sInput?.addEventListener('input', updateCalcBadge);
-    eInput?.addEventListener('input', updateCalcBadge);
 
     document.getElementById('btn-add-daily-block')?.addEventListener('click', addDailyTimeBlock);
 
@@ -3193,6 +3370,186 @@
     });
   }
 
+  // ---------------------------------------------------------------------
+  // 구글 캘린더 연동 기능 (Google Calendar Integration)
+  // ---------------------------------------------------------------------
+  function initGoogleCalendarIntegration() {
+    const btnOpen = document.getElementById('btn-open-gcal');
+    const btnMonthSync = document.getElementById('btn-month-sync-gcal');
+    const btnClose = document.getElementById('btn-close-gcal');
+    const modal = document.getElementById('gcal-modal');
+    const btnLogin = document.getElementById('btn-gcal-login-sync');
+    const btnDisconnect = document.getElementById('btn-gcal-disconnect');
+    const btnWeb = document.getElementById('btn-open-gcal-web');
+
+    const openModal = () => {
+      loadGcalSettings();
+      if (modal) modal.style.display = 'flex';
+    };
+    const closeModal = () => {
+      if (modal) modal.style.display = 'none';
+    };
+
+    btnOpen?.addEventListener('click', openModal);
+    btnMonthSync?.addEventListener('click', openModal);
+    btnClose?.addEventListener('click', closeModal);
+
+    btnWeb?.addEventListener('click', () => {
+      window.open('https://calendar.google.com/', '_blank');
+    });
+
+    btnDisconnect?.addEventListener('click', async () => {
+      const ok = await showConfirmDialog('구글 캘린더 연동 해제', '구글 캘린더 연동 정보를 초기화하시겠습니까?', true);
+      if (ok) {
+        localStorage.removeItem('haru_gcal_client_id');
+        localStorage.removeItem('haru_gcal_api_key');
+        localStorage.removeItem('haru_gcal_token');
+        isGcalAuthorized = false;
+        updateGcalUIStatus(false);
+        showToast('구글 캘린더 연동이 해제되었습니다.');
+      }
+    });
+
+    btnLogin?.addEventListener('click', handleGoogleAuthAndSync);
+
+    loadGcalSettings();
+  }
+
+  function loadGcalSettings() {
+    const savedClientId = localStorage.getItem('haru_gcal_client_id') || '';
+    const savedApiKey = localStorage.getItem('haru_gcal_api_key') || '';
+    const cidInp = document.getElementById('input-gcal-client-id');
+    const keyInp = document.getElementById('input-gcal-api-key');
+    if (cidInp) cidInp.value = savedClientId;
+    if (keyInp) keyInp.value = savedApiKey;
+
+    const savedToken = localStorage.getItem('haru_gcal_token');
+    if (savedToken) {
+      isGcalAuthorized = true;
+      updateGcalUIStatus(true);
+    }
+  }
+
+  function updateGcalUIStatus(isConnected) {
+    const pill = document.getElementById('gcal-status-pill');
+    const statusText = document.getElementById('gcal-conn-status');
+    const topBtn = document.getElementById('btn-open-gcal');
+
+    if (isConnected) {
+      if (pill) pill.textContent = '연동됨';
+      if (statusText) statusText.textContent = '🟢 실시간 연동 완료';
+      topBtn?.classList.add('gcal-connected');
+    } else {
+      if (pill) pill.textContent = '연동';
+      if (statusText) statusText.textContent = '⚪ 연동 대기 중';
+      topBtn?.classList.remove('gcal-connected');
+    }
+  }
+
+  async function handleGoogleAuthAndSync() {
+    const cid = document.getElementById('input-gcal-client-id')?.value.trim();
+    const apiKey = document.getElementById('input-gcal-api-key')?.value.trim();
+
+    if (!cid) {
+      // 클라이언트 ID가 없는 경우: 웹 구글 캘린더로 이동하여 간편 연동 가이드
+      showToast('Client ID가 입력되지 않아 Google 캘린더 웹으로 바로 연결합니다.');
+      window.open('https://calendar.google.com/calendar/r', '_blank');
+      return;
+    }
+
+    localStorage.setItem('haru_gcal_client_id', cid);
+    if (apiKey) localStorage.setItem('haru_gcal_api_key', apiKey);
+
+    if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+      showToast('Google 인증 SDK를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
+      return;
+    }
+
+    try {
+      gcalTokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: cid,
+        scope: 'https://www.googleapis.com/auth/calendar.events.readonly',
+        callback: async (resp) => {
+          if (resp.error) {
+            showToast('Google 인증 실패: ' + resp.error);
+            return;
+          }
+          localStorage.setItem('haru_gcal_token', resp.access_token);
+          isGcalAuthorized = true;
+          updateGcalUIStatus(true);
+          await fetchGoogleCalendarEvents(resp.access_token);
+          showToast('Google 캘린더 일정을 성공적으로 불러왔습니다!');
+          document.getElementById('gcal-modal').style.display = 'none';
+        }
+      });
+      gcalTokenClient.requestAccessToken({ prompt: 'consent' });
+    } catch (err) {
+      console.error(err);
+      showToast('Google 로그인 오류가 발생했습니다: ' + err.message);
+    }
+  }
+
+  async function fetchGoogleCalendarEvents(accessToken) {
+    try {
+      const year = currentMonthView.year;
+      const month = currentMonthView.month;
+      const timeMin = new Date(year, month - 2, 20).toISOString();
+      const timeMax = new Date(year, month + 1, 10).toISOString();
+
+      const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&orderBy=startTime`;
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+
+      if (!res.ok) throw new Error('이벤트 요청 실패 (' + res.status + ')');
+      const data = await res.json();
+      const items = data.items || [];
+
+      let addedCount = 0;
+      items.forEach(ev => {
+        const startStr = ev.start.dateTime || ev.start.date;
+        const endStr = ev.end.dateTime || ev.end.date;
+        if (!startStr) return;
+
+        const datePart = startStr.split('T')[0];
+        let timePart = '';
+        let endTimePart = '';
+
+        if (startStr.includes('T')) {
+          timePart = startStr.split('T')[1].slice(0, 5);
+        }
+        if (endStr && endStr.includes('T')) {
+          endTimePart = endStr.split('T')[1].slice(0, 5);
+        }
+
+        const gId = 'gcal_' + ev.id;
+        const exists = schedulesMaster.some(s => s.id === gId || s.gEventId === ev.id);
+        if (!exists) {
+          schedulesMaster.push({
+            id: gId,
+            gEventId: ev.id,
+            date: datePart,
+            time: timePart,
+            endTime: endTimePart,
+            text: ev.summary || '(제목 없는 일정)',
+            color: 'gcal',
+            isMonthlyMilestone: true,
+            isGoogleEvent: true
+          });
+          addedCount++;
+        }
+      });
+
+      if (addedCount > 0) {
+        await saveSchedules();
+        renderDailyIntegratedSection(daysCache[currentDate] || {});
+        renderMonthCalendar();
+      }
+    } catch (e) {
+      console.error('Google Events Fetch Error:', e);
+    }
+  }
+
   async function moveDay(offset) {
     await saveCurrentDayData(true);
     const [y, m, d] = currentDate.split('-').map(Number);
@@ -3205,6 +3562,11 @@
   }
 
   async function switchDate(newDateStr) {
+    // [안전 강화] 날짜가 바뀌기 전 현재 날짜에 작성된 손글씨와 입력을 100% 즉시 강제 저장
+    if (currentDate && currentDate !== newDateStr) {
+      await saveCurrentDayData(true);
+    }
+
     currentDate = newDateStr;
     const isToday = currentDate === getTodayStr();
 
@@ -3550,6 +3912,7 @@
           const timeStr = formatScheduleTime(s);
           const durationStr = calculateDuration(s.time, s.endTime);
           const isMonthly = !!s.isMonthlyMilestone;
+          const isGoogle = !!s.isGoogleEvent;
 
           row.innerHTML = `
             <button type="button" class="priority-star-btn ${isPri ? 'active' : ''}" data-itemid="${s.id}" title="최우선 몰입 과제">★</button>
@@ -3557,7 +3920,7 @@
             <div class="timeblock-chip-group">
               <span class="time-chip">${timeStr}</span>
               ${durationStr ? `<span class="duration-pill">(${durationStr})</span>` : ''}
-              ${isMonthly ? `<span class="source-tag">월간</span>` : ''}
+              ${isGoogle ? `<span class="source-tag gcal">구글</span>` : isMonthly ? `<span class="source-tag">월간</span>` : ''}
             </div>
             <span class="check-text" style="flex:1; margin-left:3px;">${escapeHtml(s.text)}</span>
             <button type="button" class="routine-del-btn btn-del-sched" data-sid="${s.id}" title="삭제" style="font-size:12px; opacity:0.6;">✕</button>
@@ -3630,7 +3993,6 @@
     const toggleDockBtn = document.getElementById('btn-toggle-timeblock-dock');
     if (dockPanel) dockPanel.style.display = 'none';
     if (toggleDockBtn) toggleDockBtn.textContent = '+ 블록 추가';
-    resetTimeRail();
 
     showToast(`⏱️ ${sVal}~${eVal} 몰입 스케줄이 등록되었습니다!`);
   }
@@ -3823,6 +4185,9 @@
     if (dInp) dInp.value = currentDate;
   }
 
+  // ---------------------------------------------------------------------
+  // 월간 돌아보기 & 루틴별 통계 / 투두 계획대비 이행률 집계
+  // ---------------------------------------------------------------------
   async function renderMonthCalendar() {
     const { year, month } = currentMonthView;
     const monthNamesEn = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -3851,8 +4216,11 @@
 
     let routineActiveDays = 0;
     let todoActiveDays = 0;
-    let totalItemsSum = 0;
-    let doneItemsSum = 0;
+    let totalPlannedTodos = 0;
+    let totalCompletedTodos = 0;
+    const routineCounts = {};
+    routinesMaster.forEach(r => { routineCounts[r.id] = 0; });
+
     const todayStr = getTodayStr();
 
     for (let d = 1; d <= lastDate; d++) {
@@ -3868,20 +4236,25 @@
       }
 
       if (dayData) {
-        // 1. 고정 루틴 실천 집계
-        const rDone = Object.values(dayData.routineChecks || {}).filter(Boolean).length;
-        const rTotal = routinesMaster.length;
-        if (rDone > 0) routineActiveDays++;
+        const rChecks = dayData.routineChecks || {};
+        let dayHasRoutine = false;
+        routinesMaster.forEach(r => {
+          if (rChecks[r.id]) {
+            routineCounts[r.id] = (routineCounts[r.id] || 0) + 1;
+            dayHasRoutine = true;
+          }
+        });
+        if (dayHasRoutine) routineActiveDays++;
 
-        // 2. 당일 타임블록/투두 실천 집계
+        // 당일 투두(타임블록) 계획 대비 완료 카운트 집계
         const daySchedules = schedulesMaster.filter(s => s.date === dateStr);
-        const sDone = Object.values(dayData.calendarChecks || {}).filter(Boolean).length;
+        const dayChecks = dayData.calendarChecks || {};
+        const sDone = Object.values(dayChecks).filter(Boolean).length;
         const sTotal = daySchedules.length;
-        if (sDone > 0) todoActiveDays++;
 
-        // 3. 전체 달성률 집계
-        totalItemsSum += (rTotal + sTotal);
-        doneItemsSum += (rDone + sDone);
+        if (sDone > 0) todoActiveDays++;
+        totalPlannedTodos += sTotal;
+        totalCompletedTodos += sDone;
       }
 
       grid.appendChild(createDayCell(d, false, isSun, isSat, dateStr, isToday, dayData));
@@ -3894,14 +4267,56 @@
       cellCount++;
     }
 
+    // 1. 투두 계획 대비 이행률 갱신
+    const todoRate = totalPlannedTodos > 0 ? Math.round((totalCompletedTodos / totalPlannedTodos) * 100) : 0;
+    const mTodoRateEl = document.getElementById('month-todo-rate');
+    const mTodoSubEl = document.getElementById('month-todo-detail-sub');
+    if (mTodoRateEl) mTodoRateEl.textContent = `${todoRate}%`;
+    if (mTodoSubEl) mTodoSubEl.textContent = `완료 ${totalCompletedTodos} / 계획 ${totalPlannedTodos}건`;
+
+    // 2. 루틴 실천 일수 및 상세 갱신
     const rDaysEl = document.getElementById('month-routine-days');
+    const rSubEl = document.getElementById('month-routine-detail-sub');
     const tDaysEl = document.getElementById('month-todo-days');
-    const avgRateEl = document.getElementById('month-avg-rate');
+
+    const totalRoutinePossible = routinesMaster.length * lastDate;
+    const totalRoutineDone = Object.values(routineCounts).reduce((a, b) => a + b, 0);
+    const overallRoutinePct = totalRoutinePossible > 0 ? Math.round((totalRoutineDone / totalRoutinePossible) * 100) : 0;
 
     if (rDaysEl) rDaysEl.textContent = `${routineActiveDays}일`;
+    if (rSubEl) rSubEl.textContent = `전체 루틴 평균 달성률 ${overallRoutinePct}% (${totalRoutineDone}/${totalRoutinePossible}회)`;
     if (tDaysEl) tDaysEl.textContent = `${todoActiveDays}일`;
-    const rate = totalItemsSum > 0 ? Math.round((doneItemsSum / totalItemsSum) * 100) : 0;
-    if (avgRateEl) avgRateEl.textContent = `${rate}%`;
+
+    // 3. 루틴별 월간 달성 현황 카드 렌더링
+    renderMonthRoutineBreakdown(routineCounts, lastDate);
+  }
+
+  function renderMonthRoutineBreakdown(routineCounts, totalDays) {
+    const container = document.getElementById('month-routine-breakdown-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (routinesMaster.length === 0) {
+      container.innerHTML = '<div class="empty-hint-text">등록된 고정 루틴이 없습니다. 상단 [고정 루틴]에서 추가해보세요.</div>';
+      return;
+    }
+
+    routinesMaster.forEach(r => {
+      const count = routineCounts[r.id] || 0;
+      const pct = Math.round((count / totalDays) * 100);
+      const item = document.createElement('div');
+      item.className = 'routine-breakdown-item';
+      item.innerHTML = `
+        <div class="routine-item-head">
+          <span>• ${escapeHtml(r.text)}</span>
+          <span class="routine-item-rate-badge">${count} / ${totalDays}일 (${pct}%)</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" style="width: ${pct}%;"></div>
+        </div>
+      `;
+      container.appendChild(item);
+    });
   }
 
   function createDayCell(dayNum, isOtherMonth, isSun, isSat, dateStr, isToday = false, dayData = null) {
@@ -3949,8 +4364,10 @@
 
       monthlyMilestones.slice(0, 3).forEach(s => {
         const item = document.createElement('div');
-        item.className = `washi-tape-item tape-color-${s.color || 0}`;
-        item.textContent = s.text;
+        const colorClass = s.color === 'gcal' ? 'tape-color-gcal' : `tape-color-${s.color || 0}`;
+        item.className = `washi-tape-item ${colorClass}`;
+        const prefix = s.isGoogleEvent ? '🗓️ ' : '';
+        item.textContent = `${prefix}${s.text}`;
         item.title = `${formatScheduleTime(s)} ${s.text}`;
         tapeList.appendChild(item);
       });
@@ -4049,6 +4466,9 @@
     }
   }
 
+  // ---------------------------------------------------------------------
+  // 주간 돌아보기 & 루틴별 통계 / 투두 계획대비 이행률 집계
+  // ---------------------------------------------------------------------
   async function renderWeekArchive() {
     const [y, m, d] = currentDate.split('-').map(Number);
     const cur = new Date(y, m - 1, d);
@@ -4071,10 +4491,18 @@
     if (!container) return;
     container.innerHTML = '';
 
-    let totalTodos = 0;
-    let doneTodos = 0;
+    let totalPlannedTodos = 0;
+    let totalCompletedTodos = 0;
+    let totalRoutinePossible = routinesMaster.length * 7;
+    let totalRoutineDone = 0;
     let feedbackDays = 0;
     const dows = ['일', '월', '화', '수', '목', '금', '토'];
+
+    // 루틴별 7일간 실천 여부 기록 맵: { rId: [false, true, ... 7개] }
+    const routineWeekMap = {};
+    routinesMaster.forEach(r => {
+      routineWeekMap[r.id] = new Array(7).fill(false);
+    });
 
     for (let i = 0; i < 7; i++) {
       const targetD = new Date(start);
@@ -4094,19 +4522,26 @@
       let feedbackHtml = '<span style="color:var(--ink-faint); font-style:italic;">(피드백 없음)</span>';
 
       if (dayData) {
-        const rTotal = routinesMaster.length;
-        const rDone = Object.values(dayData.routineChecks || {}).filter(Boolean).length;
+        // 루틴 추적
+        const rChecks = dayData.routineChecks || {};
+        routinesMaster.forEach(r => {
+          if (rChecks[r.id]) {
+            routineWeekMap[r.id][i] = true;
+            totalRoutineDone++;
+          }
+        });
+
+        // 투두(타임블록) 계획 대비 완료 추적
         const dayS = schedulesMaster.filter(s => s.date === ds);
+        const dayChecks = dayData.calendarChecks || {};
         const sTotal = dayS.length;
-        const sDone = Object.values(dayData.calendarChecks || {}).filter(Boolean).length;
+        const sDone = Object.values(dayChecks).filter(Boolean).length;
 
-        const allTotal = rTotal + sTotal;
-        const allDone = rDone + sDone;
+        totalPlannedTodos += sTotal;
+        totalCompletedTodos += sDone;
 
-        totalTodos += allTotal;
-        doneTodos += allDone;
-        if (allTotal > 0) rateText = `${Math.round((allDone / allTotal) * 100)}%`;
-        todoCnt = `${allDone}/${allTotal}`;
+        if (sTotal > 0) rateText = `${Math.round((sDone / sTotal) * 100)}%`;
+        todoCnt = `${sDone}/${sTotal}`;
 
         const textFb = dayData.texts && dayData.texts['todo-feedback'] ? dayData.texts['todo-feedback'].trim() : '';
         const hasStrokes = dayData.strokes && dayData.strokes['canvas-todo-feedback'] && dayData.strokes['canvas-todo-feedback'].length > 0;
@@ -4123,10 +4558,9 @@
       col.innerHTML = `
         <div class="day-col-title">
           <span>${targetD.getMonth() + 1}/${targetD.getDate()} (${dows[i]})</span>
-          <span style="color:var(--accent); font-family:var(--font-mono); font-size:11px;">${rateText}</span>
+          <span class="day-col-rate-badge">${rateText} (${todoCnt})</span>
         </div>
-        <div style="font-size:11px; color:var(--ink-soft); font-family:var(--font-mono);">완료: ${todoCnt}</div>
-        <div style="font-size:11px; color:var(--ink-soft); white-space:pre-wrap; max-height:80px; overflow-y:auto; border-top:1px dashed var(--line); padding-top:4px;">
+        <div class="day-col-feedback-box">
           ${feedbackHtml}
         </div>
       `;
@@ -4138,14 +4572,63 @@
       container.appendChild(col);
     }
 
-    const overallRate = totalTodos > 0 ? Math.round((doneTodos / totalTodos) * 100) : 0;
+    // 1. 투두 계획 대비 이행률 표시
+    const todoRate = totalPlannedTodos > 0 ? Math.round((totalCompletedTodos / totalPlannedTodos) * 100) : 0;
     const wRate = document.getElementById('week-todo-rate');
-    const wCount = document.getElementById('week-todo-count');
-    const wFbDays = document.getElementById('week-feedback-days');
+    const wTodoDetail = document.getElementById('week-todo-count-detail');
+    if (wRate) wRate.textContent = `${todoRate}%`;
+    if (wTodoDetail) wTodoDetail.textContent = `완료 ${totalCompletedTodos} / 계획 ${totalPlannedTodos}건`;
 
-    if (wRate) wRate.textContent = `${overallRate}%`;
-    if (wCount) wCount.textContent = `${doneTodos} / ${totalTodos}`;
+    // 2. 루틴 실천율 표시
+    const routinePct = totalRoutinePossible > 0 ? Math.round((totalRoutineDone / totalRoutinePossible) * 100) : 0;
+    const wRoutineRate = document.getElementById('week-routine-rate');
+    const wRoutineDetail = document.getElementById('week-routine-count-detail');
+    if (wRoutineRate) wRoutineRate.textContent = `${routinePct}%`;
+    if (wRoutineDetail) wRoutineDetail.textContent = `완료 ${totalRoutineDone} / 총 ${totalRoutinePossible}회`;
+
+    const wFbDays = document.getElementById('week-feedback-days');
     if (wFbDays) wFbDays.textContent = `${feedbackDays} / 7일`;
+
+    // 3. 루틴별 주간 실천 현황 렌더링
+    renderWeekRoutineBreakdown(routineWeekMap, dows);
+  }
+
+  function renderWeekRoutineBreakdown(routineWeekMap, dows) {
+    const container = document.getElementById('week-routine-breakdown-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (routinesMaster.length === 0) {
+      container.innerHTML = '<div class="empty-hint-text">등록된 고정 루틴이 없습니다. 상단 [고정 루틴]에서 추가해보세요.</div>';
+      return;
+    }
+
+    routinesMaster.forEach(r => {
+      const flags = routineWeekMap[r.id] || new Array(7).fill(false);
+      const count = flags.filter(Boolean).length;
+      const pct = Math.round((count / 7) * 100);
+
+      const item = document.createElement('div');
+      item.className = 'routine-breakdown-item';
+
+      const dotSpans = flags.map((f, idx) => {
+        return `<span class="dow-dot-item ${f ? 'active' : ''}">${dows[idx]}</span>`;
+      }).join('');
+
+      item.innerHTML = `
+        <div class="routine-item-head">
+          <span>• ${escapeHtml(r.text)}</span>
+          <span class="routine-item-rate-badge">${count} / 7일 (${pct}%)</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" style="width: ${pct}%;"></div>
+        </div>
+        <div class="dow-check-dots">
+          ${dotSpans}
+        </div>
+      `;
+      container.appendChild(item);
+    });
   }
 
   async function loadWeekReviewMeta(weekKey) {
@@ -4613,12 +5096,11 @@
     updateSyncStatusUI('syncing', '클라우드 저장 중');
     const cleanData = sanitizeForFirestore(data);
 
-    // [Firebase 1MB 사전 방어] 전송 전 페이로드 바이트 크기 사전 점검
     try {
       const payloadString = JSON.stringify(cleanData);
       const approxBytes = new Blob([payloadString]).size;
       
-      // Firestore 단일 문서 한도 1MB(1,048,576 bytes) 초과 방지 (안전 여유분 950KB)
+      // Firestore 단일 문서 한도 1MB(1,048,576 bytes) 초과 방지
       if (approxBytes > 950 * 1024) {
         console.warn(`Firestore 1MB 한도 근접 (${Math.round(approxBytes/1024)}KB): 로컬 DB에 안전 보관 유지`);
         updateSyncStatusUI('online', '로컬 안전 보관 (대용량)');
@@ -4651,7 +5133,6 @@
     try {
       updateSyncStatusUI('syncing', '데이터 가져오는 중');
       
-      // 1. 일일 일기 데이터 가져오기
       const daysSnap = await firestoreDb.collection('haru_diaries').doc(roomKey).collection('days').get();
       for (const doc of daysSnap.docs) {
         const d = doc.data();
@@ -4659,7 +5140,6 @@
         await idbStorage.setDay(doc.id, d);
       }
 
-      // 2. 메타(루틴, 스케줄, 백로그, 주간/월간 회고) 데이터 완벽 동기화
       const metaSnap = await firestoreDb.collection('haru_diaries').doc(roomKey).collection('meta').get();
       for (const doc of metaSnap.docs) {
         const d = doc.data();
